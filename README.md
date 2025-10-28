@@ -127,8 +127,3 @@ Untuk menjalankan aplikasi ini di server publik (*Go Live*):
 8.  Gunakan **Cloudflare** (paket gratis) untuk CDN, HTTPS, dan keamanan dasar.
 
 *(Tutorial detail "Deploy Django Gunicorn Nginx" banyak tersedia online).*
-
----
-## 📜 Lisensi
-
-Proyek ini dilisensikan di bawah **MIT License**. Lihat file `LICENSE` untuk detail lengkap.
