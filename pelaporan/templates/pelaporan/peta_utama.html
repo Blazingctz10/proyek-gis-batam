@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="text-center mb-4" data-aos="fade-down">
+        <h1 class="display-6">{{ title }}</h1>
+        <p class="lead">Lihat lokasi jalan rusak yang telah diverifikasi oleh petugas.</p>
+    </div>
+    
+    <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" class="mt-4 mb-4" data-aos="fade-up" data-aos-delay="200"></div>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Detail Foto Laporan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" alt="Foto Laporan Diperbesar">
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/peta_utama.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="text-center mb-4" data-aos="fade-down">
+        <h1 class="display-6">{{ title }}</h1>
+        <p class="lead">Klik lokasi di peta, isi form, lalu kirim laporan Anda.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7" data-aos="fade-right">
+            <div id="map"></div>
+        </div>
+
+        <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
+            <div class="form-container">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Lokasi Dipilih (Otomatis):</strong></p>
+                        <div class="card card-body bg-light p-2 text-center">
+                            Lat: <span id="lat-display" class="fw-bold">-</span> | 
+                            Lon: <span id="lon-display" class="fw-bold">-</span>
+                        </div>
+                    </div>
+                    
+                    {{ form.latitude }}
+                    {{ form.longitude }}
+
+                    <div class="mb-3">
+                        <label for="id_email_pelapor" class="form-label">Email Anda (Opsional):</label>
+                        {{ form.email_pelapor }}
+                        <small class="form-text text-muted">              
+                            Kami akan kirim update status laporan ke email ini.                
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_deskripsi" class="form-label">Deskripsi Kerusakan:</label>
+                        {{ form.deskripsi }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_foto_upload" class="form-label">Upload Foto (Opsional):</label>
+                        <input type="file" name="foto_uploads" id="id_foto_upload" class="form-control" multiple>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.captcha }}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" disabled>
+                            Kirim Laporan
+                        </button>
+                        <small id="submit-help" class="form-text text-danger text-center mt-2">
+                            Silakan pilih lokasi di peta terlebih dahulu.
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/form_laporan.js' %}"></script>
+    {% endblock %}

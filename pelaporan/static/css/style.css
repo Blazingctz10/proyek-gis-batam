@@ -1,0 +1,195 @@
+/* static/css/style.css */
+
+/* =========================================
+   1. DEFINISI WARNA (MODE GELAP/TERANG)
+========================================= */
+:root {
+  --latar-utama: #f8f9fa;
+  --latar-card: #ffffff;
+  --teks-utama: #212529;
+  --teks-sekunder: #6c757d;
+  --border-peta: #ddd;
+  --navbar-bg: #212529;
+  --form-input-bg: #ffffff;
+  --form-input-border: #ced4da;
+}
+
+[data-theme="dark"] {
+  --latar-utama: #1a1a1a;
+  --latar-card: #2b2b2b;
+  --teks-utama: #f8f9fa;
+  --teks-sekunder: #adb5bd;
+  --border-peta: #444;
+  --navbar-bg: #111;
+  --form-input-bg: #252525;
+  --form-input-border: #555;
+}
+
+/* =========================================
+   2. TERAPKAN WARNA KE ELEMEN DASAR
+========================================= */
+
+body {
+    background-color: var(--latar-utama);
+    color: var(--teks-utama);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Scrollbar Kustom */
+body::-webkit-scrollbar { width: 10px; }
+body::-webkit-scrollbar-track { background: var(--latar-utama); }
+body::-webkit-scrollbar-thumb {
+  background-color: var(--teks-sekunder);
+  border-radius: 10px;
+  border: 3px solid var(--latar-utama);
+}
+
+.navbar.bg-dark { background-color: var(--navbar-bg) !important; }
+.navbar-brand { font-weight: bold; }
+
+#map {
+    height: 600px; width: 100%; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-peta);
+    transition: border-color 0.2s ease, box-shadow 0.3s ease;
+}
+#map:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+.form-container {
+    background: var(--latar-card); padding: 2rem; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: background-color 0.2s ease, box-shadow 0.3s ease;
+}
+.form-container:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+/* Form Input Mode Gelap */
+.form-control {
+    background-color: var(--form-input-bg); color: var(--teks-utama);
+    border-color: var(--form-input-border);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.form-control:focus {
+    background-color: var(--form-input-bg); color: var(--teks-utama);
+    border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+[data-theme="dark"] .form-control::placeholder { color: var(--teks-sekunder); }
+[data-theme="dark"] .g-recaptcha { filter: invert(1) hue-rotate(180deg); }
+.card.bg-light { background-color: var(--latar-utama) !important; }
+
+/* =========================================
+   3. STYLE POPUP, LEGENDA, DLL.
+========================================= */
+
+/* --- POPUP CARD --- */
+.leaflet-popup-content-wrapper {
+    padding: 0; border-radius: 8px;
+    background-color: var(--latar-card) !important; color: var(--teks-utama) !important;
+    animation: popupOpen 0.3s ease-out;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+.leaflet-popup-content { margin: 0 !important; width: 300px !important; }
+.leaflet-popup-close-button {
+    top: 10px !important; right: 10px !important;
+    width: 30px !important; height: 30px !important;
+    font-size: 24px !important; color: #ffffff !important;
+    text-shadow: 0 0 3px #000000; z-index: 10;
+    opacity: 0.7; transition: opacity 0.2s;
+}
+.leaflet-popup-close-button:hover { opacity: 1; }
+
+.popup-card { border: none; box-shadow: none; }
+.popup-card .card-body { padding: 1rem; }
+.leaflet-popup-content .popup-card .card-title { font-size: 1.1rem; font-weight: 600; color: var(--teks-utama) !important; }
+.leaflet-popup-content .popup-card .card-subtitle { font-size: 0.8rem; color: var(--teks-sekunder) !important; }
+.leaflet-popup-content .popup-card .card-text { font-size: 0.9rem; margin-top: 0.5rem; color: var(--teks-utama) !important; }
+.popup-card .badge { font-size: 0.8rem; padding: 0.4em 0.6em; }
+.popup-card .badge .icon-text { display: inline-flex; align-items: center; }
+.popup-card .badge i { margin-right: 5px; }
+
+/* Carousel */
+.popup-card .carousel { border-top-left-radius: 8px; border-top-right-radius: 8px; overflow: hidden; }
+.popup-card .popup-image { height: 180px; object-fit: cover; }
+.popup-card .carousel-control-prev-icon, .popup-card .carousel-control-next-icon { width: 1.5rem; height: 1.5rem; }
+.carousel-caption { display: none; }
+#imageModal .modal-body img { width: 100%; height: auto; }
+
+/* --- LEGENDA PETA --- */
+.info.legend {
+    padding: 10px 12px; font: 14px Arial, Helvetica, sans-serif;
+    background: var(--latar-card); box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px; line-height: 18px; color: var(--teks-utama);
+}
+.info.legend h6 { margin: 0 0 5px; font-weight: bold; color: var(--teks-utama); }
+.info.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.9; border-radius: 50%; border: 1px solid #555; }
+
+/* --- TOMBOL GEOLOCATE --- */
+.leaflet-control-geolocate a {
+    background-color: var(--latar-card); border-bottom: 1px solid var(--border-peta);
+    width: 30px; height: 30px; line-height: 30px; display: block;
+    text-align: center; text-decoration: none; color: var(--teks-utama);
+    font-size: 1.2em;
+}
+.leaflet-control-geolocate a:hover { background-color: var(--latar-utama); color: var(--teks-utama); }
+
+/* --- FOOTER KUSTOM --- */
+.custom-footer {
+    background-color: var(--latar-card); color: var(--teks-sekunder);
+    border-top: 1px solid var(--border-peta);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* =========================================
+   4. ANIMASI TAMBAHAN
+========================================= */
+.navbar-nav .nav-link { transition: transform 0.2s ease, color 0.2s ease; }
+.navbar-nav .nav-link:hover { transform: translateY(-2px); color: #ffffff !important; }
+.btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.btn:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+.btn-primary:hover { box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3); }
+@keyframes popupOpen { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* =========================================
+   5. MEDIA QUERY (MOBILE RESPONSIVE)
+========================================= */
+@media (max-width: 768px) {
+    #map { height: 400px; }
+    .form-container { padding: 1rem; }
+}
+
+/* =========================================
+   6. FORCE POPUP DARK MODE STYLES
+========================================= */
+[data-theme="dark"] .leaflet-popup-content-wrapper {
+    background-color: var(--latar-card) !important; color: var(--teks-utama) !important;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.7) !important;
+}
+[data-theme="dark"] .leaflet-popup-content {
+    background: var(--latar-card) !important; color: var(--teks-utama) !important;
+}
+[data-theme="dark"] .popup-card { background-color: var(--latar-card) !important; }
+[data-theme="dark"] .popup-card .card-body { background-color: transparent !important; }
+[data-theme="dark"] .popup-card .card-title,
+[data-theme="dark"] .popup-card .card-subtitle,
+[data-theme="dark"] .popup-card .card-text { color: var(--teks-utama) !important; }
+[data-theme="dark"] .leaflet-popup-tip {
+    background: var(--latar-card) !important;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* =========================================
+   7. STYLE TOMBOL MODE GELAP MELAYANG
+========================================= */
+.floating-theme-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 1050;
+    width: 45px; height: 45px; border-radius: 50%; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--latar-card); color: var(--teks-utama);
+    border: 1px solid var(--border-peta);
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.floating-theme-btn:hover { transform: scale(1.1); }
+[data-theme="dark"] .floating-theme-btn {
+    background-color: var(--latar-card); color: var(--teks-utama);
+    border: 1px solid var(--border-peta);
+}
