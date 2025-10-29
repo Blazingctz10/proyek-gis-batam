@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %} {# Load static if you need images specific to this page #}
+
+{% block content %}
+<div class="container" data-aos="fade-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4 text-center">{{ title }}</h1>
+            <p class="lead text-center mb-4">LaporJalan Batam adalah sebuah inisiatif berbasis web untuk memudahkan warga Batam dalam melaporkan kerusakan infrastruktur jalan secara cepat dan terpetakan.</p>
+
+            <hr class="my-4">
+
+            <h2 class="h4 mb-3">Tujuan Kami 🎯</h2>
+            <p>Kami bertujuan untuk menjembatani komunikasi antara masyarakat dan pihak terkait (seperti Dinas Bina Marga dan Sumber Daya Air Kota Batam) agar penanganan kerusakan jalan dapat dilakukan lebih efektif dan efisien. Dengan adanya platform ini, diharapkan laporan dapat terkelola dengan baik dan progres perbaikan dapat dipantau.</p>
+
+            <h2 class="h4 mt-4 mb-3">Dibuat Oleh 🧑‍💻</h2>
+            <p>Aplikasi ini dikembangkan oleh ZLRFT sebagai Kegabutan Saya, Proyek Akhir Studi Independen, kontribusi untuk komunitas Batam,dan latihan pengembangan WebGIS</p>
+            <p>Teknologi utama yang digunakan adalah Python (Django/GeoDjango), PostgreSQL/PostGIS, dan Leaflet.js.</p>
+
+            <h2 class="h4 mt-4 mb-3">Hubungi Kami ✉️</h2>
+            <p>Jika Anda memiliki pertanyaan lebih lanjut, saran, atau ingin berkontribusi, jangan ragu untuk menghubungi kami melalui halaman <a href="{% url 'feedback' %}">Umpan Balik</a> atau langsung ke Rafitnamal@gmail.com .</p>
+            </div>
+    </div>
+</div>
+{% endblock %}

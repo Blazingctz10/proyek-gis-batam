@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center" data-aos="fade-up">
+    <div class="col-md-8 col-lg-6">
+        <div class="form-container">
+            <h1 class="mb-4 text-center">{{ title }}</h1>
+            <p class="text-center text-muted mb-4">Punya saran untuk pengembangan fitur, kritik, atau menemukan *bug*? Beri tahu kami agar aplikasi ini bisa menjadi lebih baik!</p>
+            
+            <form method="POST" novalidate> {# novalidate agar validasi browser tidak mengganggu #}
+                {% csrf_token %}
+                
+                {# Tampilkan error form non-field jika ada #}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="{{ form.nama.id_for_label }}" class="form-label">{{ form.nama.label }}</label>
+                    {{ form.nama }}
+                    {% if form.nama.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.nama.errors %} {{ error }} {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                     <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                    {{ form.email }}
+                     {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %} {{ error }} {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                     <label for="{{ form.subjek.id_for_label }}" class="form-label">{{ form.subjek.label }} <span class="text-danger">*</span></label> {# Tanda wajib #}
+                    {{ form.subjek }}
+                     {% if form.subjek.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.subjek.errors %} {{ error }} {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                     <label for="{{ form.pesan.id_for_label }}" class="form-label">{{ form.pesan.label }} <span class="text-danger">*</span></label> {# Tanda wajib #}
+                    {{ form.pesan }}
+                     {% if form.pesan.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.pesan.errors %} {{ error }} {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Kirim Umpan Balik</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

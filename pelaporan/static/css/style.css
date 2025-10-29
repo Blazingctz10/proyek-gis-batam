@@ -4,23 +4,25 @@
    1. DEFINISI WARNA (MODE GELAP/TERANG)
 ========================================= */
 :root {
+  /* Ini adalah mode terang (default) */
   --latar-utama: #f8f9fa;
   --latar-card: #ffffff;
   --teks-utama: #212529;
   --teks-sekunder: #6c757d;
   --border-peta: #ddd;
-  --navbar-bg: #212529;
+  --navbar-bg: #212529; /* bg-dark */
   --form-input-bg: #ffffff;
   --form-input-border: #ced4da;
 }
 
 [data-theme="dark"] {
+  /* Ini adalah mode gelap */
   --latar-utama: #1a1a1a;
   --latar-card: #2b2b2b;
-  --teks-utama: #f8f9fa;
-  --teks-sekunder: #adb5bd;
+  --teks-utama: #f8f9fa; /* Teks utama jadi putih */
+  --teks-sekunder: #adb5bd; /* Teks sekunder jadi abu terang */
   --border-peta: #444;
-  --navbar-bg: #111;
+  --navbar-bg: #111; /* Lebih gelap */
   --form-input-bg: #252525;
   --form-input-border: #555;
 }
@@ -31,7 +33,7 @@
 
 body {
     background-color: var(--latar-utama);
-    color: var(--teks-utama);
+    color: var(--teks-utama); /* Atur warna teks default body */
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -59,8 +61,23 @@ body::-webkit-scrollbar-thumb {
     background: var(--latar-card); padding: 2rem; border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     transition: background-color 0.2s ease, box-shadow 0.3s ease;
+    color: var(--teks-utama); /* Pastikan teks di form container ikut berubah */
 }
 .form-container:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+/* Atur warna teks untuk paragraf umum */
+p {
+    color: var(--teks-utama);
+    transition: color 0.2s ease;
+}
+p.lead, p.text-muted, small.text-muted {
+    color: var(--teks-sekunder) !important; /* Paksa warna sekunder untuk teks muted */
+    transition: color 0.2s ease;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: var(--teks-utama); /* Atur warna heading */
+     transition: color 0.2s ease;
+}
 
 /* Form Input Mode Gelap */
 .form-control {
@@ -73,8 +90,10 @@ body::-webkit-scrollbar-thumb {
     border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
 }
 [data-theme="dark"] .form-control::placeholder { color: var(--teks-sekunder); }
-[data-theme="dark"] .g-recaptcha { filter: invert(1) hue-rotate(180deg); }
-.card.bg-light { background-color: var(--latar-utama) !important; }
+[data-theme="dark"] .g-recaptcha { filter: invert(1) hue-rotate(180deg) !important; } /* Coba !important */
+.card.bg-light { background-color: var(--latar-utama) !important; border-color: var(--border-peta) !important; }
+[data-theme="dark"] .card.bg-light { color: var(--teks-sekunder) !important; } /* Warna teks lat/lon di mode gelap */
+
 
 /* =========================================
    3. STYLE POPUP, LEGENDA, DLL.
@@ -89,11 +108,9 @@ body::-webkit-scrollbar-thumb {
 }
 .leaflet-popup-content { margin: 0 !important; width: 300px !important; }
 .leaflet-popup-close-button {
-    top: 10px !important; right: 10px !important;
-    width: 30px !important; height: 30px !important;
-    font-size: 24px !important; color: #ffffff !important;
-    text-shadow: 0 0 3px #000000; z-index: 10;
-    opacity: 0.7; transition: opacity 0.2s;
+    top: 10px !important; right: 10px !important; width: 30px !important; height: 30px !important;
+    font-size: 24px !important; color: #ffffff !important; text-shadow: 0 0 3px #000000;
+    z-index: 10; opacity: 0.7; transition: opacity 0.2s;
 }
 .leaflet-popup-close-button:hover { opacity: 1; }
 
@@ -137,6 +154,8 @@ body::-webkit-scrollbar-thumb {
     border-top: 1px solid var(--border-peta);
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
+[data-theme="dark"] .custom-footer a.text-secondary { color: var(--teks-sekunder) !important; }
+[data-theme="dark"] .custom-footer a.text-secondary:hover { color: var(--teks-utama) !important; }
 
 /* =========================================
    4. ANIMASI TAMBAHAN
@@ -193,3 +212,31 @@ body::-webkit-scrollbar-thumb {
     background-color: var(--latar-card); color: var(--teks-utama);
     border: 1px solid var(--border-peta);
 }
+
+/* =========================================
+   8. PERBAIKAN WARNA ACCORDION (FAQ) MODE GELAP
+========================================= */
+[data-theme="dark"] .accordion-button {
+    background-color: var(--latar-card); color: var(--teks-utama) !important;
+}
+[data-theme="dark"] .accordion-button::after { filter: invert(1) brightness(2); }
+[data-theme="dark"] .accordion-button:not(.collapsed) {
+    background-color: var(--latar-card); color: var(--teks-utama) !important; box-shadow: none;
+}
+[data-theme="dark"] .accordion-body {
+    background-color: var(--latar-utama); color: var(--teks-utama);
+}
+[data-theme="dark"] .accordion-body a { color: #69a6f3 !important; }
+[data-theme="dark"] .accordion-body a:hover { color: #8cbcf5 !important; }
+[data-theme="dark"] .accordion-item { border-color: var(--border-peta); }
+
+/* =========================================
+   9. PERBAIKAN WARNA MODE GELAP TAMBAHAN
+========================================= */
+[data-theme="dark"] #notificationModal .modal-content {
+    background-color: var(--latar-card); color: var(--teks-utama);
+    border: 1px solid var(--border-peta);
+}
+[data-theme="dark"] #notificationModal .modal-header { border-bottom: 1px solid var(--border-peta); }
+[data-theme="dark"] #notificationModal .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+[data-theme="dark"] #notificationModal .modal-footer { border-top: 1px solid var(--border-peta); }

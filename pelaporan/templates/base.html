@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
-<html lang="id"> <head>
+<html lang="id">
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
@@ -15,16 +16,15 @@
     
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.1"> </head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.1">
+</head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand me-auto" href="{% url 'halaman_peta_utama' %}">🗺️ LaporJalan Batam</a>
-            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -39,46 +39,78 @@
     </nav>
 
     <main class="container mt-4 mb-5">
+        
+        {% if messages %}
+            {% for message in messages %}
+                {% with message_tags=message.tags %}
+                    {% if 'error' in message_tags or 'danger' in message_tags %}{% with alert_class='danger' %}
+                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                    {% endwith %}{% elif 'success' in message_tags %}{% with alert_class='success' %}
+                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                    {% endwith %}{% elif 'warning' in message_tags %}{% with alert_class='warning' %}
+                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                    {% endwith %}{% else %}{% with alert_class='info' %}
+                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+                    {% endwith %}{% endif %}
+                {% endwith %}
+            {% endfor %}
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>
 
     <footer class="custom-footer text-center p-3">
-        &copy; 2025 Proyek WebGIS Batam
+        <div class="container">
+            <small>
+                &copy; {% now "Y" %} Proyek WebGIS Batam | 
+                <a href="{% url 'about' %}" class="text-secondary">Tentang</a> | 
+                <a href="{% url 'faq' %}" class="text-secondary">FAQ</a> |
+                <a href="{% url 'feedback' %}" class="text-secondary">Umpan Balik</a>
+            </small>
+        </div>
     </footer>
 
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title" id="imageModalLabel">Detail Foto Laporan</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                <div class="modal-body text-center"><img id="modalImage" src="" class="img-fluid" alt="Foto Laporan Diperbesar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"> <h5 class="modal-title" id="notificationModalLabel">Informasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="notificationModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <button id="floating-theme-toggle" class="btn btn-secondary btn-sm floating-theme-btn" title="Ganti Mode">
-        <i class="fa-solid fa-moon"></i> </button>
+        <i class="fa-solid fa-moon"></i>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
-    {% block scripts %}
-    {% endblock %}
+    {% block scripts %}{% endblock %}
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 600,
-            once: true 
-        });
-    </script>
+    <script> AOS.init({ duration: 600, once: true }); </script>
 
     <script>
     document.addEventListener('DOMContentLoaded', (event) => {
-        // Target ID tombol baru
         const toggleButton = document.getElementById('floating-theme-toggle'); 
-        const moonIcon = 'fa-moon';
-        const sunIcon = 'fa-sun';
-
-        if (!toggleButton) {
-            // Error message dengan ID baru
-            console.error('Tombol mode gelap (id="floating-theme-toggle") tidak ditemukan.'); 
-            return;
-        }
-
+        const moonIcon = 'fa-moon'; const sunIcon = 'fa-sun';
+        if (!toggleButton) { console.error('Tombol mode gelap (id="floating-theme-toggle") tidak ditemukan.'); return; }
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
@@ -90,18 +122,12 @@
                 localStorage.setItem('theme', 'light');
             }
         }
-
         const currentTheme = localStorage.getItem('theme');
         applyTheme(currentTheme); 
-
         toggleButton.addEventListener('click', (e) => {
             e.preventDefault();
             let storedTheme = localStorage.getItem('theme');
-            if (storedTheme === 'dark') {
-                applyTheme('light');
-            } else {
-                applyTheme('dark');
-            }
+            if (storedTheme === 'dark') { applyTheme('light'); } else { applyTheme('dark'); }
         });
     });
     </script>
