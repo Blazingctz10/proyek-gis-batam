@@ -46,8 +46,8 @@ Ikuti langkah-langkah ini untuk menjalankan proyek di komputer lokal Anda:
 
 1.  **Clone Repositori:**
     ```bash
-    git clone <URL_REPO_GITHUB_ANDA>
-    cd <nama-folder-proyek>
+    git clone https://github.com/Blazingctz10/proyek-gis-batam.git
+    cd proyek-gis-batam
     ```
 
 2.  **Buat & Aktifkan Virtual Environment:**
