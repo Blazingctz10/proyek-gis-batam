@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
     <div class="text-center mb-4" data-aos="fade-down">
         <h1 class="display-6">{{ title }}</h1>
@@ -13,7 +12,7 @@
         </div>
 
         <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
-            <form method="POST" enctype="multipart/form-data" id="laporan-form" novalidate>
+            <form id="laporan-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
                 <div class="mb-3">
@@ -128,7 +127,8 @@
 
 {% block scripts %}
     <script src="{% static 'js/form_laporan.js' %}"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
     // ✅ FOTO PREVIEW SCRIPT
     document.addEventListener('DOMContentLoaded', function() {

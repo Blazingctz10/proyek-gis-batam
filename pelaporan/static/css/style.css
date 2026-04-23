@@ -1,19 +1,18 @@
 /* ==========================================================================
-   STYLE.CSS - MASTER RESET (CLEAN VERSION)
+   STYLE.CSS - MASTER RESET (ULTIMATE FINAL VERSION)
    Author: WebGIS Team
-   Version: 4.0 (Final Fix)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    1. GLOBAL VARIABLES (THEME ENGINE)
    -------------------------------------------------------------------------- */
 :root {
-    /* --- LIGHT MODE (DEFAULT) --- */
-    --bg-body: #f4f6f9;           /* Abu sangat muda (lebih modern dari putih) */
-    --bg-card: #ffffff;           /* Putih bersih */
-    --text-main: #212529;         /* Hitam pekat */
-    --text-muted: #6c757d;        /* Abu gelap */
-    --border-color: #dee2e6;      /* Garis abu terang */
+    /* --- LIGHT MODE --- */
+    --bg-body: #f4f6f9;           
+    --bg-card: #ffffff;           
+    --text-main: #212529;         
+    --text-muted: #6c757d;        
+    --border-color: #dee2e6;      
     --input-bg: #ffffff;
     --input-text: #212529;
     --table-hover: rgba(0, 0, 0, 0.05);
@@ -21,11 +20,11 @@
 
 [data-theme="dark"] {
     /* --- DARK MODE --- */
-    --bg-body: #121212;           /* Hitam material design */
-    --bg-card: #1e1e1e;           /* Abu gelap untuk kartu */
-    --text-main: #e0e0e0;         /* Putih gading (nyaman di mata) */
-    --text-muted: #a0a0a0;        /* Abu terang */
-    --border-color: #444444;      /* Garis abu gelap */
+    --bg-body: #121212;           
+    --bg-card: #1e1e1e;           
+    --text-main: #e0e0e0;         
+    --text-muted: #a0a0a0;        
+    --border-color: #444444;      
     --input-bg: #2d2d2d;
     --input-text: #e0e0e0;
     --table-hover: rgba(255, 255, 255, 0.05);
@@ -41,374 +40,196 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Heading & Paragraphs */
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    color: var(--text-main);
-    font-weight: 600;
-}
-p, span, li, div {
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, p, span, li, div {
     color: var(--text-main);
 }
-.text-muted, small {
-    color: var(--text-muted) !important;
-}
+.text-muted, small { color: var(--text-muted) !important; }
 
 /* Links */
-a {
-    color: #0d6efd;
-    text-decoration: none;
-    transition: color 0.2s;
-}
+a { color: #0d6efd; text-decoration: none; transition: color 0.2s; }
 a:hover { color: #0a58ca; }
-
 [data-theme="dark"] a { color: #6ea8fe; }
 [data-theme="dark"] a:hover { color: #9ec5fe; }
 
-/* Navbar (Selalu Gelap untuk Kontras) */
-.navbar.bg-dark {
-    background-color: #212529 !important;
-    border-bottom: 1px solid #333;
-}
+/* Navbar */
+.navbar.bg-dark { background-color: #212529 !important; border-bottom: 1px solid #333; }
 .navbar-brand { font-weight: 700; color: #fff !important; }
-.nav-link { color: rgba(255,255,255,0.85) !important; }
-.nav-link:hover, .nav-link.active { color: #fff !important; }
+.navbar-dark .navbar-nav .nav-link { color: rgba(255,255,255,0.85) !important; }
+.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link.active { color: #ffffff !important; }
 
 /* --------------------------------------------------------------------------
-   3. CARDS & CONTAINERS (CRITICAL FOR DASHBOARD)
+   3. CARDS & STATISTIK (DASHBOARD)
    -------------------------------------------------------------------------- */
-
-/* A. KARTU STANDAR (Tanpa Warna Background) */
-/* Kartu ini akan putih di Light Mode, dan Abu Gelap di Dark Mode */
 .card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    color: var(--text-main);
 }
-
-/* Header & Footer Kartu Standar */
 .card-header {
-    background-color: rgba(0,0,0,0.03); /* Transparan dikit */
+    background-color: rgba(0,0,0,0.03);
     border-bottom: 1px solid var(--border-color);
     font-weight: 600;
-    color: var(--text-main);
 }
-[data-theme="dark"] .card-header {
-    background-color: rgba(255,255,255,0.05); /* Transparan putih dikit */
-}
+[data-theme="dark"] .card-header { background-color: rgba(255,255,255,0.05); }
 
-/* B. KARTU STATISTIK BERWARNA (ADMIN & DASHBOARD) */
-/* Aturan ini menggunakan !important untuk MENOLAK Dark Mode pada kartu berwarna */
-/* Agar kartu Biru tetap Biru, Merah tetap Merah, dll. */
-
-/* Background Colors */
+/* Kartu Statistik Warna (Nolak Dark Mode agar tetap ngejreng) */
 .card.bg-primary, .bg-primary { background-color: #0d6efd !important; border-color: #0d6efd !important; }
 .card.bg-success, .bg-success { background-color: #198754 !important; border-color: #198754 !important; }
 .card.bg-danger, .bg-danger   { background-color: #dc3545 !important; border-color: #dc3545 !important; }
 .card.bg-warning, .bg-warning { background-color: #ffc107 !important; border-color: #ffc107 !important; }
 .card.bg-info, .bg-info       { background-color: #0dcaf0 !important; border-color: #0dcaf0 !important; }
 .card.bg-dark, .bg-dark       { background-color: #212529 !important; border-color: #212529 !important; }
-.card.bg-secondary, .bg-secondary { background-color: #6c757d !important; border-color: #6c757d !important; }
 
-/* Text Colors inside Colored Cards */
-/* Primary, Success, Danger, Dark, Secondary -> TEKS PUTIH */
-.bg-primary, .bg-success, .bg-danger, .bg-dark, .bg-secondary {
-    color: #fff !important;
-}
-.bg-primary h1, .bg-primary h2, .bg-primary h3, .bg-primary p, .bg-primary i, .bg-primary small,
-.bg-success h1, .bg-success h2, .bg-success h3, .bg-success p, .bg-success i, .bg-success small,
-.bg-danger h1, .bg-danger h2, .bg-danger h3, .bg-danger p, .bg-danger i, .bg-danger small,
-.bg-secondary h1, .bg-secondary h2, .bg-secondary h3, .bg-secondary p, .bg-secondary i, .bg-secondary small {
-    color: #fff !important;
-}
+/* Paksa Kontras Teks Kartu */
+.bg-primary *, .bg-success *, .bg-danger *, .bg-dark * { color: #ffffff !important; }
+.bg-warning *, .bg-info * { color: #212529 !important; }
 
-/* Warning, Info -> TEKS HITAM */
-.bg-warning, .bg-info {
-    color: #212529 !important;
-}
-.bg-warning h1, .bg-warning h2, .bg-warning h3, .bg-warning p, .bg-warning i,
-.bg-info h1, .bg-info h2, .bg-info h3, .bg-info p, .bg-info i {
-    color: #212529 !important;
+/* Kotak Lat/Lon & Card Light */
+.bg-light, .card.bg-light {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
 /* --------------------------------------------------------------------------
-   4. FORMS & INPUTS
+   4. FORMS, INPUTS & BUTTONS (TERMASUK FIX PLACEHOLDER & AUTOFILL)
    -------------------------------------------------------------------------- */
 .form-container {
     background-color: var(--bg-card);
     padding: 2rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.form-control, .form-select, textarea {
+.form-control, .form-select, input.form-control, textarea.form-control {
     background-color: var(--input-bg) !important;
     color: var(--input-text) !important;
     border: 1px solid var(--border-color) !important;
 }
-
 .form-control:focus, .form-select:focus {
     border-color: #86b7fe !important;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    background-color: var(--input-bg) !important;
-    color: var(--input-text) !important;
 }
 
-/* Kotak Koordinat Lat/Lon (yang pakai bg-light) */
-.card.bg-light {
-    background-color: var(--bg-body) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-main) !important;
+/* Fix Placeholder Teks Bayangan */
+.form-control::placeholder, textarea.form-control::placeholder { color: #a0a0a0 !important; opacity: 0.9 !important; }
+[data-theme="light"] .form-control::placeholder { color: #6c757d !important; }
+
+/* Fix Chrome Autofill Mode Gelap */
+[data-theme="dark"] input:-webkit-autofill, [data-theme="dark"] select:-webkit-autofill, [data-theme="dark"] textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #2d2d2d inset !important;
+    -webkit-text-fill-color: #e0e0e0 !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Tombol */
-.btn-primary { background-color: #0d6efd; border-color: #0d6efd; }
+/* Fix Dropdown Bawaan Bootstrap (Mode Gelap) */
+[data-theme="dark"] select.form-select, [data-theme="dark"] select.form-control {
+    background-color: #2d2d2d !important;
+    color: #e0e0e0 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+[data-theme="dark"] select.form-select option, [data-theme="dark"] select.form-control option {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+/* Tombol Standar */
+.btn-primary { background-color: #0d6efd; border-color: #0d6efd; transition: all 0.3s ease; }
 .btn-primary:hover { background-color: #0b5ed7; border-color: #0a58ca; }
+.btn-secondary { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff !important; opacity: 1 !important; }
 
-/* Tombol Kembali (Secondary) agar tidak pudar */
-.btn-secondary {
-    background-color: #6c757d !important;
-    border-color: #6c757d !important;
-    color: #fff !important;
-    opacity: 1 !important;
+/* Tombol Primary Mode Gelap (Glow Effect) */
+[data-theme="dark"] .btn-primary {
+    background-color: #3d8bfd !important;
+    border-color: #3d8bfd !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 0 12px rgba(61, 139, 253, 0.4) !important; 
 }
-
-/* reCAPTCHA Filter untuk Dark Mode */
-[data-theme="dark"] .g-recaptcha {
-    filter: invert(1) hue-rotate(180deg);
-}
+[data-theme="dark"] .btn-primary:hover { background-color: #6ea8fe !important; border-color: #6ea8fe !important; box-shadow: 0 0 20px rgba(110, 168, 254, 0.6) !important; }
+[data-theme="dark"] .g-recaptcha { filter: invert(1) hue-rotate(180deg); }
 
 /* --------------------------------------------------------------------------
-   5. TABLES (ADMIN LIST & DASHBOARD)
+   5. TABLES (ADMIN & DASHBOARD)
    -------------------------------------------------------------------------- */
-.table {
-    color: var(--text-main) !important;
-    --bs-table-bg: transparent; /* Hilangkan background default bootstrap */
-    border-color: var(--border-color);
+.table { color: var(--text-main) !important; --bs-table-bg: transparent; border-color: var(--border-color); }
+.table thead th { background-color: var(--bg-card); color: var(--text-main); border-bottom: 2px solid var(--border-color); font-weight: 700; }
+.table tbody td, .table tbody th, .table tbody td *, .table tbody th * {
+    background-color: var(--bg-card); color: var(--text-main) !important; border-bottom: 1px solid var(--border-color); vertical-align: middle; 
 }
-
-.table thead th {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border-bottom: 2px solid var(--border-color);
-    font-weight: 700;
-}
-
-.table tbody td, .table tbody th {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
-}
-
-/* Hover Row Effect */
-.table-hover tbody tr:hover td {
-    background-color: var(--table-hover) !important;
-    color: var(--text-main) !important;
-}
-
-/* Tabel tanpa border (di detail laporan) */
-.table-borderless td, .table-borderless th {
-    border: none !important;
-}
+.table-hover tbody tr:hover td { background-color: var(--table-hover) !important; }
+.table-borderless td, .table-borderless th { border: none !important; }
 
 /* --------------------------------------------------------------------------
-   6. MAPS & LEAFLET (POPUP & CONTROLS)
+   6. MAPS & LEAFLET (POPUP, CONTROLS & ZOOM BUTTONS)
    -------------------------------------------------------------------------- */
-/* Pastikan peta punya tinggi & border */
-#map, #map-detail {
-    width: 100%;
-    min-height: 450px;
-    height: 100%;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    z-index: 1;
+/* Fix Peta Gepeng */
+.leaflet-pane img, .leaflet-tile, .leaflet-marker-icon, .leaflet-marker-shadow {
+    max-width: none !important; max-height: none !important; width: auto;
 }
 
-/* Popup Container */
-.leaflet-popup-content-wrapper {
+/* Ukuran Dasar Peta */
+#map, #map-detail { width: 100%; border-radius: 8px; border: 1px solid var(--border-color); z-index: 1; }
+#map { height: 75vh !important; min-height: 500px !important; }
+
+/* Fix Peta Mepet di Halaman Form & Detail */
+.col-lg-7 #map, .col-lg-5 #map-detail {
+    height: 450px !important; min-height: 450px !important; margin-bottom: 1.5rem !important;
+}
+
+/* Popup Leaflet */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background-color: var(--bg-card) !important; color: var(--text-main) !important; }
+.leaflet-popup-content .card-title, .leaflet-popup-content .card-text { color: var(--text-main) !important; }
+.leaflet-popup-close-button { color: #999 !important; font-size: 20px !important; }
+[data-theme="dark"] .leaflet-popup-close-button { color: #fff !important; }
+
+/* Kontrol Peta (Legenda & Lokasi) */
+.info.legend, .leaflet-control-layers, .leaflet-control-geolocate a {
+    background: var(--bg-card) !important; color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 5px;
+}
+
+/* FIX: Tombol Zoom Leaflet Mode Gelap */
+.leaflet-bar a, .leaflet-bar a:hover, .leaflet-control-zoom-in, .leaflet-control-zoom-out {
     background-color: var(--bg-card) !important;
     color: var(--text-main) !important;
-    border-radius: 8px;
-    padding: 0;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-.leaflet-popup-tip {
-    background: var(--bg-card) !important;
-}
-
-/* Konten Popup */
-.leaflet-popup-content .card-title { color: var(--text-main) !important; font-weight: bold; }
-.leaflet-popup-content .card-text { color: var(--text-main) !important; }
-.leaflet-popup-content .text-muted { color: var(--text-muted) !important; }
-
-/* Tombol Close Popup */
-.leaflet-popup-close-button {
-    color: #999 !important;
-    font-size: 20px !important;
-}
-[data-theme="dark"] .leaflet-popup-close-button {
-    color: #fff !important;
-}
-
-/* Controls (Legenda, Layer, Geolocate) */
-.info.legend, .leaflet-control-layers, .leaflet-control-geolocate a {
-    background: var(--bg-card) !important;
-    color: var(--text-main) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    border-radius: 5px;
-}
-.leaflet-control-geolocate a:hover {
-    background: var(--bg-body) !important;
+    border-color: var(--border-color) !important;
 }
 
 /* --------------------------------------------------------------------------
-   7. MISCELLANEOUS (FOOTER, MODAL, BUTTONS)
+   7. NAVBAR DROPDOWN (PROFIL USER)
    -------------------------------------------------------------------------- */
-/* Footer */
-.custom-footer {
-    background-color: var(--bg-card);
-    color: var(--text-muted);
-    border-top: 1px solid var(--border-color);
-}
+[data-theme="dark"] .dropdown-menu { background-color: var(--bg-card) !important; border-color: var(--border-color) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; }
+[data-theme="dark"] .dropdown-item, [data-theme="dark"] .dropdown-item-text, [data-theme="dark"] .dropdown-item-text strong { color: var(--text-main) !important; }
+[data-theme="dark"] .dropdown-item:hover, [data-theme="dark"] .dropdown-item:focus { background-color: rgba(255, 255, 255, 0.1) !important; color: #ffffff !important; }
+[data-theme="dark"] .dropdown-divider { border-top-color: var(--border-color) !important; }
+[data-theme="dark"] .dropdown-item.text-danger:hover { background-color: #dc3545 !important; color: #ffffff !important; }
+
+/* --------------------------------------------------------------------------
+   8. MISCELLANEOUS (FOOTER, MODAL, FLOATING BUTTON)
+   -------------------------------------------------------------------------- */
+.custom-footer { background-color: var(--bg-card); color: var(--text-muted); border-top: 1px solid var(--border-color); }
 [data-theme="dark"] .custom-footer a { color: var(--text-muted); }
 [data-theme="dark"] .custom-footer a:hover { color: var(--text-main); }
 
-/* Modal */
-.modal-content {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-}
-.modal-header, .modal-footer {
-    border-color: var(--border-color);
-}
-[data-theme="dark"] .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
+.modal-content { background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
+.modal-header, .modal-footer { border-color: var(--border-color); }
+[data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
 
-/* Tombol Floating Dark Mode */
+.list-group-item { background-color: var(--bg-card); color: var(--text-main); border-color: var(--border-color); }
+
+/* Tombol Mengambang (Dark Mode Toggle) */
 .floating-theme-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 9999;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s;
+    position: fixed; bottom: 25px; right: 25px; z-index: 9999; width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); background-color: var(--bg-card); color: var(--text-main);
+    border: 1px solid var(--border-color); transition: transform 0.2s;
 }
-.floating-theme-btn:hover {
-    transform: scale(1.1);
-}
+.floating-theme-btn:hover { transform: scale(1.1); }
 
-/* Accordion (FAQ) */
-.accordion-button {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-}
-.accordion-button:not(.collapsed) {
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
-}
-.accordion-body {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-}
-[data-theme="dark"] .accordion-item { border-color: var(--border-color); }
-[data-theme="dark"] .accordion-button::after { filter: invert(1); }
-
-/* List Group Item (Dashboard Top Users) */
-.list-group-item {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border-color: var(--border-color);
-}
-
-/* Mobile Responsive Adjustments */
+/* Responsivitas Mobile */
 @media (max-width: 768px) {
-    #map { min-height: 350px; }
+    #map { min-height: 400px !important; }
+    .col-lg-7 #map, .col-lg-5 #map-detail { height: 350px !important; min-height: 350px !important; margin-bottom: 2rem !important; }
     .form-container { padding: 1.5rem; }
-}
-/* ==========================================================================
-   8. FIX MAP PENYET (LEAFLET vs BOOTSTRAP CONFLICT) - WAJIB ADA
-   ========================================================================== */
-
-/* 1. Reset aturan gambar Bootstrap di dalam Peta */
-/* Ini yang bikin peta/marker jadi gepeng/penyet */
-.leaflet-pane img, 
-.leaflet-tile, 
-.leaflet-marker-icon, 
-.leaflet-marker-shadow {
-    max-width: none !important;
-    max-height: none !important;
-    width: auto;
-    padding: 0;
-}
-
-/* 2. Atur Tinggi Peta Utama agar Proporsional */
-#map {
-    height: 75vh !important; /* Gunakan 75% dari tinggi layar monitor */
-    min-height: 500px !important; /* Jangan biarkan kurang dari 500px */
-    width: 100%;
-    z-index: 1; /* Agar peta tetap di bawah navbar/modal */
-}
-
-/* 3. Atur Tinggi Peta di Halaman Detail & Form */
-/* Karena di form ada di kolom, jangan terlalu tinggi */
-.col-lg-7 #map,       /* Peta di Form Lapor */
-.col-lg-5 #map-detail /* Peta di Detail Laporan */ {
-    height: 100% !important;
-    min-height: 400px !important;
-}
-
-/* ==========================================================================
-   9. FIX KONTRAS TEKS (UTILITY HELPER) - WAJIB ADA
-   ========================================================================== */
-
-/* 1. Paksa elemen dengan class .text-white agar SELALU putih */
-/* Ini memperbaiki teks di dalam kartu berwarna (Dashboard Admin) */
-.text-white, 
-.text-white h1, .text-white h2, .text-white h3, 
-.text-white h4, .text-white h5, .text-white h6,
-.text-white p, .text-white span, .text-white i, .text-white small {
-    color: #ffffff !important;
-}
-
-/* 2. Paksa elemen dengan class .text-dark agar SELALU hitam */
-/* Ini untuk kartu warna kuning (Warning) */
-.text-dark,
-.text-dark h1, .text-dark h2, .text-dark h3,
-.text-dark h4, .text-dark h5, .text-dark h6,
-.text-dark p, .text-dark span, .text-dark i, .text-dark small {
-    color: #212529 !important;
-}
-
-/* 3. Perbaikan Khusus Kartu Statistik Dashboard */
-/* Menjamin angka statistik besar (h2, h3) mengikuti warna background */
-.card.bg-primary .card-body,
-.card.bg-success .card-body,
-.card.bg-danger .card-body,
-.card.bg-info .card-body {
-    color: #ffffff !important;
-}
-
-/* 4. Perbaikan Navbar Link (Agar tidak hitam di mode terang) */
-.navbar-dark .navbar-nav .nav-link {
-    color: rgba(255,255,255,0.85) !important;
-}
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
-    color: #ffffff !important;
 }
