@@ -14,56 +14,167 @@
 
         <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
             <form method="POST" enctype="multipart/form-data" id="laporan-form" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <p class="mb-1"><strong>Lokasi Dipilih (Otomatis):</strong></p>
-                        <div class="card card-body bg-light p-2 text-center">
-                            Lat: <span id="lat-display" class="fw-bold">-</span> | 
-                            Lon: <span id="lon-display" class="fw-bold">-</span>
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <p class="mb-1"><strong>Lokasi Dipilih (Otomatis):</strong></p>
+                    <div class="card card-body bg-light p-2 text-center">
+                        Lat: <span id="lat-display" class="fw-bold">-</span> | 
+                        Lon: <span id="lon-display" class="fw-bold">-</span>
+                    </div>
+                </div>
+                
+                {{ form.latitude }}
+                {{ form.longitude }}
+
+                <!-- ✅ FIELD BARU: Jenis Kerusakan -->
+                <div class="mb-3">
+                    <label for="id_jenis_kerusakan" class="form-label">
+                        <i class="fas fa-road"></i> Jenis Kerusakan <span class="text-danger">*</span>
+                    </label>
+                    {{ form.jenis_kerusakan }}
+                    <small class="form-text text-muted">Pilih jenis kerusakan yang paling sesuai</small>
+                </div>
+
+                <!-- ✅ FIELD BARU: Tingkat Kerusakan -->
+                <div class="mb-3">
+                    <label for="id_tingkat_kerusakan" class="form-label">
+                        <i class="fas fa-exclamation-triangle"></i> Tingkat Kerusakan <span class="text-danger">*</span>
+                    </label>
+                    {{ form.tingkat_kerusakan }}
+                    <small class="form-text text-muted">
+                        <strong>Ringan:</strong> Sedikit retak | 
+                        <strong>Sedang:</strong> Lubang kecil | 
+                        <strong>Berat:</strong> Lubang besar/amblas
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_deskripsi" class="form-label">
+                        <i class="fas fa-comment-alt"></i> Deskripsi Kerusakan <span class="text-danger">*</span>
+                    </label>
+                    {{ form.deskripsi }}
+                    <small class="form-text text-muted">Jelaskan kondisi kerusakan dengan detail</small>
+                </div>
+                
+                <!-- ✅ CONDITIONAL EMAIL FIELD -->
+                {% if user.is_authenticated %}
+                    {% if user.email %}
+                        <!-- User sudah login dan punya email - readonly -->
+                        <div class="mb-3">
+                            <label for="id_email_pelapor" class="form-label">
+                                <i class="fas fa-envelope"></i> Email Anda
+                            </label>
+                            <input type="email" class="form-control" value="{{ user.email }}" readonly disabled>
+                            <input type="hidden" name="email_pelapor" value="{{ user.email }}">
+                            <small class="form-text text-success">
+                                <i class="fas fa-check-circle"></i> Notifikasi akan dikirim ke email Anda yang terdaftar.
+                            </small>
                         </div>
-                    </div>
-                    
-                    {{ form.latitude }}
-                    {{ form.longitude }}
-
+                    {% else %}
+                        <!-- User login tapi belum ada email - bisa diisi -->
+                        <div class="mb-3">
+                            <label for="id_email_pelapor" class="form-label">
+                                <i class="fas fa-envelope"></i> Email Anda (Opsional)
+                            </label>
+                            {{ form.email_pelapor }}
+                            <small class="form-text text-muted">
+                                Tambahkan email untuk menerima notifikasi update laporan.
+                            </small>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <!-- Guest user - email opsional -->
                     <div class="mb-3">
-                        <label for="id_email_pelapor" class="form-label">Email Anda (Opsional):</label>
+                        <label for="id_email_pelapor" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Anda (Opsional)
+                        </label>
                         {{ form.email_pelapor }}
-                        <small class="form-text text-muted">              
-                            Kami akan kirim update status laporan ke email ini.                
+                        <small class="form-text text-muted">
+                            Masukkan email jika ingin menerima notifikasi update laporan. <a href="{% url 'register' %}">Atau daftar akun</a> untuk tracking otomatis.
                         </small>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="id_deskripsi" class="form-label">Deskripsi Kerusakan:</label>
-                        {{ form.deskripsi }}
-                    </div>
+                {% endif %}
+                
+                <!-- ✅ IMPROVED: Upload Foto dengan Preview -->
+                <div class="mb-3">
+                    <label for="id_foto_upload" class="form-label">
+                        <i class="fas fa-camera"></i> Upload Foto (Opsional, Maks 5 foto)
+                    </label>
+                    <input type="file" name="foto_uploads" id="id_foto_upload" class="form-control" multiple accept="image/*">
+                    <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks 5MB per foto.</small>
                     
-                    <div class="mb-3">
-                        <label for="id_foto_upload" class="form-label">Upload Foto (Opsional):</label>
-                        <input type="file" name="foto_uploads" id="id_foto_upload" class="form-control" multiple>
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form.captcha }}
-                    </div>
+                    <!-- Preview Container -->
+                    <div id="foto-preview-container" class="mt-2 d-flex flex-wrap gap-2"></div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.captcha }}
+                </div>
 
-                    <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" disabled>
-                                <span class="submit-text">Kirim Laporan</span>
-                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                        </button>
-                        <small id="submit-help" class="form-text text-danger text-center mt-2">
-                                Silakan pilih lokasi di peta terlebih dahulu.
-                        </small>
-                    </div>
-                </form>
-            </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" disabled>
+                        <span class="submit-text"><i class="fas fa-paper-plane"></i> Kirim Laporan</span>
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                    <small id="submit-help" class="form-text text-danger text-center mt-2">
+                        Silakan pilih lokasi di peta terlebih dahulu.
+                    </small>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{% static 'js/form_laporan.js' %}"></script>
-    {% endblock %}
+    
+    <script>
+    // ✅ FOTO PREVIEW SCRIPT
+    document.addEventListener('DOMContentLoaded', function() {
+        const fotoInput = document.getElementById('id_foto_upload');
+        const previewContainer = document.getElementById('foto-preview-container');
+        
+        fotoInput.addEventListener('change', function(e) {
+            previewContainer.innerHTML = ''; // Clear previous previews
+            
+            const files = Array.from(e.target.files);
+            
+            if (files.length > 5) {
+                alert('Maksimal 5 foto!');
+                fotoInput.value = '';
+                return;
+            }
+            
+            files.forEach((file, index) => {
+                // Validasi size
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`Foto ${index + 1} terlalu besar (maks 5MB)`);
+                    return;
+                }
+                
+                // Validasi format
+                if (!file.type.match('image.*')) {
+                    alert(`File ${index + 1} bukan gambar`);
+                    return;
+                }
+                
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'position-relative';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" 
+                             class="img-thumbnail" 
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                        <small class="d-block text-center">${file.name.substring(0, 15)}...</small>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    });
+    </script>
+{% endblock %}

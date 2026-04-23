@@ -9,64 +9,59 @@ document.addEventListener("DOMContentLoaded", function() {
     const modalImage = document.getElementById('modalImage');
     const dataUrl = mapElement.dataset.geojsonUrl;
 
-    // Definisikan Base Map Layers
+    // --- 1. Base Maps (Sama seperti sebelumnya) ---
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
     const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attribution: '&copy; CARTO'
     });
     const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	    attribution: 'Tiles &copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	    attribution: 'Tiles &copy; Esri'
     });
 
-    // Inisialisasi Peta
     const map = L.map('map', {
-        center: [1.0456, 104.0305], // Batam
+        center: [1.0456, 104.0305],
         zoom: 12,
-        layers: [osmLayer] // Default ke OSM
+        layers: [osmLayer]
     });
 
-    // Buat Objek Base Maps
     const baseMaps = {
-        "OpenStreetMap": osmLayer,
+        "Peta Jalan (Terang)": osmLayer,
         "Mode Gelap": darkLayer,
         "Satelit": satelliteLayer
     };
-
-    // Tambahkan Layer Control
     L.control.layers(baseMaps).addTo(map);
 
-    // Fungsi Helper
+
+    // --- 2. Warna Status (Gradasi Logis) ---
     function getStatusColor(status) {
-        if (status === 'DIVERIFIKASI') return 'orange';
-        if (status === 'DIPERBAIKI') return 'blue';
+        if (status === 'DIVERIFIKASI') return '#fd7e14'; // Oranye (Menunggu)
+        if (status === 'DIPERBAIKI') return '#0d6efd';   // Biru (Sedang Dikerjakan)
         return 'grey';
     }
     
+    // --- 3. Fungsi Carousel & Badge (Sama seperti sebelumnya) ---
     function createCarousel(id, fotoUrls) {
-        if (!fotoUrls || fotoUrls.length === 0) { return '<p class="text-center text-muted small my-3">Tidak ada foto terlampir.</p>'; }
+        if (!fotoUrls || fotoUrls.length === 0) { return '<p class="text-center text-muted small my-3">Tidak ada foto.</p>'; }
         let carouselId = `carousel-${id}`; let indicators = ''; let items = '';
         fotoUrls.forEach((url, index) => {
             let activeClass = (index === 0) ? 'active' : '';
             indicators += `<button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${index}" class="${activeClass}"></button>`;
-            items += `<div class="carousel-item ${activeClass}"><img src="${url}" class="d-block w-100 popup-image zoomable-image" alt="Foto Laporan" data-img-url="${url}" style="cursor: pointer;"></div>`;
+            items += `<div class="carousel-item ${activeClass}"><img src="${url}" class="d-block w-100 popup-image zoomable-image" data-img-url="${url}" style="cursor: pointer;"></div>`;
         });
-        let controls = '';
-        if (fotoUrls.length > 1) {
-            controls = `<button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span></button><button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span></button>`;
-        }
+        let controls = (fotoUrls.length > 1) ? `<button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button><button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>` : '';
         return `<div id="${carouselId}" class="carousel slide" data-bs-ride="carousel"><div class="carousel-indicators">${indicators}</div><div class="carousel-inner">${items}</div>${controls}</div>`;
     }
     
     function createStatusBadge(status) {
-        let badgeClass = 'bg-secondary'; let icon = '<i class="fa-solid fa-question-circle"></i>';
-        if (status === 'DIVERIFIKASI') { badgeClass = 'bg-warning text-dark'; icon = '<i class="fa-solid fa-eye"></i>'; }
-        if (status === 'DIPERBAIKI') { badgeClass = 'bg-primary'; icon = '<i class="fa-solid fa-wrench"></i>'; }
+        let badgeClass = 'bg-secondary'; let icon = '<i class="fa-solid fa-question"></i>';
+        if (status === 'DIVERIFIKASI') { badgeClass = 'bg-warning text-dark'; icon = '<i class="fa-solid fa-clock"></i>'; } // Ikon Jam (Menunggu)
+        if (status === 'DIPERBAIKI') { badgeClass = 'bg-primary'; icon = '<i class="fa-solid fa-person-digging"></i>'; } // Ikon Kerja (Proses)
         return `<span class="badge ${badgeClass}"><span class="icon-text">${icon} ${status}</span></span>`;
     }
 
-    // Fetch Data dan Tampilkan
+    // --- 4. Fetch Data ---
     fetch(dataUrl)
         .then(response => response.json()) 
         .then(data => {
@@ -74,21 +69,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const geoJsonLayer = L.geoJSON(data, {
                 pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {
-                        radius: 8, fillColor: getStatusColor(feature.properties.status), color: "#000",
-                        weight: 1, opacity: 1, fillOpacity: 0.8
+                        radius: 8, 
+                        fillColor: getStatusColor(feature.properties.status), 
+                        color: "#fff", // Border putih agar lebih kontras
+                        weight: 2, 
+                        opacity: 1, 
+                        fillOpacity: 0.9
                     });
                 },
                 onEachFeature: function (feature, layer) {
                     const props = feature.properties; const id = feature.id;
-                    const popupContent = `<div class="card popup-card">${createCarousel(id, props.foto_urls)}<div class="card-body"><h6 class="card-title">Detail Kerusakan</h6><p class="card-subtitle mb-2 text-muted">Laporan #${id}</p>${createStatusBadge(props.status)}<p class="card-text">${props.deskripsi || 'Tidak ada deskripsi.'}</p></div></div>`;
+                    const popupContent = `<div class="card popup-card">${createCarousel(id, props.foto_urls)}<div class="card-body"><h6 class="card-title">Laporan #${id}</h6><div class="mb-2">${createStatusBadge(props.status)}</div><p class="card-text">${props.deskripsi || '-'}</p></div></div>`;
                     layer.bindPopup(popupContent);
                     layer.on('popupopen', function () {
                         const popupElement = layer.getPopup().getElement();
-                        const zoomableImages = popupElement.querySelectorAll('.zoomable-image');
-                        zoomableImages.forEach(image => {
-                            image.addEventListener('dblclick', function () {
-                                modalImage.src = this.dataset.imgUrl; imageModal.show();
-                            });
+                        popupElement.querySelectorAll('.zoomable-image').forEach(image => {
+                            image.addEventListener('dblclick', function () { modalImage.src = this.dataset.imgUrl; imageModal.show(); });
                         });
                     });
                 }
@@ -96,16 +92,40 @@ document.addEventListener("DOMContentLoaded", function() {
             markers.addLayer(geoJsonLayer);
             map.addLayer(markers);
         })
-        .catch(error => { console.error('Error fetching or parsing GeoJSON:', error); });
+        .catch(error => { console.error('Error:', error); });
+
     
-    // Legenda Peta
+    // --- 5. LEGENDA BARU YANG LEBIH BAGUS ---
     const legend = L.control({ position: 'bottomright' });
+
     legend.onAdd = function (map) {
         const div = L.DomUtil.create('div', 'info legend');
-        const grades = [ { status: 'DIVERIFIKASI', color: 'orange', text: 'Menunggu Perbaikan' }, { status: 'DIPERBAIKI', color: 'blue', text: 'Sedang Dikerjakan' } ];
-        let labels = ['<h6>Keterangan:</h6>']; 
-        for (let i = 0; i < grades.length; i++) { labels.push('<i style="background:' + grades[i].color + '"></i> ' + grades[i].text); }
-        div.innerHTML = labels.join('<br>');
+        
+        // Judul Legenda
+        div.innerHTML = '<h6><i class="fa-solid fa-circle-info me-1"></i> Status Laporan</h6>';
+        
+        // Item 1: Diverifikasi (Oranye)
+        div.innerHTML += `
+            <div class="d-flex align-items-center mb-1">
+                <i style="background: #fd7e14; width: 15px; height: 15px; border-radius: 50%; display: inline-block; margin-right: 8px; border: 2px solid #fff;"></i>
+                <div>
+                    <strong>Menunggu Perbaikan</strong><br>
+                    <small class="text-muted">(Sudah Diverifikasi)</small>
+                </div>
+            </div>
+        `;
+
+        // Item 2: Diperbaiki (Biru)
+        div.innerHTML += `
+            <div class="d-flex align-items-center">
+                <i style="background: #0d6efd; width: 15px; height: 15px; border-radius: 50%; display: inline-block; margin-right: 8px; border: 2px solid #fff;"></i>
+                <div>
+                    <strong>Sedang Dikerjakan</strong><br>
+                    <small class="text-muted">(Proses Perbaikan)</small>
+                </div>
+            </div>
+        `;
+
         return div;
     };
     legend.addTo(map);

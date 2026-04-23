@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center" data-aos="fade-up">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus Laporan</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i> <strong>Perhatian!</strong> Tindakan ini tidak dapat dibatalkan.
+                </div>
+
+                <p>Anda yakin ingin menghapus laporan ini?</p>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="40%">ID Laporan:</th>
+                        <td><strong>#{{ laporan.id }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Tanggal Lapor:</th>
+                        <td>{{ laporan.tanggal_lapor|date:"d F Y, H:i" }} WIB</td>
+                    </tr>
+                    <tr>
+                        <th>Jenis Kerusakan:</th>
+                        <td>{{ laporan.get_jenis_kerusakan_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            <span class="badge bg-secondary">{{ laporan.get_status_display }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Jumlah Foto:</th>
+                        <td>{{ laporan.foto_set.count }} foto</td>
+                    </tr>
+                </table>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="fas fa-trash"></i> Ya, Hapus Laporan
+                        </button>
+                        <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary flex-fill">
+                            <i class="fas fa-times"></i> Batal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

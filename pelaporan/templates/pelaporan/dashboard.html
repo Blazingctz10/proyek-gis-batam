@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3">
+                <i class="fas fa-tachometer-alt text-primary"></i> Dashboard Saya
+            </h1>
+            <p class="text-muted mb-0">Selamat datang, {{ user.first_name|default:user.username }}!</p>
+        </div>
+        <a href="{% url 'tambah_laporan' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Buat Laporan Baru
+        </a>
+    </div>
+
+    <!-- Statistik Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-primary mb-0">{{ total }}</h3>
+                    <small class="text-muted">Total Laporan</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-secondary mb-0">{{ baru }}</h3>
+                    <small class="text-muted">Menunggu Verifikasi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-warning mb-0">{{ diverifikasi }}</h3>
+                    <small class="text-muted">Diverifikasi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-success mb-0">{{ selesai }}</h3>
+                    <small class="text-muted">Selesai</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabel Laporan -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Daftar Laporan Saya</h5>
+        </div>
+        <div class="card-body">
+            {% if laporan_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tanggal</th>
+                                <th>Jenis</th>
+                                <th>Tingkat</th>
+                                <th>Status</th>
+                                <th>Foto</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for laporan in laporan_list %}
+                            <tr>
+                                <td><strong>#{{ laporan.id }}</strong></td>
+                                <td>{{ laporan.tanggal_lapor|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ laporan.get_jenis_kerusakan_display }}</span>
+                                </td>
+                                <td>
+                                    {% if laporan.tingkat_kerusakan == 'BERAT' %}
+                                        <span class="badge bg-danger">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                    {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
+                                        <span class="badge bg-warning">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if laporan.status == 'BARU' %}
+                                        <span class="badge bg-secondary"><i class="fas fa-clock"></i> {{ laporan.get_status_display }}</span>
+                                    {% elif laporan.status == 'DIVERIFIKASI' %}
+                                        <span class="badge bg-warning"><i class="fas fa-eye"></i> {{ laporan.get_status_display }}</span>
+                                    {% elif laporan.status == 'DIPERBAIKI' %}
+                                        <span class="badge bg-primary"><i class="fas fa-wrench"></i> {{ laporan.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fas fa-check"></i> {{ laporan.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if laporan.foto_set.count > 0 %}
+                                        <span class="text-primary"><i class="fas fa-camera"></i> {{ laporan.foto_set.count }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-sm btn-info" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if laporan.status == 'BARU' %}
+                                        <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-sm btn-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-sm btn-danger" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Anda belum memiliki laporan.</p>
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Buat Laporan Pertama
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

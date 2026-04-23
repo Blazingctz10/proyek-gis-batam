@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3">
+                <i class="fas fa-chart-line text-warning"></i> Dashboard Admin - Statistik Laporan
+            </h1>
+            <p class="text-muted mb-0">Overview data laporan kerusakan jalan Kota Batam</p>
+        </div>
+        <div class="btn-group">
+            <a href="{% url 'laporan_list_admin' %}" class="btn btn-outline-primary">
+                <i class="fas fa-list"></i> Kelola Laporan
+            </a>
+            <a href="/admin/" class="btn btn-outline-secondary" target="_blank">
+                <i class="fas fa-cog"></i> Django Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-primary">
+                <div class="card-body">
+                    <i class="fas fa-list fa-2x text-primary mb-2"></i>
+                    <h3 class="text-primary mb-0">{{ total_laporan }}</h3>
+                    <small class="text-muted">Total Laporan</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-secondary">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-2x text-secondary mb-2"></i>
+                    <h3 class="text-secondary mb-0">{{ baru }}</h3>
+                    <small class="text-muted">Baru</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-warning">
+                <div class="card-body">
+                    <i class="fas fa-eye fa-2x text-warning mb-2"></i>
+                    <h3 class="text-warning mb-0">{{ diverifikasi }}</h3>
+                    <small class="text-muted">Diverifikasi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-info">
+                <div class="card-body">
+                    <i class="fas fa-wrench fa-2x text-info mb-2"></i>
+                    <h3 class="text-info mb-0">{{ diperbaiki }}</h3>
+                    <small class="text-muted">Diperbaiki</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-success">
+                <div class="card-body">
+                    <i class="fas fa-check fa-2x text-success mb-2"></i>
+                    <h3 class="text-success mb-0">{{ selesai }}</h3>
+                    <small class="text-muted">Selesai</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="card text-center shadow-sm border-primary">
+                <div class="card-body">
+                    <i class="fas fa-calendar-week fa-2x text-primary mb-2"></i>
+                    <h3 class="text-primary mb-0">{{ laporan_minggu_ini }}</h3>
+                    <small class="text-muted">7 Hari Terakhir</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Grafik Tren Bulanan -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Tren Laporan (6 Bulan Terakhir)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTrenBulanan" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart: Jenis Kerusakan -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Per Jenis Kerusakan</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartJenis" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row Charts -->
+    <div class="row g-4 mb-4">
+        <!-- Tingkat Kerusakan -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Per Tingkat Kerusakan</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTingkat" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Laporan dengan Foto -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-camera"></i> Laporan dengan Foto</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartFoto" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Users -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-users"></i> Top 5 Pelapor Aktif</h5>
+                </div>
+                <div class="card-body">
+                    {% if top_users %}
+                        <ul class="list-group list-group-flush">
+                            {% for user in top_users %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>{{ user.user__first_name|default:user.user__username }}</strong>
+                                    <br><small class="text-muted">{{ user.user__email }}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ user.total }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">Belum ada data</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="fas fa-download"></i> Export Data</h5>
+        </div>
+        <div class="card-body text-center">
+            <p class="text-muted">Download semua data laporan dalam format Excel atau CSV</p>
+            <div class="btn-group">
+                <a href="{% url 'export_excel' %}" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Download Excel (.xlsx)
+                </a>
+                <a href="{% url 'export_csv' %}" class="btn btn-info">
+                    <i class="fas fa-file-csv"></i> Download CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. Deteksi Warna Berdasarkan Tema
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDarkMode ? '#e0e0e0' : '#212529';
+    const gridColor = isDarkMode ? '#444' : '#ddd';
+    const cardBgColor = isDarkMode ? '#1e1e1e' : '#ffffff';
+
+    Chart.defaults.color = textColor;
+    Chart.defaults.borderColor = gridColor;
+
+    // 2. CHART STATUS
+    const ctxStatus = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+            labels: ['Baru', 'Diverifikasi', 'Diperbaiki', 'Selesai'],
+            datasets: [{
+                data: [{{ stats.baru|default:0 }}, {{ stats.diverifikasi|default:0 }}, {{ stats.diperbaiki|default:0 }}, {{ stats.selesai|default:0 }}],
+                backgroundColor: ['#dc3545', '#ffc107', '#0d6efd', '#198754'],
+                borderWidth: 2,
+                borderColor: cardBgColor // Border mengikuti warna kartu
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: textColor } }
+            },
+            cutout: '60%'
+        }
+    });
+
+    // 3. CHART BULANAN
+    const ctxBulanan = document.getElementById('laporanBulananChart').getContext('2d');
+    new Chart(ctxBulanan, {
+        type: 'bar',
+        data: {
+            labels: {{ labels_bulanan|safe }},
+            datasets: [{
+                label: 'Jumlah Laporan',
+                data: {{ data_bulanan|safe }},
+                backgroundColor: '#0d6efd',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: gridColor }, 
+                    ticks: { color: textColor } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: textColor } 
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 4. RELOAD OTOMATIS SAAT GANTI TEMA
+    // Ini penting agar Chart.js bisa menggambar ulang dengan warna baru
+    const themeToggleBtn = document.getElementById('floating-theme-toggle');
+    if(themeToggleBtn){
+        themeToggleBtn.addEventListener('click', function(){
+            setTimeout(() => { 
+                location.reload(); 
+            }, 100);
+        });
+    }
+});
+</script>
+{% endblock %}
