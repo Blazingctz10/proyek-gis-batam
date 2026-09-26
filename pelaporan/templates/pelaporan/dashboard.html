@@ -3,121 +3,144 @@
 
 {% block content %}
 <div data-aos="fade-up">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3">
-                <i class="fas fa-tachometer-alt text-primary"></i> Dashboard Saya
-            </h1>
-            <p class="text-muted mb-0">Selamat datang, {{ user.first_name|default:user.username }}!</p>
+    <!-- Header Banner -->
+    <div class="card border-0 mb-4 p-4 shadow-sm" style="background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(6,182,212,0.08));">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="feature-icon-box bg-primary text-white mb-0 shadow" style="width: 54px; height: 54px; border-radius: 16px;">
+                    <i class="fas fa-user-circle fs-3"></i>
+                </div>
+                <div>
+                    <h2 class="h4 fw-bold mb-1">Halo, {{ user.first_name|default:user.username }}! 👋</h2>
+                    <p class="text-muted small mb-0">Selamat datang di portal pelaporan dan pemantauan perbaikan infrastruktur jalan Anda.</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'tambah_laporan' %}" class="btn btn-primary shadow-sm">
+                    <i class="fas fa-plus-circle"></i> Buat Laporan Baru
+                </a>
+            </div>
         </div>
-        <a href="{% url 'tambah_laporan' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Buat Laporan Baru
-        </a>
     </div>
 
     <!-- Statistik Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3 col-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h3 class="text-primary mb-0">{{ total }}</h3>
-                    <small class="text-muted">Total Laporan</small>
-                </div>
+        <div class="col-lg col-md-4 col-6">
+            <div class="card p-3 text-center h-100 card-hover border-start border-primary border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">TOTAL LAPORAN</small>
+                <h3 class="fw-extrabold text-primary mb-0 mt-1">{{ total }}</h3>
             </div>
         </div>
-        <div class="col-md-3 col-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h3 class="text-secondary mb-0">{{ baru }}</h3>
-                    <small class="text-muted">Menunggu Verifikasi</small>
-                </div>
+        <div class="col-lg col-md-4 col-6">
+            <div class="card p-3 text-center h-100 card-hover border-start border-secondary border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">BARU DIAJUKAN</small>
+                <h3 class="fw-extrabold text-secondary mb-0 mt-1">{{ baru }}</h3>
             </div>
         </div>
-        <div class="col-md-3 col-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h3 class="text-warning mb-0">{{ diverifikasi }}</h3>
-                    <small class="text-muted">Diverifikasi</small>
-                </div>
+        <div class="col-lg col-md-4 col-6">
+            <div class="card p-3 text-center h-100 card-hover border-start border-warning border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">DIVERIFIKASI</small>
+                <h3 class="fw-extrabold text-warning mb-0 mt-1">{{ diverifikasi }}</h3>
             </div>
         </div>
-        <div class="col-md-3 col-6">
-            <div class="card text-center shadow-sm">
-                <div class="card-body">
-                    <h3 class="text-success mb-0">{{ selesai }}</h3>
-                    <small class="text-muted">Selesai</small>
-                </div>
+        <div class="col-lg col-md-4 col-6">
+            <div class="card p-3 text-center h-100 card-hover border-start border-info border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SEDANG DIKERJAKAN</small>
+                <h3 class="fw-extrabold text-info mb-0 mt-1">{{ diperbaiki }}</h3>
+            </div>
+        </div>
+        <div class="col-lg col-md-4 col-6">
+            <div class="card p-3 text-center h-100 card-hover border-start border-success border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SELESAI</small>
+                <h3 class="fw-extrabold text-success mb-0 mt-1">{{ selesai }}</h3>
             </div>
         </div>
     </div>
 
     <!-- Tabel Laporan -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="fas fa-list"></i> Daftar Laporan Saya</h5>
+    <div class="card shadow-sm border-0">
+        <div class="card-header d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-list-check text-primary me-2"></i> Riwayat Laporan Saya</h5>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1">{{ laporan_list|length }} Laporan</span>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             {% if laporan_list %}
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th style="width: 80px;">ID</th>
                                 <th>Tanggal</th>
-                                <th>Jenis</th>
+                                <th>Jenis Kerusakan</th>
                                 <th>Tingkat</th>
-                                <th>Status</th>
-                                <th>Foto</th>
-                                <th>Aksi</th>
+                                <th>Status Terkini</th>
+                                <th class="text-center">Dokumentasi</th>
+                                <th class="text-end" style="width: 140px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for laporan in laporan_list %}
                             <tr>
-                                <td><strong>#{{ laporan.id }}</strong></td>
-                                <td>{{ laporan.tanggal_lapor|date:"d/m/Y H:i" }}</td>
+                                <td><span class="fw-bold text-primary">#{{ laporan.id }}</span></td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ laporan.get_jenis_kerusakan_display }}</span>
+                                    <span class="fw-semibold">{{ laporan.tanggal_lapor|date:"d M Y" }}</span><br>
+                                    <small class="text-muted">{{ laporan.tanggal_lapor|date:"H:i" }} WIB</small>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">{{ laporan.get_jenis_kerusakan_display }}</span><br>
+                                    <small class="text-muted">{{ laporan.deskripsi|truncatechars:45 }}</small>
                                 </td>
                                 <td>
                                     {% if laporan.tingkat_kerusakan == 'BERAT' %}
-                                        <span class="badge bg-danger">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 small">
+                                            <i class="fas fa-triangle-exclamation"></i> {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
-                                        <span class="badge bg-warning">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 small">
+                                            {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% else %}
-                                        <span class="badge bg-success">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
+                                            {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if laporan.status == 'BARU' %}
-                                        <span class="badge bg-secondary"><i class="fas fa-clock"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-baru"><i class="fas fa-clock"></i> Baru</span>
                                     {% elif laporan.status == 'DIVERIFIKASI' %}
-                                        <span class="badge bg-warning"><i class="fas fa-eye"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-diverifikasi"><i class="fas fa-eye"></i> Diverifikasi</span>
                                     {% elif laporan.status == 'DIPERBAIKI' %}
-                                        <span class="badge bg-primary"><i class="fas fa-wrench"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-diperbaiki"><i class="fas fa-person-digging"></i> Dikerjakan</span>
+                                    {% elif laporan.status == 'SELESAI' %}
+                                        <span class="badge-custom badge-status-selesai"><i class="fas fa-check-circle"></i> Selesai</span>
                                     {% else %}
-                                        <span class="badge bg-success"><i class="fas fa-check"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-ditolak"><i class="fas fa-ban"></i> {{ laporan.get_status_display }}</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {% if laporan.foto_set.count > 0 %}
-                                        <span class="text-primary"><i class="fas fa-camera"></i> {{ laporan.foto_set.count }}</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1">
+                                            <i class="fas fa-image"></i> {{ laporan.foto_set.count }} Foto
+                                        </span>
                                     {% else %}
-                                        <span class="text-muted">-</span>
+                                        <span class="text-muted small">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-sm btn-info" title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    {% if laporan.status == 'BARU' %}
-                                        <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-sm btn-warning" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary" title="Lihat Detail & Peta">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-sm btn-danger" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    {% endif %}
+                                        {% if laporan.status == 'BARU' %}
+                                            <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-outline-primary" title="Ubah Data">
+                                                <i class="fas fa-pen-to-square"></i>
+                                            </a>
+                                            <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-outline-danger" title="Hapus Laporan">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -126,10 +149,13 @@
                 </div>
             {% else %}
                 <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Anda belum memiliki laporan.</p>
-                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Buat Laporan Pertama
+                    <div class="feature-icon-box bg-primary-subtle text-primary mx-auto mb-3" style="width: 72px; height: 72px; border-radius: 50%;">
+                        <i class="fas fa-inbox fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Belum Ada Laporan Terkirim</h5>
+                    <p class="text-muted small mb-4">Laporkan kondisi jalan rusak di sekitar tempat tinggal Anda untuk mempercepat tindak lanjut perbaikan.</p>
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary shadow-sm">
+                        <i class="fas fa-plus-circle"></i> Buat Laporan Sekarang
                     </a>
                 </div>
             {% endif %}

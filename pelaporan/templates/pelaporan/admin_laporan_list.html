@@ -3,154 +3,172 @@
 
 {% block content %}
 <div data-aos="fade-up">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">
-            <i class="fas fa-list text-warning"></i> {{ title }}
-        </h1>
-        <a href="{% url 'admin_statistics' %}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali ke Stats
-        </a>
-    </div>
-
-    <!-- Filter Form -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="fas fa-filter"></i> Filter Laporan</h5>
+    <!-- Header Page -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
+                    <i class="fas fa-shield-alt"></i> Panel Kontrol Petugas
+                </span>
+                <span class="text-muted small">Kelola Seluruh Data Laporan Masuk</span>
+            </div>
+            <h1 class="h3 fw-bold mb-0">{{ title }}</h1>
         </div>
-        <div class="card-body">
-            <form method="GET" class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
-                        <option value="">Semua Status</option>
-                        {% for value, label in status_choices %}
-                            <option value="{{ value }}" {% if current_filters.status == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Jenis Kerusakan</label>
-                    <select name="jenis" class="form-select">
-                        <option value="">Semua Jenis</option>
-                        {% for value, label in jenis_choices %}
-                            <option value="{{ value }}" {% if current_filters.jenis == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Tingkat</label>
-                    <select name="tingkat" class="form-select">
-                        <option value="">Semua Tingkat</option>
-                        {% for value, label in tingkat_choices %}
-                            <option value="{{ value }}" {% if current_filters.tingkat == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Pencarian</label>
-                    <input type="text" name="search" class="form-control" placeholder="ID, deskripsi, email..." value="{{ current_filters.search }}">
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Terapkan Filter
-                    </button>
-                    <a href="{% url 'laporan_list_admin' %}" class="btn btn-secondary">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Tabel Laporan -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Daftar Laporan ({{ laporan_list.count }} hasil)</h5>
-            <a href="/admin/pelaporan/laporanjalan/" class="btn btn-sm btn-light" target="_blank">
-                <i class="fas fa-edit"></i> Edit via Django Admin
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_statistics' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-chart-line"></i> Statistik
+            </a>
+            <a href="/admin/pelaporan/laporanjalan/" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-cog"></i> Django Admin
             </a>
         </div>
+    </div>
+
+    <!-- Filter Form Card -->
+    <div class="card shadow-sm border-0 mb-4 p-3">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label small mb-1">Status Laporan</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Semua Status</option>
+                    {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if current_filters.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label small mb-1">Jenis Kerusakan</label>
+                <select name="jenis" class="form-select form-select-sm">
+                    <option value="">Semua Jenis</option>
+                    {% for value, label in jenis_choices %}
+                        <option value="{{ value }}" {% if current_filters.jenis == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 col-sm-6">
+                <label class="form-label small mb-1">Tingkat</label>
+                <select name="tingkat" class="form-select form-select-sm">
+                    <option value="">Semua Tingkat</option>
+                    {% for value, label in tingkat_choices %}
+                        <option value="{{ value }}" {% if current_filters.tingkat == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label small mb-1">Kata Kunci</label>
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="ID, deskripsi, email..." value="{{ current_filters.search }}">
+            </div>
+
+            <div class="col-md-1 col-sm-12 d-flex gap-1">
+                <button type="submit" class="btn btn-primary btn-sm w-100" title="Cari Data">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="{% url 'laporan_list_admin' %}" class="btn btn-secondary btn-sm" title="Reset Filter">
+                    <i class="fas fa-rotate-left"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-table-list text-primary me-2"></i>Daftar Laporan</h5>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1">{{ laporan_list.count }} Hasil</span>
+        </div>
+
         <div class="card-body p-0">
             {% if laporan_list %}
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped mb-0">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
                             <tr>
-                                <th>ID</th>
+                                <th style="width: 70px;">ID</th>
                                 <th>Tanggal</th>
-                                <th>User</th>
-                                <th>Jenis</th>
+                                <th>Pelapor</th>
+                                <th>Jenis Kerusakan</th>
                                 <th>Tingkat</th>
                                 <th>Status</th>
-                                <th>Foto</th>
-                                <th>Aksi</th>
+                                <th class="text-center">Foto</th>
+                                <th class="text-end" style="width: 140px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for laporan in laporan_list %}
                             <tr>
-                                <td><strong>#{{ laporan.id }}</strong></td>
+                                <td><span class="fw-bold text-primary">#{{ laporan.id }}</span></td>
                                 <td>
-                                    {{ laporan.tanggal_lapor|date:"d/m/Y" }}<br>
-                                    <small class="text-muted">{{ laporan.tanggal_lapor|date:"H:i" }}</small>
+                                    <span class="fw-semibold">{{ laporan.tanggal_lapor|date:"d/m/Y" }}</span><br>
+                                    <small class="text-muted">{{ laporan.tanggal_lapor|date:"H:i" }} WIB</small>
                                 </td>
                                 <td>
                                     {% if laporan.user %}
-                                        <strong>{{ laporan.user.username }}</strong><br>
+                                        <strong class="text-main">{{ laporan.user.username }}</strong><br>
                                         <small class="text-muted">{{ laporan.email_pelapor|default:"-" }}</small>
                                     {% else %}
-                                        <span class="text-muted">Guest</span><br>
-                                        <small>{{ laporan.email_pelapor|default:"-" }}</small>
+                                        <span class="badge bg-secondary-subtle text-secondary">Tamu</span><br>
+                                        <small class="text-muted">{{ laporan.email_pelapor|default:"-" }}</small>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary">{{ laporan.get_jenis_kerusakan_display }}</span>
+                                    <span class="fw-semibold">{{ laporan.get_jenis_kerusakan_display }}</span>
                                 </td>
                                 <td>
                                     {% if laporan.tingkat_kerusakan == 'BERAT' %}
-                                        <span class="badge bg-danger">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 small">
+                                            {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
-                                        <span class="badge bg-warning">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 small">
+                                            {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% else %}
-                                        <span class="badge bg-success">{{ laporan.get_tingkat_kerusakan_display }}</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
+                                            {{ laporan.get_tingkat_kerusakan_display }}
+                                        </span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if laporan.status == 'BARU' %}
-                                        <span class="badge bg-secondary"><i class="fas fa-clock"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-baru">Baru</span>
                                     {% elif laporan.status == 'DIVERIFIKASI' %}
-                                        <span class="badge bg-warning"><i class="fas fa-eye"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-diverifikasi">Diverifikasi</span>
                                     {% elif laporan.status == 'DIPERBAIKI' %}
-                                        <span class="badge bg-primary"><i class="fas fa-wrench"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-diperbaiki">Dikerjakan</span>
+                                    {% elif laporan.status == 'SELESAI' %}
+                                        <span class="badge-custom badge-status-selesai">Selesai</span>
                                     {% else %}
-                                        <span class="badge bg-success"><i class="fas fa-check"></i> {{ laporan.get_status_display }}</span>
+                                        <span class="badge-custom badge-status-ditolak">{{ laporan.get_status_display }}</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {% if laporan.foto_set.count > 0 %}
-                                        <span class="text-primary"><i class="fas fa-camera"></i> {{ laporan.foto_set.count }}</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1">
+                                            <i class="fas fa-camera"></i> {{ laporan.foto_set.count }}
+                                        </span>
                                     {% else %}
-                                        <span class="text-muted">-</span>
+                                        <span class="text-muted small">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="text-end">
                                     <div class="btn-group btn-group-sm">
-                                        {% if laporan.user %}
-                                            <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-info" title="Lihat Detail" target="_blank">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        {% endif %}
-                                        <a href="/admin/pelaporan/laporanjalan/{{ laporan.id }}/change/" class="btn btn-warning" title="Edit" target="_blank">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary" title="Lihat Detail & Peta" target="_blank">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" class="btn btn-success" title="Buka Peta" target="_blank">
-                                            <i class="fas fa-map-marker-alt"></i>
+                                        <a href="/admin/pelaporan/laporanjalan/{{ laporan.id }}/change/" class="btn btn-outline-primary" title="Ubah Status via Admin" target="_blank">
+                                            <i class="fas fa-pen-to-square"></i>
+                                        </a>
+                                        <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" class="btn btn-outline-success" title="Buka Koordinat Google Maps" target="_blank">
+                                            <i class="fas fa-location-dot"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -161,9 +179,9 @@
                 </div>
             {% else %}
                 <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Tidak ada laporan ditemukan dengan filter ini.</p>
-                    <a href="{% url 'laporan_list_admin' %}" class="btn btn-primary">Reset Filter</a>
+                    <i class="fas fa-inbox fa-3x text-muted mb-3 opacity-50"></i>
+                    <p class="text-muted mb-3">Tidak ada laporan yang sesuai dengan kriteria filter.</p>
+                    <a href="{% url 'laporan_list_admin' %}" class="btn btn-secondary btn-sm">Reset Filter</a>
                 </div>
             {% endif %}
         </div>

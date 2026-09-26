@@ -3,104 +3,201 @@
 
 {% block content %}
 <div data-aos="fade-up">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">
-            <i class="fas fa-file-alt text-primary"></i> Detail Laporan #{{ laporan.id }}
-        </h1>
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
+    <!-- Header Page -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
+                    <i class="fas fa-file-invoice"></i> ID Laporan #{{ laporan.id }}
+                </span>
+                <span class="text-muted small">Pelaporan Kerusakan Jalan Batam</span>
+            </div>
+            <h1 class="h3 fw-bold mb-0">Rincian & Status Penanganan</h1>
+        </div>
+        <div class="d-flex gap-2">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Beranda
+                </a>
+            {% endif %}
+            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-map"></i> Lihat di Peta
+            </a>
+        </div>
+    </div>
+
+    <!-- Progress Status Stepper -->
+    <div class="card shadow-sm border-0 mb-4 p-4">
+        <h6 class="fw-bold mb-3 text-secondary text-uppercase small tracking-wider">Tahapan Status Penanganan</h6>
+        <div class="row g-3 text-center">
+            <!-- Step 1: Baru -->
+            <div class="col-6 col-md-3">
+                <div class="stepper-item {% if laporan.status == 'BARU' %}active active-baru{% elif laporan.status == 'DIVERIFIKASI' or laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}completed{% endif %}">
+                    <div class="stepper-icon-box">
+                        {% if laporan.status == 'BARU' %}
+                            <i class="fas fa-spinner fa-spin"></i>
+                        {% elif laporan.status == 'DIVERIFIKASI' or laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            <i class="fas fa-clock"></i>
+                        {% endif %}
+                    </div>
+                    <div class="stepper-title">1. Masuk</div>
+                    <div class="stepper-desc">Review Administrasi</div>
+                </div>
+            </div>
+
+            <!-- Step 2: Diverifikasi -->
+            <div class="col-6 col-md-3">
+                <div class="stepper-item {% if laporan.status == 'DIVERIFIKASI' %}active active-warning{% elif laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}completed{% endif %}">
+                    <div class="stepper-icon-box">
+                        {% if laporan.status == 'DIVERIFIKASI' %}
+                            <i class="fas fa-magnifying-glass-location"></i>
+                        {% elif laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            <i class="fas fa-clipboard-check"></i>
+                        {% endif %}
+                    </div>
+                    <div class="stepper-title">2. Diverifikasi</div>
+                    <div class="stepper-desc">Validasi Tim Lapangan</div>
+                </div>
+            </div>
+
+            <!-- Step 3: Dikerjakan -->
+            <div class="col-6 col-md-3">
+                <div class="stepper-item {% if laporan.status == 'DIPERBAIKI' %}active active-info{% elif laporan.status == 'SELESAI' %}completed{% endif %}">
+                    <div class="stepper-icon-box">
+                        {% if laporan.status == 'DIPERBAIKI' %}
+                            <i class="fas fa-person-digging"></i>
+                        {% elif laporan.status == 'SELESAI' %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            <i class="fas fa-tools"></i>
+                        {% endif %}
+                    </div>
+                    <div class="stepper-title">3. Dikerjakan</div>
+                    <div class="stepper-desc">Proses Perbaikan Fisik</div>
+                </div>
+            </div>
+
+            <!-- Step 4: Selesai -->
+            <div class="col-6 col-md-3">
+                <div class="stepper-item {% if laporan.status == 'SELESAI' %}active active-success{% endif %}">
+                    <div class="stepper-icon-box">
+                        {% if laporan.status == 'SELESAI' %}
+                            <i class="fas fa-check-double"></i>
+                        {% else %}
+                            <i class="fas fa-flag-checkered"></i>
+                        {% endif %}
+                    </div>
+                    <div class="stepper-title">4. Tuntas</div>
+                    <div class="stepper-desc">Selesai Diperbaiki</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <!-- Info Laporan -->
+        <!-- Kolom Info Detail -->
         <div class="col-lg-7">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informasi Laporan</h5>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-circle-info text-primary me-2"></i>Informasi Kerusakan</h5>
+                    <div>
+                        {% if laporan.status == 'BARU' %}
+                            <span class="badge-custom badge-status-baru">Baru</span>
+                        {% elif laporan.status == 'DIVERIFIKASI' %}
+                            <span class="badge-custom badge-status-diverifikasi">Diverifikasi</span>
+                        {% elif laporan.status == 'DIPERBAIKI' %}
+                            <span class="badge-custom badge-status-diperbaiki">Dikerjakan</span>
+                        {% elif laporan.status == 'SELESAI' %}
+                            <span class="badge-custom badge-status-selesai">Selesai</span>
+                        {% else %}
+                            <span class="badge-custom badge-status-ditolak">{{ laporan.get_status_display }}</span>
+                        {% endif %}
+                    </div>
                 </div>
+
                 <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <th width="30%">Status:</th>
-                            <td>
-                                {% if laporan.status == 'BARU' %}
-                                    <span class="badge bg-secondary fs-6"><i class="fas fa-clock"></i> {{ laporan.get_status_display }}</span>
-                                {% elif laporan.status == 'DIVERIFIKASI' %}
-                                    <span class="badge bg-warning fs-6"><i class="fas fa-eye"></i> {{ laporan.get_status_display }}</span>
-                                {% elif laporan.status == 'DIPERBAIKI' %}
-                                    <span class="badge bg-primary fs-6"><i class="fas fa-wrench"></i> {{ laporan.get_status_display }}</span>
-                                {% else %}
-                                    <span class="badge bg-success fs-6"><i class="fas fa-check"></i> {{ laporan.get_status_display }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Jenis Kerusakan:</th>
-                            <td><span class="badge bg-secondary">{{ laporan.get_jenis_kerusakan_display }}</span></td>
-                        </tr>
-                        <tr>
-                            <th>Tingkat Kerusakan:</th>
-                            <td>
-                                {% if laporan.tingkat_kerusakan == 'BERAT' %}
-                                    <span class="badge bg-danger">{{ laporan.get_tingkat_kerusakan_display }}</span>
-                                {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
-                                    <span class="badge bg-warning">{{ laporan.get_tingkat_kerusakan_display }}</span>
-                                {% else %}
-                                    <span class="badge bg-success">{{ laporan.get_tingkat_kerusakan_display }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Lapor:</th>
-                            <td>{{ laporan.tanggal_lapor|date:"d F Y, H:i" }} WIB</td>
-                        </tr>
-                        <tr>
-                            <th>Terakhir Diupdate:</th>
-                            <td>{{ laporan.tanggal_update|date:"d F Y, H:i" }} WIB</td>
-                        </tr>
-                        <tr>
-                            <th>Koordinat:</th>
-                            <td>
-                                {{ laporan.lokasi.y|floatformat:5 }}, {{ laporan.lokasi.x|floatformat:5 }}
-                                <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
-                                    <i class="fas fa-map-marker-alt"></i> Buka di Google Maps
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">JENIS KERUSAKAN</small>
+                            <span class="fw-bold text-main fs-6">{{ laporan.get_jenis_kerusakan_display }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">TINGKAT KERUSAKAN</small>
+                            {% if laporan.tingkat_kerusakan == 'BERAT' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1">
+                                    <i class="fas fa-triangle-exclamation"></i> {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1">
+                                    {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1">
+                                    {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">TANGGAL LAPOR</small>
+                            <span class="fw-semibold text-main">{{ laporan.tanggal_lapor|date:"d F Y, H:i" }} WIB</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">TERAKHIR DIUPDATE</small>
+                            <span class="fw-semibold text-main">{{ laporan.tanggal_update|date:"d F Y, H:i" }} WIB</span>
+                        </div>
+
+                        <div class="col-12">
+                            <small class="text-muted d-block">KOORDINAT LOKASI</small>
+                            <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                <span class="badge bg-card-subtle text-main border px-2 py-1">
+                                    {{ laporan.lokasi.y|floatformat:6 }}, {{ laporan.lokasi.x|floatformat:6 }}
+                                </span>
+                                <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" target="_blank" class="btn btn-outline-primary btn-sm py-1">
+                                    <i class="fas fa-external-link-alt me-1"></i> Buka Google Maps
                                 </a>
-                            </td>
-                        </tr>
-                    </table>
+                            </div>
+                        </div>
+                    </div>
 
-                    <hr>
-
-                    <h6 class="mb-2"><i class="fas fa-comment-alt"></i> Deskripsi:</h6>
-                    <p class="mb-0">{{ laporan.deskripsi|default:"<em class='text-muted'>Tidak ada deskripsi</em>"|safe }}</p>
+                    <div class="p-3 rounded-3 bg-card-subtle border mb-3">
+                        <small class="text-muted fw-bold d-block mb-1"><i class="fas fa-align-left text-primary me-1"></i>DESKRIPSI / PATOKAN</small>
+                        <p class="mb-0 text-main">{{ laporan.deskripsi|default:"<em>Tidak ada catatan deskripsi.</em>"|safe }}</p>
+                    </div>
 
                     {% if laporan.catatan_admin %}
-                        <hr>
-                        <div class="alert alert-info">
-                            <h6 class="mb-2"><i class="fas fa-user-shield"></i> Catatan Admin:</h6>
-                            <p class="mb-0">{{ laporan.catatan_admin }}</p>
+                        <div class="p-3 rounded-3 bg-info-subtle border border-info mb-0">
+                            <small class="text-info fw-bold d-block mb-1"><i class="fas fa-user-shield me-1"></i>TANGGAPAN / CATATAN PETUGAS</small>
+                            <p class="mb-0 text-main">{{ laporan.catatan_admin }}</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Foto -->
+            <!-- Dokumentasi Foto -->
             {% if laporan.foto_set.all %}
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-camera"></i> Foto ({{ laporan.foto_set.count }})</h5>
+                <div class="card shadow-sm border-0">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-camera text-primary me-2"></i>Dokumentasi Foto ({{ laporan.foto_set.count }})</h5>
+                        <small class="text-muted">Klik foto untuk memperbesar</small>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             {% for foto in laporan.foto_set.all %}
                                 <div class="col-md-4 col-6">
-                                    <div class="position-relative">
-                                        <img src="{{ foto.foto.url }}" class="img-thumbnail w-100" style="height: 150px; object-fit: cover; cursor: pointer;" onclick="showImageModal('{{ foto.foto.url }}')" alt="Foto Laporan">
-                                        
+                                    <div class="position-relative rounded-3 overflow-hidden border shadow-sm" style="height: 160px;">
+                                        <img src="{{ foto.foto.url }}" class="w-100 h-100 object-fit-cover" style="cursor: pointer;" onclick="showImageModal('{{ foto.foto.url }}')" alt="Dokumentasi Laporan">
                                         {% if laporan.status == 'BARU' %}
-                                            <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="hapusFoto({{ foto.id }})" title="Hapus Foto">
-                                                <i class="fas fa-trash"></i>
+                                            <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle" style="width: 32px; height: 32px; padding: 0;" onclick="hapusFoto({{ foto.id }})" title="Hapus Foto">
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         {% endif %}
                                     </div>
@@ -112,120 +209,107 @@
             {% endif %}
         </div>
 
-        <!-- Peta -->
+        <!-- Kolom Peta & Kontrol -->
         <div class="col-lg-5">
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-map"></i> Lokasi di Peta</h5>
+            <div class="card shadow-sm border-0 sticky-top" style="top: 80px;">
+                <div class="card-header py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-map-location-dot text-primary me-2"></i>Titik Koordinat</h5>
                 </div>
                 <div class="card-body p-0">
-                    <div id="map" style="height: 400px;"></div>
+                    <div id="map" style="height: 380px; border-radius: 0;"></div>
+                </div>
+                
+                <div class="card-footer p-3">
+                    {% if is_owner and laporan.status == 'BARU' %}
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                <i class="fas fa-pen-to-square"></i> Edit Laporan
+                            </a>
+                            <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i> Hapus
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center small text-muted">
+                            <i class="fas fa-shield-alt text-success me-1"></i> Data diverifikasi oleh tim teknis dan dipublikasikan untuk transparansi publik.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-
-            <!-- Aksi -->
-            {% if laporan.status == 'BARU' %}
-                <div class="card shadow-sm mt-3">
-                    <div class="card-header bg-warning">
-                        <h5 class="mb-0"><i class="fas fa-tools"></i> Aksi</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-muted mb-3">Laporan masih bisa diedit atau dihapus.</p>
-                        <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-warning w-100 mb-2">
-                            <i class="fas fa-edit"></i> Edit Laporan
-                        </a>
-                        <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-danger w-100">
-                            <i class="fas fa-trash"></i> Hapus Laporan
-                        </a>
-                    </div>
-                </div>
-            {% else %}
-                <div class="card shadow-sm mt-3">
-                    <div class="card-body text-center">
-                        <i class="fas fa-lock fa-2x text-muted mb-2"></i>
-                        <p class="text-muted mb-0">Laporan yang sudah diverifikasi tidak dapat diedit atau dihapus.</p>
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    // Inisialisasi Peta
-    const map = L.map('map').setView([{{ laporan.lokasi.y }}, {{ laporan.lokasi.x }}], 16);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    
-    // Marker
-    const marker = L.marker([{{ laporan.lokasi.y }}, {{ laporan.lokasi.x }}]).addTo(map);
-    marker.bindPopup('<b>Laporan #{{ laporan.id }}</b><br>{{ laporan.get_jenis_kerusakan_display }}').openPopup();
+document.addEventListener("DOMContentLoaded", function() {
+    const mapElement = document.getElementById('map');
+    if (mapElement && typeof L !== 'undefined') {
+        const lat = {{ laporan.lokasi.y|stringformat:".6f" }};
+        const lon = {{ laporan.lokasi.x|stringformat:".6f" }};
+        
+        const map = L.map('map').setView([lat, lon], 15);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        const marker = L.marker([lat, lon]).addTo(map);
+        const popupHtml = `
+            <div class="p-3 text-center" style="min-width: 170px;">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 mb-2 d-inline-block small">
+                    Laporan #{{ laporan.id }}
+                </span>
+                <h6 class="fw-bold mb-1 text-main fs-6">{{ laporan.get_jenis_kerusakan_display }}</h6>
+                <span class="badge bg-secondary-subtle text-secondary small">{{ laporan.get_tingkat_kerusakan_display }}</span>
+            </div>
+        `;
+        marker.bindPopup(popupHtml, { minWidth: 170, maxWidth: 260 }).openPopup();
+        
+        // Add a soft accuracy pulse circle around marker
+        L.circle([lat, lon], {
+            color: '#2563eb',
+            fillColor: '#3b82f6',
+            fillOpacity: 0.15,
+            radius: 40
+        }).addTo(map);
+    }
+});
 
-    // Show Image Modal
-    function showImageModal(imageUrl) {
-        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-        document.getElementById('modalImage').src = imageUrl;
+function showImageModal(imageUrl) {
+    const modalElement = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    if (modalElement && modalImage) {
+        modalImage.src = imageUrl;
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
         modal.show();
     }
+}
 
-    // Hapus Foto
-    function hapusFoto(fotoId) {
-        if (!confirm('Yakin ingin menghapus foto ini?')) return;
-        
-        fetch(`/foto/${fotoId}/hapus/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus foto');
-        });
-        
-        document.addEventListener("DOMContentLoaded", function() {
-        // Inisialisasi Peta
-        const mapContainer = document.getElementById('map-detail');
-        if (mapContainer) {
-            // Ambil koordinat
-            const lat = {{ laporan.lokasi.y|stringformat:".6f" }};
-            const lon = {{ laporan.lokasi.x|stringformat:".6f" }};
-
-            const map = L.map('map-detail').setView([lat, lon], 16);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            L.marker([lat, lon]).addTo(map)
-                .bindPopup("<b>Lokasi Laporan #{{ laporan.id }}</b>")
-                .openPopup();
+function hapusFoto(fotoId) {
+    if (!confirm('Yakin ingin menghapus foto ini?')) return;
+    
+    fetch(`/foto/${fotoId}/hapus/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         }
-
-        // Fungsi Modal Gambar (Agar bisa diklik)
-        window.showImageModal = function(imageUrl) {
-            const modalElement = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            if (modalElement && modalImage) {
-                modalImage.src = imageUrl;
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
-            }
-        };
-    }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        } else {
+            alert(data.message || 'Gagal menghapus foto.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menghapus foto');
+    });
+}
 </script>
 {% endblock %}

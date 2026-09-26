@@ -2,85 +2,105 @@
 {% load static %}
 
 {% block content %}
-<div class="container" data-aos="fade-up">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="mb-4 text-center">{{ title }}</h1>
+<div class="max-w-800 mx-auto py-3" data-aos="fade-up">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+            <i class="fas fa-circle-question"></i> PUSAT BANTUAN
+        </span>
+        <h1 class="display-6 fw-bold mb-2">Pertanyaan yang Sering Diajukan (FAQ)</h1>
+        <p class="text-muted small max-w-600 mx-auto">
+            Temukan jawaban cepat seputar tata cara pelaporan jalan rusak, arti status di peta, dan verifikasi data.
+        </p>
+    </div>
 
-            <div class="accordion" id="faqAccordion">
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Bagaimana cara melaporkan jalan rusak?
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Sangat mudah! Pergi ke halaman <a href="{% url 'tambah_laporan' %}">Buat Laporan Baru</a>. Klik lokasi persis di peta tempat Anda menemukan kerusakan. Isi formulir yang muncul (deskripsi, email jika ingin notifikasi, dan upload foto jika ada). Centang kotak reCAPTCHA, lalu klik "Kirim Laporan".
-                        </div>
-                    </div>
+    <!-- Accordion FAQ -->
+    <div class="accordion accordion-custom shadow-sm rounded-4 overflow-hidden mb-5" id="faqAccordion">
+        <!-- Q1 -->
+        <div class="accordion-item border-0 border-bottom border-color bg-card">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fas fa-route text-primary me-2"></i> Bagaimana cara melaporkan jalan rusak?
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small pt-0 pb-3">
+                    Sangat mudah! Buka menu <a href="{% url 'tambah_laporan' %}" class="fw-semibold">Buat Laporan</a>. Klik titik lokasi kerusakan di atas peta (atau gunakan tombol GPS otomatis). Kemudian pilih jenis kerusakan, tingkat keparahan, tambahkan deskripsi dan unggah foto bukti. Setelah itu klik <strong>Kirim Laporan</strong>.
                 </div>
+            </div>
+        </div>
 
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Apa arti status laporan di peta?
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Berikut arti status yang mungkin Anda lihat:
-                            <ul>
-                                <li><strong>Baru:</strong> Laporan baru saja masuk dan sedang menunggu verifikasi oleh admin kami. (Status ini tidak muncul di peta publik).</li>
-                                <li><span class="badge bg-warning text-dark"><i class="fa-solid fa-eye"></i> DIVERIFIKASI</span>: Laporan sudah dicek dan valid. Kerusakan ini masuk dalam antrian untuk diperbaiki. (Titik Oranye di peta).</li>
-                                <li><span class="badge bg-primary"><i class="fa-solid fa-wrench"></i> DIPERBAIKI</span>: Tim terkait sedang dalam proses melakukan perbaikan di lokasi tersebut. (Titik Biru di peta).</li>
-                                <li><strong>Selesai:</strong> Perbaikan telah selesai dilakukan. (Laporan dengan status ini tidak akan muncul lagi di peta utama).</li>
-                            </ul>
-                        </div>
-                    </div>
+        <!-- Q2 -->
+        <div class="accordion-item border-0 border-bottom border-color bg-card">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="fas fa-layer-group text-primary me-2"></i> Apa arti warna dan status laporan di peta?
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small pt-0 pb-3">
+                    Di peta interaktif publik, titik dibedakan menjadi:
+                    <ul class="mt-2 mb-0 ps-3">
+                        <li class="mb-1"><span class="badge-custom badge-status-diverifikasi">Diverifikasi (Oranye)</span>: Laporan sudah dicek keabsahannya oleh tim teknis dan masuk antrean penanganan.</li>
+                        <li class="mb-1"><span class="badge-custom badge-status-diperbaiki">Sedang Dikerjakan (Biru)</span>: Tim lapangan sedang atau telah menjadwalkan pengerjaan perbaikan fisik di lokasi.</li>
+                        <li><span class="badge-custom badge-status-selesai">Selesai (Hijau)</span>: Perbaikan jalan telah rampung dituntaskan.</li>
+                    </ul>
                 </div>
+            </div>
+        </div>
 
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Mengapa laporan saya tidak langsung muncul di peta?
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Setiap laporan yang masuk harus melalui proses verifikasi oleh tim admin terlebih dahulu untuk memastikan keakuratan informasi dan lokasi. Hanya laporan yang berstatus "Diverifikasi" atau "Diperbaiki" yang akan ditampilkan di peta publik.
-                        </div>
-                    </div>
+        <!-- Q3 -->
+        <div class="accordion-item border-0 border-bottom border-color bg-card">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fas fa-clock text-primary me-2"></i> Mengapa laporan saya tidak langsung muncul di peta publik?
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small pt-0 pb-3">
+                    Untuk mencegah laporan palsu, foto tidak pantas, atau duplikasi, setiap laporan baru berstatus <strong>Baru</strong> terlebih dahulu untuk ditinjau oleh administrator. Setelah diverifikasi validitasnya, titik laporan akan otomatis muncul di peta utama.
                 </div>
+            </div>
+        </div>
 
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFour">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                            Apakah saya akan mendapat pemberitahuan jika laporan saya diproses?
-                        </button>
-                    </h2>
-                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Ya, jika Anda memasukkan alamat email Anda (opsional) saat membuat laporan, sistem akan otomatis mengirimkan email pemberitahuan ketika laporan Anda diverifikasi dan ketika perbaikan telah selesai.
-                        </div>
-                    </div>
+        <!-- Q4 -->
+        <div class="accordion-item border-0 border-bottom border-color bg-card">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    <i class="fas fa-user-shield text-primary me-2"></i> Apakah saya wajib membuat akun untuk melapor?
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small pt-0 pb-3">
+                    Tidak wajib. Anda tetap dapat mengirim laporan sebagai tamu (guest). Namun, jika Anda membuat akun, Anda memiliki akses ke <strong>Dashboard Saya</strong> untuk memantau semua laporan terdahulu, menerima pemberitahuan email otomatis, serta mengedit laporan selama belum diverifikasi.
                 </div>
+            </div>
+        </div>
 
-                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFive">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                           Bagaimana jika saya salah menandai lokasi?
-                        </button>
-                    </h2>
-                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Saat ini belum ada fitur untuk mengedit laporan yang sudah dikirim. Jika Anda menyadari kesalahan lokasi setelah mengirim, cara terbaik adalah mengirimkan laporan baru dengan lokasi yang benar dan mungkin menambahkan catatan di deskripsi bahwa ini adalah koreksi dari laporan sebelumnya (jika Anda ingat ID-nya). Anda juga bisa menghubungi kami melalui halaman <a href="{% url 'feedback' %}">Umpan Balik</a>.
-                        </div>
-                    </div>
+        <!-- Q5 -->
+        <div class="accordion-item border-0 bg-card">
+            <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    <i class="fas fa-map-location text-primary me-2"></i> Apakah laporan di luar Kota Batam bisa diterima?
+                </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small pt-0 pb-3">
+                    Sistem dilengkapi dengan batas poligon resmi Kota Batam. Titik koordinat yang berada di luar batas wilayah administratif Batam akan ditolak oleh sistem geospasial secara otomatis.
                 </div>
+            </div>
+        </div>
+    </div>
 
-            </div> </div>
+    <!-- Helpdesk Banner -->
+    <div class="card bg-card-subtle border-0 p-4 text-center">
+        <h5 class="fw-bold mb-2">Masih Memiliki Pertanyaan Lain?</h5>
+        <p class="text-muted small mb-3">Tim kami siap membantu Anda seputar penggunaan sistem informasi geografis ini.</p>
+        <div>
+            <a href="{% url 'feedback' %}" class="btn btn-primary btn-sm px-4">
+                <i class="fas fa-headset me-1"></i> Hubungi Kami / Feedback
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

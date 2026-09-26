@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     # Public pages
-    path('', views.halaman_peta_utama, name='halaman_peta_utama'),
+    path('', views.landing_page, name='landing'),
+    path('peta/', views.halaman_peta_utama, name='halaman_peta_utama'),
     path('lapor/', views.tambah_laporan, name='tambah_laporan'),
     path('api/data-laporan/', views.data_laporan_geojson, name='data_laporan_geojson'),
     path('faq/', views.faq_view, name='faq'),

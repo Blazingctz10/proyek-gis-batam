@@ -1,25 +1,97 @@
 {% extends 'base.html' %}
-{% load static %} {# Load static if you need images specific to this page #}
+{% load static %}
 
 {% block content %}
-<div class="container" data-aos="fade-up">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="mb-4 text-center">{{ title }}</h1>
-            <p class="lead text-center mb-4">LaporJalan Batam adalah sebuah inisiatif berbasis web untuk memudahkan warga Batam dalam melaporkan kerusakan infrastruktur jalan secara cepat dan terpetakan.</p>
+<div class="max-w-900 mx-auto py-3" data-aos="fade-up">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+            <i class="fas fa-info-circle"></i> TENTANG PLATFORM
+        </span>
+        <h1 class="display-6 fw-bold mb-2">Mengenal LaporJalan Batam</h1>
+        <p class="text-muted lead fs-6 max-w-700 mx-auto">
+            Sebuah inisiatif Geographic Information System (WebGIS) modern untuk mempercepat respon perbaikan infrastruktur jalan di Kota Batam melalui partisipasi aktif warga.
+        </p>
+    </div>
 
-            <hr class="my-4">
-
-            <h2 class="h4 mb-3">Tujuan Kami 🎯</h2>
-            <p>Kami bertujuan untuk menjembatani komunikasi antara masyarakat dan pihak terkait (seperti Dinas Bina Marga dan Sumber Daya Air Kota Batam) agar penanganan kerusakan jalan dapat dilakukan lebih efektif dan efisien. Dengan adanya platform ini, diharapkan laporan dapat terkelola dengan baik dan progres perbaikan dapat dipantau.</p>
-
-            <h2 class="h4 mt-4 mb-3">Dibuat Oleh 🧑‍💻</h2>
-            <p>Aplikasi ini dikembangkan oleh ZLRFT sebagai Kegabutan Saya, Proyek Akhir Studi Independen, kontribusi untuk komunitas Batam,dan latihan pengembangan WebGIS</p>
-            <p>Teknologi utama yang digunakan adalah Python (Django/GeoDjango), PostgreSQL/PostGIS, dan Leaflet.js.</p>
-
-            <h2 class="h4 mt-4 mb-3">Hubungi Kami ✉️</h2>
-            <p>Jika Anda memiliki pertanyaan lebih lanjut, saran, atau ingin berkontribusi, jangan ragu untuk menghubungi kami melalui halaman <a href="{% url 'feedback' %}">Umpan Balik</a> atau langsung ke Rafitnamal@gmail.com .</p>
+    <!-- Mission & Vision Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6" data-aos="fade-right">
+            <div class="card p-4 h-100 shadow-sm border-0">
+                <div class="feature-icon-box bg-primary-subtle text-primary mb-3">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Tujuan & Misi Kami</h5>
+                <p class="text-muted small mb-0">
+                    Menjembatani aspirasi masyarakat Batam dengan instansi pemeliharaan jalan (Dinas Bina Marga & Sumber Daya Air). Setiap laporan yang dikirimkan memiliki koordinat presisi dan dokumentasi foto agar tim teknis dapat melakukan survei dan perbaikan secara akurat dan tepat sasaran.
+                </p>
             </div>
+        </div>
+
+        <div class="col-md-6" data-aos="fade-left">
+            <div class="card p-4 h-100 shadow-sm border-0">
+                <div class="feature-icon-box bg-success-subtle text-success mb-3">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Transparansi Data</h5>
+                <p class="text-muted small mb-0">
+                    Kami meyakini bahwa keterbukaan informasi publik adalah kunci pelayanan yang prima. Melalui peta interaktif, warga dapat memantau secara langsung status penanganan jalan rusak dari tahap verifikasi hingga selesai dikerjakan.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tech Stack Showcase -->
+    <div class="card shadow-sm border-0 p-4 p-md-5 mb-5 text-center" data-aos="fade-up">
+        <h5 class="fw-bold mb-3">Arsitektur & Teknologi WebGIS</h5>
+        <p class="text-muted small max-w-700 mx-auto mb-4">
+            Aplikasi ini dibangun menggunakan tumpukan teknologi geospasial handal berstandar enterprise:
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
+                <i class="fab fa-python text-primary fs-4"></i>
+                <div class="text-start">
+                    <strong class="d-block small">Django & GeoDjango</strong>
+                    <small class="text-muted" style="font-size: 0.7rem;">Backend & GIS Engine</small>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
+                <i class="fas fa-database text-info fs-4"></i>
+                <div class="text-start">
+                    <strong class="d-block small">PostgreSQL & PostGIS</strong>
+                    <small class="text-muted" style="font-size: 0.7rem;">Spatial Database</small>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
+                <i class="fas fa-map-marked-alt text-success fs-4"></i>
+                <div class="text-start">
+                    <strong class="d-block small">Leaflet.js</strong>
+                    <small class="text-muted" style="font-size: 0.7rem;">Interactive Mapping</small>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
+                <i class="fab fa-bootstrap text-purple fs-4" style="color: #7952b3;"></i>
+                <div class="text-start">
+                    <strong class="d-block small">Bootstrap 5</strong>
+                    <small class="text-muted" style="font-size: 0.7rem;">Responsive UI System</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Feedback CTA -->
+    <div class="card bg-card-subtle border-0 p-4 text-center" data-aos="fade-up">
+        <h5 class="fw-bold mb-2">Punya Saran atau Pertanyaan?</h5>
+        <p class="text-muted small mb-3">Kritik, saran, dan masukan Anda sangat berharga bagi pengembangan platform ini ke depan.</p>
+        <div>
+            <a href="{% url 'feedback' %}" class="btn btn-primary btn-sm px-4">
+                <i class="fas fa-comment-dots me-1"></i> Kirim Umpan Balik
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

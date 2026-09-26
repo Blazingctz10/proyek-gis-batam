@@ -4,15 +4,23 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file if available
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
+
 # ✅ GUNAKAN ENVIRONMENT VARIABLES UNTUK PRODUCTION
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-u*l7xvm5q8e7ns8@8xi!0d09puyibt@52u$b_u86hoic!tslnn')
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if os.environ.get('DJANGO_ALLOWED_HOSTS') else []
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',') if h.strip()] if not DEBUG else ['*']
 
 # Application definition
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,7 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'pelaporan.middleware.SeparateAdminSessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,19 +98,58 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# GDAL Configuration (Windows)
-OSGEO4W_DIR = r'C:\Users\62813\AppData\Local\Programs\OSGeo4W'
-GDAL_FILE_NAME = 'gdal311.dll'
-GDAL_LIBRARY_PATH = os.path.join(OSGEO4W_DIR, 'bin', GDAL_FILE_NAME)
+# GDAL / GEOS Configuration (Cross-Platform & Resilient)
+if os.name == 'nt':
+    import glob
+    # Daftar lokasi potensial GDAL di Windows (PostgreSQL PostGIS bin, OSGeo4W, dll.)
+    gdal_candidates = [
+        r'C:\Program Files\PostgreSQL\15\bin',
+        r'C:\Program Files\PostgreSQL\16\bin',
+        r'C:\Program Files\PostgreSQL\14\bin',
+        os.environ.get('OSGEO4W_ROOT', '') + r'\bin' if os.environ.get('OSGEO4W_ROOT') else '',
+        r'C:\OSGeo4W\bin',
+        r'C:\OSGeo4W64\bin',
+        os.path.expandvars(r'%LOCALAPPDATA%\Programs\OSGeo4W\bin'),
+        r'C:\Program Files\GDAL',
+    ]
 
-if not os.environ.get('GDAL_LIBRARY_PATH'):
-    os.environ['GDAL_LIBRARY_PATH'] = GDAL_LIBRARY_PATH
-    os.environ['PROJ_LIB'] = os.path.join(OSGEO4W_DIR, 'share', 'proj')
+    selected_bin = None
+    selected_gdal = None
+    selected_geos = None
 
-if not os.environ.get('PATH'):
-    os.environ['PATH'] = os.path.join(OSGEO4W_DIR, 'bin') + ';' + os.environ.get('PATH', '')
-else:
-    os.environ['PATH'] = os.path.join(OSGEO4W_DIR, 'bin') + ';' + os.environ['PATH']
+    for candidate in gdal_candidates:
+        if candidate and os.path.isdir(candidate):
+            dlls = glob.glob(os.path.join(candidate, '*gdal*.dll'))
+            if dlls:
+                selected_bin = candidate
+                selected_gdal = dlls[0]
+                geos = glob.glob(os.path.join(candidate, '*geos_c*.dll'))
+                if geos:
+                    selected_geos = geos[0]
+                break
+
+    if selected_bin:
+        try:
+            os.add_dll_directory(selected_bin)
+        except (AttributeError, OSError):
+            pass
+        os.environ['PATH'] = selected_bin + ';' + os.environ.get('PATH', '')
+        if selected_gdal:
+            GDAL_LIBRARY_PATH = selected_gdal
+        if selected_geos:
+            GEOS_LIBRARY_PATH = selected_geos
+
+        proj_candidates = [
+            r'C:\Program Files\PostgreSQL\15\share\contrib\postgis-3.6\proj',
+            r'C:\Program Files\PostgreSQL\15\share\contrib\postgis-3.5\proj',
+            r'C:\Program Files\PostgreSQL\16\share\contrib\postgis-3.6\proj',
+            r'C:\OSGeo4W\share\proj',
+        ]
+        for p in proj_candidates:
+            if os.path.isdir(p):
+                os.environ['PROJ_LIB'] = p
+                break
+
 
 # reCAPTCHA Configuration
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6Lfr6fgrAAAAAOJOmn7IW024ThUM3R8UB41OzqFv')
@@ -129,7 +176,88 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
 
-# ✅ TAMBAHAN: Login Settings
+# ✅ TAMBAHAN: Login & Session Settings
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'halaman_peta_utama'
+LOGOUT_REDIRECT_URL = 'landing'
+ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
+
+# ✅ JAZZMIN ADMIN UI CONFIGURATION
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin LaporJalan Batam",
+    "site_header": "LaporJalan Batam",
+    "site_brand": "WebGIS Batam",
+    "site_logo_classes": "fas fa-route",
+    "welcome_sign": "Selamat Datang di Panel Kontrol WebGIS Batam",
+    "copyright": "LaporJalan Batam © 2026",
+    "search_model": ["pelaporan.LaporanJalan", "auth.User"],
+    "user_avatar": None,
+    
+    # Top Menu Links
+    "topmenu_links": [
+        {"name": "Beranda Web", "url": "landing", "permissions": ["auth.view_user"]},
+        {"name": "Peta Interaktif", "url": "halaman_peta_utama", "permissions": ["auth.view_user"]},
+        {"name": "Statistik & Analisis", "url": "admin_statistics", "permissions": ["auth.view_user"]},
+    ],
+    
+    # User Menu
+    "usermenu_links": [
+        {"name": "Dashboard Pelapor", "url": "dashboard", "icon": "fas fa-columns"},
+        {"name": "Statistik Admin", "url": "admin_statistics", "icon": "fas fa-chart-line"},
+    ],
+    
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    
+    # Icons untuk menu model di sidebar
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "pelaporan.LaporanJalan": "fas fa-road-barrier",
+        "pelaporan.FotoLaporan": "fas fa-camera",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    
+    "related_modal_active": True,
+    "custom_css": None,
+    "custom_js": None,
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "default_theme_mode": "auto",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

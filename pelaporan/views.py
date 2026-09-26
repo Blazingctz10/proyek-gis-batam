@@ -10,7 +10,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.db.models import Count, Q
+from django.utils import timezone
 from datetime import datetime, timedelta
 
 BASE_DIR = settings.BASE_DIR
@@ -52,16 +54,43 @@ def get_batam_boundary():
 
 # --- VIEWS APLIKASI ---
 
+def landing_page(request):
+    """Halaman Landing Page modern untuk portal WebGIS LaporJalan Batam."""
+    total_laporan = LaporanJalan.objects.count()
+    baru = LaporanJalan.objects.filter(status='BARU').count()
+    diverifikasi = LaporanJalan.objects.filter(status='DIVERIFIKASI').count()
+    diperbaiki = LaporanJalan.objects.filter(status='DIPERBAIKI').count()
+    selesai = LaporanJalan.objects.filter(status='SELESAI').count()
+    
+    # 6 Laporan terbaru yang sudah diverifikasi, sedang dikerjakan, atau selesai
+    laporan_terbaru = (
+        LaporanJalan.objects.all()
+        .prefetch_related('foto_set')
+        .order_by('-tanggal_lapor')[:6]
+    )
+    
+    context = {
+        'title': 'LaporJalan Batam - Portal WebGIS Pelaporan Kerusakan Jalan',
+        'total_laporan': total_laporan,
+        'baru': baru,
+        'diverifikasi': diverifikasi,
+        'diperbaiki': diperbaiki,
+        'selesai': selesai,
+        'sedang_proses': diverifikasi + diperbaiki,
+        'laporan_terbaru': laporan_terbaru,
+    }
+    return render(request, 'pelaporan/landing.html', context)
+
+
 def halaman_peta_utama(request):
-    """Menampilkan halaman peta utama (homepage)."""
-    # ✅ TAMBAHAN: Hitung statistik
+    """Menampilkan halaman peta utama interaktif."""
     total_laporan = LaporanJalan.objects.count()
     diverifikasi = LaporanJalan.objects.filter(status='DIVERIFIKASI').count()
     diperbaiki = LaporanJalan.objects.filter(status='DIPERBAIKI').count()
     selesai = LaporanJalan.objects.filter(status='SELESAI').count()
     
     context = {
-        'title': 'Peta Laporan Jalan Rusak',
+        'title': 'Peta Interaktif Laporan Jalan Rusak',
         'total_laporan': total_laporan,
         'diverifikasi': diverifikasi,
         'diperbaiki': diperbaiki,
@@ -72,18 +101,18 @@ def halaman_peta_utama(request):
 
 def data_laporan_geojson(request):
     """API endpoint untuk mengirim data GeoJSON ke Leaflet."""
-    # ✅ TAMBAHAN: Filter berdasarkan query params
     status_filter = request.GET.get('status', None)
     jenis_filter = request.GET.get('jenis', None)
     tingkat_filter = request.GET.get('tingkat', None)
     
-    laporan_query = LaporanJalan.objects.filter(
-        status__in=['DIVERIFIKASI', 'DIPERBAIKI']
-    )
-    
-    # Terapkan filter jika ada
     if status_filter:
-        laporan_query = laporan_query.filter(status=status_filter)
+        laporan_query = LaporanJalan.objects.filter(status=status_filter)
+    else:
+        laporan_query = LaporanJalan.objects.filter(
+            status__in=['BARU', 'DIVERIFIKASI', 'DIPERBAIKI', 'SELESAI']
+        )
+    
+    # Terapkan filter tambahan jika ada
     if jenis_filter:
         laporan_query = laporan_query.filter(jenis_kerusakan=jenis_filter)
     if tingkat_filter:
@@ -96,8 +125,9 @@ def data_laporan_geojson(request):
             "type": "Feature", 
             "id": laporan.id,
             "properties": {
-                "deskripsi": laporan.deskripsi,
+                "deskripsi": laporan.deskripsi or "Tidak ada deskripsi",
                 "status": laporan.status,
+                "status_display": laporan.get_status_display(),
                 "jenis_kerusakan": laporan.get_jenis_kerusakan_display(),
                 "tingkat_kerusakan": laporan.get_tingkat_kerusakan_display(),
                 "tanggal_lapor": laporan.tanggal_lapor.strftime('%d/%m/%Y %H:%M'),
@@ -292,15 +322,25 @@ def login_view(request):
                 login(request, user)
                 messages.success(request, f'Selamat datang kembali, {user.first_name or user.username}!')
                 
-                # Redirect ke 'next' jika ada, atau ke dashboard
-                next_url = request.GET.get('next', 'dashboard')
-                return redirect(next_url)
+                # Redirect ke 'next' jika ada dan aman, atau ke dashboard
+                next_url = request.POST.get('next') or request.GET.get('next', '')
+                if next_url and url_has_allowed_host_and_scheme(
+                    url=next_url,
+                    allowed_hosts={request.get_host()},
+                    require_https=request.is_secure()
+                ):
+                    return redirect(next_url)
+                return redirect('dashboard')
         else:
             messages.error(request, 'Username atau password salah!')
     else:
         form = LoginForm()
     
-    context = {'form': form, 'title': 'Login'}
+    context = {
+        'form': form,
+        'title': 'Login',
+        'next': request.GET.get('next', ''),
+    }
     return render(request, 'pelaporan/login.html', context)
 
 
@@ -308,7 +348,7 @@ def logout_view(request):
     """Logout user"""
     logout(request)
     messages.info(request, 'Anda telah logout.')
-    return redirect('halaman_peta_utama')
+    return redirect('landing')
 
 
 # ========== DASHBOARD VIEWS ==========
@@ -340,14 +380,26 @@ def dashboard(request):
     return render(request, 'pelaporan/dashboard.html', context)
 
 
-@login_required
 def detail_laporan(request, laporan_id):
-    """Detail laporan milik user"""
-    laporan = get_object_or_404(LaporanJalan, id=laporan_id, user=request.user)
+    """
+    Detail laporan:
+    - Publik (tanpa login) dapat melihat laporan yang sudah diverifikasi, sedang dikerjakan, atau selesai.
+    - Laporan dengan status 'BARU' hanya dapat dilihat oleh pelapor pemilik akun atau staf/admin.
+    """
+    laporan = get_object_or_404(LaporanJalan, id=laporan_id)
+    
+    # Proteksi laporan status 'BARU': hanya pemilik atau staff yang bisa melihat
+    if laporan.status == 'BARU':
+        if not request.user.is_authenticated or (request.user != laporan.user and not request.user.is_staff):
+            messages.warning(request, 'Laporan ini masih dalam tahap review verifikasi dan hanya dapat dilihat oleh pelapor.')
+            return redirect('landing')
+
+    is_owner = request.user.is_authenticated and (request.user == laporan.user or request.user.is_staff)
     
     context = {
         'title': f'Detail Laporan #{laporan.id}',
         'laporan': laporan,
+        'is_owner': is_owner,
     }
     return render(request, 'pelaporan/detail_laporan.html', context)
 
@@ -355,10 +407,15 @@ def detail_laporan(request, laporan_id):
 @login_required
 def edit_laporan(request, laporan_id):
     """Edit laporan (hanya jika status masih BARU)"""
-    laporan = get_object_or_404(LaporanJalan, id=laporan_id, user=request.user)
+    if request.user.is_staff:
+        laporan = get_object_or_404(LaporanJalan, id=laporan_id)
+    else:
+        laporan = get_object_or_404(LaporanJalan, id=laporan_id, user=request.user)
     
     # Cek status - hanya BARU yang bisa diedit
     if laporan.status != 'BARU':
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': 'Laporan yang sudah diverifikasi tidak dapat diedit!'}, status=400)
         messages.error(request, 'Laporan yang sudah diverifikasi tidak dapat diedit!')
         return redirect('detail_laporan', laporan_id=laporan_id)
     
@@ -380,8 +437,23 @@ def edit_laporan(request, laporan_id):
             for f in foto_list[:5]:
                 FotoLaporan.objects.create(laporan=updated_laporan, foto=f)
             
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Laporan berhasil diperbarui!',
+                    'laporan_id': updated_laporan.id
+                })
+            
             messages.success(request, 'Laporan berhasil diperbarui!')
             return redirect('detail_laporan', laporan_id=laporan_id)
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                errors_dict = {field: [e for e in errors] for field, errors in form.errors.items()}
+                return JsonResponse({
+                    'status': 'form_error',
+                    'errors': errors_dict,
+                    'message': 'Harap perbaiki kesalahan pada form.'
+                }, status=400)
     else:
         # Pre-fill koordinat dari lokasi existing
         initial_data = {
@@ -464,7 +536,7 @@ def admin_statistics(request):
     selesai = LaporanJalan.objects.filter(status='SELESAI').count()
     
     # Laporan 7 hari terakhir
-    week_ago = datetime.now() - timedelta(days=7)
+    week_ago = timezone.now() - timedelta(days=7)
     laporan_minggu_ini = LaporanJalan.objects.filter(tanggal_lapor__gte=week_ago).count()
     
     # Laporan per jenis kerusakan
@@ -478,7 +550,7 @@ def admin_statistics(request):
     ).order_by('-total')
     
     # Laporan per bulan (6 bulan terakhir)
-    six_months_ago = datetime.now() - timedelta(days=180)
+    six_months_ago = timezone.now() - timedelta(days=180)
     per_bulan = LaporanJalan.objects.filter(
         tanggal_lapor__gte=six_months_ago
     ).annotate(
@@ -491,6 +563,16 @@ def admin_statistics(request):
     labels_bulan = [item['bulan'].strftime('%b %Y') for item in per_bulan]
     data_bulan = [item['total'] for item in per_bulan]
     
+    # Format per jenis kerusakan
+    jenis_dict = dict(LaporanJalan.JENIS_CHOICES)
+    labels_jenis = [jenis_dict.get(item['jenis_kerusakan'], item['jenis_kerusakan']) for item in per_jenis]
+    data_jenis = [item['total'] for item in per_jenis]
+    
+    # Format per tingkat kerusakan
+    tingkat_dict = dict(LaporanJalan.TINGKAT_CHOICES)
+    labels_tingkat = [tingkat_dict.get(item['tingkat_kerusakan'], item['tingkat_kerusakan']) for item in per_tingkat]
+    data_tingkat = [item['total'] for item in per_tingkat]
+
     # User paling aktif (top 5)
     top_users = LaporanJalan.objects.filter(user__isnull=False).values(
         'user__username', 'user__first_name', 'user__email'
@@ -498,12 +580,9 @@ def admin_statistics(request):
         total=Count('id')
     ).order_by('-total')[:5]
     
-    # Rata-rata waktu penanganan (dari DIVERIFIKASI ke SELESAI)
-    # Ini butuh tracking tanggal per status, untuk sekarang kita skip dulu
-    
     # Laporan dengan foto vs tanpa foto
     dengan_foto = LaporanJalan.objects.filter(foto_set__isnull=False).distinct().count()
-    tanpa_foto = total_laporan - dengan_foto
+    tanpa_foto = max(0, total_laporan - dengan_foto)
     
     context = {
         'title': 'Dashboard Admin - Statistik Laporan',
@@ -512,11 +591,23 @@ def admin_statistics(request):
         'diverifikasi': diverifikasi,
         'diperbaiki': diperbaiki,
         'selesai': selesai,
+        'stats': {
+            'baru': baru,
+            'diverifikasi': diverifikasi,
+            'diperbaiki': diperbaiki,
+            'selesai': selesai,
+        },
         'laporan_minggu_ini': laporan_minggu_ini,
         'per_jenis': per_jenis,
         'per_tingkat': per_tingkat,
         'labels_bulan': json.dumps(labels_bulan),
         'data_bulan': json.dumps(data_bulan),
+        'labels_jenis': json.dumps(labels_jenis),
+        'data_jenis': json.dumps(data_jenis),
+        'labels_tingkat': json.dumps(labels_tingkat),
+        'data_tingkat': json.dumps(data_tingkat),
+        'labels_foto': json.dumps(['Dengan Foto', 'Tanpa Foto']),
+        'data_foto': json.dumps([dengan_foto, tanpa_foto]),
         'top_users': top_users,
         'dengan_foto': dengan_foto,
         'tanpa_foto': tanpa_foto,
@@ -628,30 +719,22 @@ def export_laporan_csv(request):
 @staff_member_required
 def heatmap_data(request):
     """API untuk data heatmap (intensitas kerusakan per area)"""
-    
-    # Ambil semua laporan dengan koordinat
     laporan_list = LaporanJalan.objects.exclude(
         status='SELESAI'
-    ).values('lokasi', 'tingkat_kerusakan')
+    ).exclude(lokasi__isnull=True)
     
-    # Convert ke format heatmap
     heatmap_points = []
     for laporan in laporan_list:
-        if laporan['lokasi']:
-            # Weight berdasarkan tingkat kerusakan
+        if laporan.lokasi:
             weight = 1
-            if laporan['tingkat_kerusakan'] == 'SEDANG':
+            if laporan.tingkat_kerusakan == 'SEDANG':
                 weight = 2
-            elif laporan['tingkat_kerusakan'] == 'BERAT':
+            elif laporan.tingkat_kerusakan == 'BERAT':
                 weight = 3
             
-            # Extract lat/lon dari POINT
-            from django.contrib.gis.geos import GEOSGeometry
-            point = GEOSGeometry(laporan['lokasi'])
-            
             heatmap_points.append({
-                'lat': point.y,
-                'lng': point.x,
+                'lat': laporan.lokasi.y,
+                'lng': laporan.lokasi.x,
                 'weight': weight
             })
     

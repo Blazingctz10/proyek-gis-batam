@@ -1,201 +1,318 @@
 {% load static %}
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Portal WebGIS LaporJalan Batam - Laporkan jalan berlubang, rusak, atau membahayakan di Kota Batam secara presisi berbasis peta geospasial real-time.">
+    <meta name="theme-color" content="#2563eb">
     
-    <title>{{ title }} | LaporJalan Batam</title>
+    <title>{{ title }} | LaporJalan Batam WebGIS</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
+    <!-- Leaflet & Plugins -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     
+    <!-- AOS Animation -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.0">
+    <!-- Custom Design System -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.0">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <div class="container">
-            <a class="navbar-brand me-auto" href="{% url 'halaman_peta_utama' %}">🗺️ LaporJalan Batam</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <!-- Top Modern Glass Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-xl">
+            <!-- Brand -->
+            <a class="navbar-brand" href="{% url 'landing' %}">
+                <div class="navbar-brand-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div>
+                    <span>LaporJalan</span><span class="text-primary">Batam</span>
+                </div>
+                <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle d-none d-sm-inline-flex align-items-center gap-1 ms-1 px-2 py-1" style="font-size: 0.68rem;">
+                    <span class="pulse-indicator pulse-indicator-green"></span> Live GIS
+                </span>
+            </a>
+
+            <!-- Mobile Toggler -->
+            <div class="d-flex align-items-center gap-2 d-lg-none">
+                <button class="theme-switch-btn" id="mobile-theme-toggle" type="button" title="Ganti Mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars fs-5"></i>
+                </button>
+            </div>
+
+            <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
+                <ul class="navbar-nav mx-auto align-items-lg-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'halaman_peta_utama' %}">
-                            <i class="fas fa-map"></i> Lihat Peta
+                        <a class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}" href="{% url 'landing' %}">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'halaman_peta_utama' %}active{% endif %}" href="{% url 'halaman_peta_utama' %}">
+                            <i class="fas fa-map-marked-alt"></i> Peta Interaktif
                         </a>
                     </li>
                     
                     {% if user.is_authenticated %}
-                        <!-- ✅ MENU UNTUK USER YANG SUDAH LOGIN -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard' %}">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                                <i class="fas fa-columns"></i> Dashboard
                             </a>
                         </li>
-                        
                         {% if user.is_staff %}
-                            <!-- ✅ MENU KHUSUS ADMIN/STAFF -->
                             <li class="nav-item">
-                                <a class="nav-link text-warning" href="{% url 'admin_statistics' %}">
-                                    <i class="fas fa-chart-line"></i> Admin Stats
+                                <a class="nav-link text-warning fw-semibold {% if request.resolver_match.url_name == 'admin_statistics' %}active{% endif %}" href="{% url 'admin_statistics' %}">
+                                    <i class="fas fa-chart-pie"></i> Admin Stats
                                 </a>
                             </li>
                         {% endif %}
-                        
-                        <li class="nav-item">
-                            <a class="btn btn-primary btn-sm ms-lg-2 mb-2 mb-lg-0" href="{% url 'tambah_laporan' %}">
-                                <i class="fas fa-plus"></i> Buat Laporan
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle"></i> {{ user.first_name|default:user.username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'faq' %}active{% endif %}" href="{% url 'faq' %}">
+                            <i class="fas fa-circle-question"></i> FAQ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                            <i class="fas fa-info-circle"></i> Tentang
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                    <!-- Desktop Theme Toggle -->
+                    <button class="theme-switch-btn d-none d-lg-inline-flex" id="theme-toggle" type="button" title="Ganti Mode Gelap/Terang">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    {% if user.is_authenticated %}
+                        <!-- User Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle text-primary"></i> {{ user.first_name|default:user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userMenu">
                                 <li>
-                                    <span class="dropdown-item-text">
-                                        <small class="text-muted">Logged in as</small><br>
+                                    <div class="dropdown-item-text">
+                                        <small class="text-muted d-block">Masuk sebagai</small>
                                         <strong>{{ user.username }}</strong>
-                                    </span>
+                                        {% if user.is_staff %}<span class="badge bg-warning-subtle text-warning ms-1">Staff</span>{% endif %}
+                                    </div>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="{% url 'dashboard' %}">
-                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                        <i class="fas fa-columns me-2 text-primary"></i> Dashboard Saya
                                     </a>
                                 </li>
+                                {% if user.is_staff %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'admin_statistics' %}">
+                                            <i class="fas fa-chart-line me-2 text-warning"></i> Statistik Admin
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'laporan_list_admin' %}">
+                                            <i class="fas fa-tasks me-2 text-info"></i> Kelola Laporan
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                        <i class="fas fa-sign-out-alt me-2"></i> Keluar
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </div>
                     {% else %}
-                        <!-- ✅ MENU UNTUK GUEST (BELUM LOGIN) -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                <i class="fas fa-sign-in-alt"></i> Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-outline-light btn-sm ms-lg-2 mb-2 mb-lg-0" href="{% url 'register' %}">
-                                <i class="fas fa-user-plus"></i> Daftar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary btn-sm ms-lg-2" href="{% url 'tambah_laporan' %}">
-                                <i class="fas fa-plus"></i> Buat Laporan
-                            </a>
-                        </li>
+                        <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-sign-in-alt"></i> Masuk
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm">
+                            Daftar
+                        </a>
                     {% endif %}
-                </ul>
+
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus-circle"></i> Buat Laporan
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <main class="container mt-4 mb-5">
-        
-        {% if messages %}
+    <!-- Global Toast / Alert Notifications -->
+    {% if messages %}
+        <div class="container-xl mt-3">
             {% for message in messages %}
-                {% with message_tags=message.tags %}
-                    {% if 'error' in message_tags or 'danger' in message_tags %}{% with alert_class='danger' %}
-                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
-                    {% endwith %}{% elif 'success' in message_tags %}{% with alert_class='success' %}
-                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
-                    {% endwith %}{% elif 'warning' in message_tags %}{% with alert_class='warning' %}
-                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
-                    {% endwith %}{% else %}{% with alert_class='info' %}
-                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show" role="alert" data-aos="fade-down">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
-                    {% endwith %}{% endif %}
-                {% endwith %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show shadow-sm" role="alert" data-aos="fade-down">
+                    <div class="d-flex align-items-center gap-2">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle text-success fs-5"></i>
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="fas fa-exclamation-circle text-danger fs-5"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle text-primary fs-5"></i>
+                        {% endif %}
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             {% endfor %}
-        {% endif %}
-        {% block content %}
-        {% endblock %}
-    </main>
+        </div>
+    {% endif %}
 
-    <footer class="custom-footer text-center p-3">
-        <div class="container">
-            <small>
-                &copy; {% now "Y" %} Proyek WebGIS Batam | 
-                <a href="{% url 'about' %}" class="text-secondary">Tentang</a> | 
-                <a href="{% url 'faq' %}" class="text-secondary">FAQ</a> |
-                <a href="{% url 'feedback' %}" class="text-secondary">Umpan Balik</a>
-            </small>
+    <!-- Main Content Slot -->
+    {% block full_content %}
+        <main class="container-xl my-4 flex-grow-1">
+            {% block content %}{% endblock %}
+        </main>
+    {% endblock %}
+
+    <!-- Modern Multi-Column Footer -->
+    <footer class="footer-custom pt-5 pb-4 mt-auto">
+        <div class="container-xl">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="navbar-brand-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">LaporJalan <span class="text-primary">Batam</span></h5>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Inisiatif sistem informasi geografis partisipatif untuk pemantauan, pelaporan, dan verifikasi perbaikan infrastruktur jalan di seluruh wilayah Kota Batam.
+                    </p>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+                            <i class="fas fa-layer-group"></i> GeoDjango + PostGIS
+                        </span>
+                        <span class="badge rounded-pill bg-info-subtle text-info border border-info-subtle">
+                            <i class="fas fa-map"></i> Leaflet.js
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="fw-bold mb-3">Navigasi</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a href="{% url 'landing' %}" class="footer-link">Beranda</a></li>
+                        <li><a href="{% url 'halaman_peta_utama' %}" class="footer-link">Peta Kerusakan</a></li>
+                        <li><a href="{% url 'tambah_laporan' %}" class="footer-link">Laporkan Jalan</a></li>
+                        <li><a href="{% url 'dashboard' %}" class="footer-link">Dashboard Warga</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="fw-bold mb-3">Dukungan</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a href="{% url 'faq' %}" class="footer-link">Pusat Bantuan / FAQ</a></li>
+                        <li><a href="{% url 'feedback' %}" class="footer-link">Kirim Umpan Balik</a></li>
+                        <li><a href="{% url 'about' %}" class="footer-link">Tentang Platform</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="card p-3 bg-card-subtle border-0">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-bullhorn text-primary me-2"></i>Menemukan Jalan Rusak?</h6>
+                        <p class="small text-muted mb-3">Ambil foto dan tentukan titik lokasi kerusakan di peta sekarang. Tanpa perlu proses yang rumit.</p>
+                        <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-camera"></i> Buat Laporan Baru
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 border-secondary opacity-25">
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-muted">
+                <div>
+                    &copy; {% now "Y" %} <strong>LaporJalan Batam</strong>. Hak cipta dilindungi.
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'about' %}" class="footer-link">Inisiatif Terbuka</a>
+                    <span>•</span>
+                    <a href="{% url 'feedback' %}" class="footer-link">Kontak & Saran</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Image Modal for enlargement -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title" id="imageModalLabel">Detail Foto Laporan</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-                <div class="modal-body text-center"><img id="modalImage" src="" class="img-fluid" alt="Foto Laporan Diperbesar"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header"> <h5 class="modal-title" id="notificationModalLabel">Informasi</h5>
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" id="imageModalLabel">Dokumentasi Foto Laporan</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="notificationModalBody"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <div class="modal-body text-center p-4">
+                    <img id="modalImage" src="" class="img-fluid rounded-3 shadow" alt="Foto Laporan Diperbesar">
                 </div>
             </div>
         </div>
     </div>
 
-    <button id="floating-theme-toggle" class="btn btn-secondary btn-sm floating-theme-btn" title="Ganti Mode">
-        <i class="fa-solid fa-moon"></i>
-    </button>
-
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-    {% block scripts %}{% endblock %}
-
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script> AOS.init({ duration: 600, once: true }); </script>
-
+    
     <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const toggleButton = document.getElementById('floating-theme-toggle'); 
-        const moonIcon = 'fa-moon'; const sunIcon = 'fa-sun';
-        if (!toggleButton) { console.error('Tombol mode gelap (id="floating-theme-toggle") tidak ditemukan.'); return; }
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                toggleButton.innerHTML = `<i class="fa-solid ${sunIcon}"></i>`;
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                toggleButton.innerHTML = `<i class="fa-solid ${moonIcon}"></i>`;
-                localStorage.setItem('theme', 'light');
+        // Init AOS Animations
+        AOS.init({ duration: 600, once: true });
+
+        // Theme Switcher Engine
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtns = [
+                document.getElementById('theme-toggle'),
+                document.getElementById('mobile-theme-toggle')
+            ].filter(Boolean);
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                toggleBtns.forEach(btn => {
+                    btn.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun text-warning"></i>' : '<i class="fa-solid fa-moon"></i>';
+                });
             }
-        }
-        const currentTheme = localStorage.getItem('theme');
-        applyTheme(currentTheme); 
-        toggleButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            let storedTheme = localStorage.getItem('theme');
-            if (storedTheme === 'dark') { applyTheme('light'); } else { applyTheme('dark'); }
+
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            setTheme(savedTheme);
+
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+                });
+            });
         });
-    });
     </script>
+    
+    {% block scripts %}{% endblock %}
 </body>
 </html>

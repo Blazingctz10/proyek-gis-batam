@@ -1,30 +1,167 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-    <div class="text-center mb-4" data-aos="fade-down">
-        <h1 class="display-6">{{ title }}</h1>
-        <p class="lead">Lihat lokasi jalan rusak yang telah diverifikasi oleh petugas.</p>
-    </div>
-    
-    <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" class="mt-4 mb-4" data-aos="fade-up" data-aos-delay="200"></div>
+{% block full_content %}
+<div class="container-xl py-4">
+    <!-- Header Page -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4" data-aos="fade-down">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
+                    <i class="fas fa-layer-group"></i> WebGIS Monitor
+                </span>
+                <span class="text-muted small">Kota Batam, Kepulauan Riau</span>
+            </div>
+            <h1 class="h3 fw-bold mb-1">Peta Sebaran Kerusakan Jalan</h1>
+            <p class="text-muted small mb-0">Pantau sebaran titik kerusakan jalan aktif yang telah diverifikasi dan sedang dalam pengerjaan teknis.</p>
+        </div>
 
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Detail Foto Laporan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm shadow-sm">
+                <i class="fas fa-plus-circle"></i> Laporkan Jalan Baru
+            </a>
+            <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-home"></i> Beranda
+            </a>
+        </div>
+    </div>
+
+    <!-- Live Stats Pill Strip -->
+    <div class="row g-3 mb-4" data-aos="fade-up">
+        <div class="col-6 col-md-3">
+            <div class="card p-3 h-100 card-hover border-start border-primary border-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">TOTAL LAPORAN</small>
+                        <h4 class="mb-0 fw-bold text-primary">{{ total_laporan|default:0 }}</h4>
+                    </div>
+                    <div class="feature-icon-box bg-primary-subtle text-primary mb-0" style="width: 42px; height: 42px;">
+                        <i class="fas fa-database fs-6"></i>
+                    </div>
                 </div>
-                <div class="modal-body text-center">
-                    <img id="modalImage" src="" class="img-fluid" alt="Foto Laporan Diperbesar">
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 h-100 card-hover border-start border-warning border-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">DIVERIFIKASI</small>
+                        <h4 class="mb-0 fw-bold text-warning">{{ diverifikasi|default:0 }}</h4>
+                    </div>
+                    <div class="feature-icon-box bg-warning-subtle text-warning mb-0" style="width: 42px; height: 42px;">
+                        <i class="fas fa-clock fs-6"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 h-100 card-hover border-start border-info border-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SEDANG DIKERJAKAN</small>
+                        <h4 class="mb-0 fw-bold text-info">{{ diperbaiki|default:0 }}</h4>
+                    </div>
+                    <div class="feature-icon-box bg-info-subtle text-info mb-0" style="width: 42px; height: 42px;">
+                        <i class="fas fa-person-digging fs-6"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card p-3 h-100 card-hover border-start border-success border-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SELESAI</small>
+                        <h4 class="mb-0 fw-bold text-success">{{ selesai|default:0 }}</h4>
+                    </div>
+                    <div class="feature-icon-box bg-success-subtle text-success mb-0" style="width: 42px; height: 42px;">
+                        <i class="fas fa-check-double fs-6"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modern Filter Toolbar -->
+    <div class="card mb-3 p-3 shadow-sm border-0" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-auto fw-bold text-secondary d-flex align-items-center gap-2">
+                <i class="fas fa-filter text-primary"></i>
+                <span class="small text-uppercase tracking-wider">Filter Data:</span>
+            </div>
+            
+            <div class="col-12 col-sm-6 col-md-3">
+                <select id="filter-status" class="form-select form-select-sm">
+                    <option value="">Semua Status Aktif</option>
+                    <option value="BARU">Menunggu Inspeksi Surveyor (Baru)</option>
+                    <option value="DIVERIFIKASI">Terverifikasi Surveyor</option>
+                    <option value="DIPERBAIKI">Pengerjaan Fisik Sedang Berjalan</option>
+                    <option value="SELESAI">Perbaikan Telah Tuntas Diverifikasi</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <select id="filter-jenis" class="form-select form-select-sm">
+                    <option value="">Semua Jenis Kerusakan</option>
+                    <option value="LUBANG">Jalan Berlubang</option>
+                    <option value="RETAK">Jalan Retak</option>
+                    <option value="AMBLAS">Jalan Amblas</option>
+                    <option value="RUSAK_PARAH">Rusak Parah</option>
+                    <option value="LAINNYA">Lainnya</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-2">
+                <select id="filter-tingkat" class="form-select form-select-sm">
+                    <option value="">Semua Tingkat</option>
+                    <option value="RINGAN">Ringan</option>
+                    <option value="SEDANG">Sedang</option>
+                    <option value="BERAT">Berat</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-auto ms-auto d-flex gap-2">
+                <button id="btn-reset-filter" class="btn btn-secondary btn-sm" title="Kembalikan semua filter ke awal">
+                    <i class="fas fa-rotate-left"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container with Floating Reference Legend -->
+    <div class="position-relative map-showcase-wrapper" data-aos="fade-up" data-aos-delay="150" style="border-radius: var(--radius-xl);">
+        <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" style="height: 640px; width: 100%;"></div>
+
+        <!-- Floating Status Legend (Bottom-Left matching reference) -->
+        <div class="map-floating-legend">
+            <div class="map-floating-legend-title">STATUS PENANGANAN TITIK:</div>
+            <ul class="map-floating-legend-list">
+                <li class="map-floating-legend-item">
+                    <span class="legend-pin-dot dot-red"></span>
+                    <span>Menunggu Inspeksi Surveyor</span>
+                </li>
+                <li class="map-floating-legend-item">
+                    <span class="legend-pin-dot dot-amber"></span>
+                    <span>Pengerjaan Fisik Sedang Berjalan</span>
+                </li>
+                <li class="map-floating-legend-item">
+                    <span class="legend-pin-dot dot-green"></span>
+                    <span>Perbaikan Telah Tuntas Diverifikasi</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Floating CTA Button (Bottom-Right) -->
+        <a href="{% url 'tambah_laporan' %}" class="map-floating-cta-btn">
+            <i class="fas fa-plus-circle"></i> Tambah Laporan Baru
+        </a>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/peta_utama.js' %}"></script>
+    <script src="{% static 'js/peta_utama.js' %}?v=4.0"></script>
 {% endblock %}
