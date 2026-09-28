@@ -34,7 +34,7 @@
 <body>
     <!-- Top Modern Glass Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-        <div class="container-xl">
+        <div class="container-fluid px-3 px-md-4 px-xl-5">
             <!-- Brand -->
             <a class="navbar-brand" href="{% url 'landing' %}">
                 <div class="navbar-brand-icon">
@@ -60,7 +60,7 @@
 
             <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto align-items-lg-center">
+                <ul class="navbar-nav mx-auto align-items-lg-center gap-lg-1 gap-xl-2">
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %}" href="{% url 'landing' %}">
                             <i class="fas fa-home"></i> Beranda
@@ -89,7 +89,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'faq' %}active{% endif %}" href="{% url 'faq' %}">
-                            <i class="fas fa-circle-question"></i> FAQ
+                            <i class="fas fa-question-circle"></i> FAQ
                         </a>
                     </li>
                     <li class="nav-item">
@@ -100,7 +100,7 @@
                 </ul>
 
                 <!-- Right Side Actions (Adaptive for Mobile) -->
-                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-lg-center gap-2 mt-3 mt-lg-0 w-100 w-lg-auto">
+                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-lg-center gap-2 mt-3 mt-lg-0 w-100 w-lg-auto ms-lg-auto">
                     <!-- Desktop Theme Toggle -->
                     <button class="theme-switch-btn d-none d-lg-inline-flex" id="theme-toggle" type="button" title="Ganti Mode Gelap/Terang">
                         <i class="fa-solid fa-moon"></i>
