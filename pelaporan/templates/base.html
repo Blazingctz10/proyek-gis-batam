@@ -99,8 +99,8 @@
                     </li>
                 </ul>
 
-                <!-- Right Side Actions -->
-                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                <!-- Right Side Actions (Adaptive for Mobile) -->
+                <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-lg-center gap-2 mt-3 mt-lg-0 w-100 w-lg-auto">
                     <!-- Desktop Theme Toggle -->
                     <button class="theme-switch-btn d-none d-lg-inline-flex" id="theme-toggle" type="button" title="Ganti Mode Gelap/Terang">
                         <i class="fa-solid fa-moon"></i>
@@ -108,8 +108,8 @@
 
                     {% if user.is_authenticated %}
                         <!-- User Dropdown -->
-                        <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="dropdown flex-grow-1 flex-lg-grow-0">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle w-100 w-lg-auto" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle text-primary"></i> {{ user.first_name|default:user.username }}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userMenu">
@@ -147,15 +147,17 @@
                             </ul>
                         </div>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-sign-in-alt"></i> Masuk
-                        </a>
-                        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm">
-                            Daftar
-                        </a>
+                        <div class="d-flex gap-2 flex-grow-1 flex-lg-grow-0">
+                            <a href="{% url 'login' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-lg-grow-0">
+                                <i class="fas fa-sign-in-alt"></i> Masuk
+                            </a>
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm flex-grow-1 flex-lg-grow-0">
+                                Daftar
+                            </a>
+                        </div>
                     {% endif %}
 
-                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm">
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm flex-grow-1 flex-lg-grow-0">
                         <i class="fas fa-plus-circle"></i> Buat Laporan
                     </a>
                 </div>

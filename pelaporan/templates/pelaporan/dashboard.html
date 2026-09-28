@@ -24,32 +24,33 @@
     </div>
 
     <!-- Statistik Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-lg col-md-4 col-6">
+    <!-- Statistik Cards (Balanced Grid on Mobile) -->
+    <div class="row g-2 g-md-3 mb-4">
+        <div class="col-12 col-md-4 col-lg">
             <div class="card p-3 text-center h-100 card-hover border-start border-primary border-4">
                 <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">TOTAL LAPORAN</small>
                 <h3 class="fw-extrabold text-primary mb-0 mt-1">{{ total }}</h3>
             </div>
         </div>
-        <div class="col-lg col-md-4 col-6">
+        <div class="col-6 col-md-4 col-lg">
             <div class="card p-3 text-center h-100 card-hover border-start border-secondary border-4">
                 <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">BARU DIAJUKAN</small>
                 <h3 class="fw-extrabold text-secondary mb-0 mt-1">{{ baru }}</h3>
             </div>
         </div>
-        <div class="col-lg col-md-4 col-6">
+        <div class="col-6 col-md-4 col-lg">
             <div class="card p-3 text-center h-100 card-hover border-start border-warning border-4">
                 <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">DIVERIFIKASI</small>
                 <h3 class="fw-extrabold text-warning mb-0 mt-1">{{ diverifikasi }}</h3>
             </div>
         </div>
-        <div class="col-lg col-md-4 col-6">
+        <div class="col-6 col-md-4 col-lg">
             <div class="card p-3 text-center h-100 card-hover border-start border-info border-4">
                 <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SEDANG DIKERJAKAN</small>
                 <h3 class="fw-extrabold text-info mb-0 mt-1">{{ diperbaiki }}</h3>
             </div>
         </div>
-        <div class="col-lg col-md-4 col-6">
+        <div class="col-6 col-md-4 col-lg">
             <div class="card p-3 text-center h-100 card-hover border-start border-success border-4">
                 <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SELESAI</small>
                 <h3 class="fw-extrabold text-success mb-0 mt-1">{{ selesai }}</h3>
@@ -65,7 +66,71 @@
         </div>
         <div class="card-body p-0">
             {% if laporan_list %}
-                <div class="table-responsive">
+                <!-- Mobile Card List (Screen < md) -->
+                <div class="d-md-none p-3 d-flex flex-column gap-3">
+                    {% for laporan in laporan_list %}
+                    <div class="report-mobile-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-primary">#{{ laporan.id }}</span>
+                            <small class="text-muted"><i class="far fa-clock me-1"></i>{{ laporan.tanggal_lapor|date:"d M Y, H:i" }}</small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <h6 class="fw-bold mb-1 text-main">{{ laporan.get_jenis_kerusakan_display }}</h6>
+                            <p class="text-muted small mb-0">{{ laporan.deskripsi|truncatechars:65 }}</p>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                            {% if laporan.status == 'BARU' %}
+                                <span class="badge-custom badge-status-baru"><i class="fas fa-clock"></i> Baru</span>
+                            {% elif laporan.status == 'DIVERIFIKASI' %}
+                                <span class="badge-custom badge-status-diverifikasi"><i class="fas fa-eye"></i> Diverifikasi</span>
+                            {% elif laporan.status == 'DIPERBAIKI' %}
+                                <span class="badge-custom badge-status-diperbaiki"><i class="fas fa-person-digging"></i> Dikerjakan</span>
+                            {% elif laporan.status == 'SELESAI' %}
+                                <span class="badge-custom badge-status-selesai"><i class="fas fa-check-circle"></i> Selesai</span>
+                            {% else %}
+                                <span class="badge-custom badge-status-ditolak">{{ laporan.get_status_display }}</span>
+                            {% endif %}
+
+                            {% if laporan.tingkat_kerusakan == 'BERAT' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 small">
+                                    <i class="fas fa-triangle-exclamation"></i> {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 small">
+                                    {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
+                                    {{ laporan.get_tingkat_kerusakan_display }}
+                                </span>
+                            {% endif %}
+
+                            {% if laporan.foto_set.count > 0 %}
+                                <span class="badge bg-secondary-subtle text-secondary small"><i class="fas fa-image me-1"></i>{{ laporan.foto_set.count }} Foto</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary btn-sm flex-grow-1">
+                                <i class="fas fa-eye me-1"></i> Rincian & Peta
+                            </a>
+                            {% if laporan.status == 'BARU' %}
+                                <a href="{% url 'edit_laporan' laporan.id %}" class="btn btn-outline-primary btn-sm px-3" title="Ubah Data">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'hapus_laporan' laporan.id %}" class="btn btn-outline-danger btn-sm px-3" title="Hapus Laporan">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Desktop Table View (Screen >= md) -->
+                <div class="table-responsive d-none d-md-block">
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>

@@ -119,9 +119,14 @@
             <!-- Map Container with Leaflet -->
             <div id="landing-preview-map" style="height: 520px; width: 100%;"></div>
 
-            <!-- Floating Status Legend (Bottom-Left matching reference) -->
-            <div class="map-floating-legend">
-                <div class="map-floating-legend-title">STATUS PENANGANAN TITIK:</div>
+            <!-- Floating Status Legend (Bottom-Left matching reference with mobile collapse) -->
+            <div class="map-floating-legend" id="landingLegend">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="map-floating-legend-title mb-0">STATUS TITIK:</div>
+                    <button type="button" class="legend-toggle-btn d-md-none" onclick="document.getElementById('landingLegend').classList.toggle('is-collapsed')" title="Toggle Legenda">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
                 <ul class="map-floating-legend-list">
                     <li class="map-floating-legend-item">
                         <span class="legend-pin-dot dot-red"></span>

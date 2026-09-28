@@ -14,24 +14,24 @@
             </div>
             <h1 class="h3 fw-bold mb-0">Rincian & Status Penanganan</h1>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 w-100 w-md-auto">
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
                     <i class="fas fa-arrow-left"></i> Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm">
+                <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
                     <i class="fas fa-arrow-left"></i> Beranda
                 </a>
             {% endif %}
-            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm">
+            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm flex-grow-1 flex-md-grow-0">
                 <i class="fas fa-map"></i> Lihat di Peta
             </a>
         </div>
     </div>
 
     <!-- Progress Status Stepper -->
-    <div class="card shadow-sm border-0 mb-4 p-4">
+    <div class="card shadow-sm border-0 mb-4 p-3 p-md-4">
         <h6 class="fw-bold mb-3 text-secondary text-uppercase small tracking-wider">Tahapan Status Penanganan</h6>
         <div class="row g-3 text-center">
             <!-- Step 1: Baru -->
@@ -211,12 +211,12 @@
 
         <!-- Kolom Peta & Kontrol -->
         <div class="col-lg-5">
-            <div class="card shadow-sm border-0 sticky-top" style="top: 80px;">
+            <div class="card shadow-sm border-0 sticky-md-top" style="top: 80px;">
                 <div class="card-header py-3">
                     <h5 class="mb-0 fw-bold"><i class="fas fa-map-location-dot text-primary me-2"></i>Titik Koordinat</h5>
                 </div>
                 <div class="card-body p-0">
-                    <div id="map" style="height: 380px; border-radius: 0;"></div>
+                    <div id="map" style="height: 380px; min-height: 280px; border-radius: 0;"></div>
                 </div>
                 
                 <div class="card-footer p-3">

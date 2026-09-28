@@ -1171,6 +1171,7 @@ input[type="file"]::file-selector-button:hover {
    17. ENHANCED REPORTING FORM (STEPPER & QUICK CHIPS)
    -------------------------------------------------------------------------- */
 /* Stepper Navigation */
+/* Stepper Navigation */
 .stepper-horizontal {
     display: flex;
     align-items: center;
@@ -1181,6 +1182,7 @@ input[type="file"]::file-selector-button:hover {
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
     margin-bottom: 1.5rem;
+    gap: 8px;
 }
 
 .stepper-step {
@@ -1199,21 +1201,24 @@ input[type="file"]::file-selector-button:hover {
     opacity: 1;
 }
 
+.step-circle,
 .stepper-circle {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: var(--bg-card-subtle);
     border: 2px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: var(--text-muted);
     transition: all 0.25s ease;
+    flex-shrink: 0;
 }
 
+.stepper-step.active .step-circle,
 .stepper-step.active .stepper-circle {
     background: var(--primary);
     border-color: var(--primary);
@@ -1221,22 +1226,32 @@ input[type="file"]::file-selector-button:hover {
     box-shadow: 0 0 0 4px var(--primary-subtle);
 }
 
+.stepper-step.completed .step-circle,
+.stepper-step.completed .stepper-circle {
+    background: var(--success);
+    border-color: var(--success);
+    color: #ffffff;
+    box-shadow: 0 0 0 4px var(--success-subtle);
+}
+
 .stepper-step.completed,
 .stepper-step.active {
     cursor: pointer;
 }
 
+.step-label,
 .stepper-label {
     font-size: 0.82rem;
     font-weight: 700;
     color: var(--text-main);
+    line-height: 1.25;
 }
 
 .stepper-connector {
     flex: 1;
     height: 2px;
     background: var(--border-color);
-    margin: 0 14px;
+    margin: 0 10px;
     transition: background-color 0.3s ease;
 }
 
@@ -1309,9 +1324,10 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .quick-tag-chip {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 600;
-    padding: 4px 10px;
+    padding: 6px 12px;
+    min-height: 32px;
     border-radius: 50px;
     background: var(--bg-card-subtle);
     color: var(--text-secondary);
@@ -1321,7 +1337,8 @@ input[type="file"]::file-selector-button:hover {
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .quick-tag-chip:hover {
@@ -1339,10 +1356,17 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* Photo Upload Dropzone & Previews */
+.upload-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
 .upload-preview-item {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 2px solid var(--border-color);
@@ -1359,18 +1383,19 @@ input[type="file"]::file-selector-button:hover {
     position: absolute;
     top: 4px;
     right: 4px;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: rgba(220, 38, 38, 0.9);
+    background: rgba(220, 38, 38, 0.95);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px;
     cursor: pointer;
     border: none;
     transition: transform 0.15s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .upload-preview-remove:hover {
@@ -1378,56 +1403,212 @@ input[type="file"]::file-selector-button:hover {
     background: #dc2626;
 }
 
+/* Legend Toggle Pill on Mobile */
+.legend-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.legend-toggle-btn:hover {
+    color: var(--primary);
+    background: var(--primary-subtle);
+}
+
+.map-floating-legend.is-collapsed .map-floating-legend-list {
+    display: none !important;
+}
+
+/* Mobile Report Card (Used in dashboard & admin list for mobile views) */
+.report-mobile-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.15rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+}
+
+.report-mobile-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
 /* --------------------------------------------------------------------------
-   18. RESPONSIVE OPTIMIZATIONS
+   18. COMPREHENSIVE RESPONSIVE DESIGN SYSTEM
    -------------------------------------------------------------------------- */
 @media (max-width: 991.98px) {
+    /* Navbar Mobile Sheet */
+    .navbar-collapse {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .nav-link {
+        padding: 0.65rem 1rem !important;
+        margin-bottom: 3px;
+        font-size: 0.95rem;
+        width: 100%;
+        border-radius: var(--radius-md);
+    }
+    
     .hero-wrapper {
         padding: 3rem 0 2rem;
     }
-    #map {
-        height: 60vh !important;
-        min-height: 420px !important;
+    
+    #map, #landing-preview-map {
+        height: 55vh !important;
+        min-height: 390px !important;
+        max-height: 540px !important;
     }
+    
     .stepper-horizontal {
         padding: 0.75rem 1rem;
     }
-    .stepper-label {
-        font-size: 0.72rem;
+}
+
+@media (max-width: 767.98px) {
+    /* Prevent iOS auto-zoom on input focus */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="search"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Touch target ergonomics */
+    .btn {
+        min-height: 40px;
+    }
+    
+    .btn-lg {
+        min-height: 48px;
+    }
+    
+    /* Map controls positioning to prevent overlapping */
+    .map-floating-legend {
+        bottom: 64px !important;
+        left: 12px !important;
+        max-width: calc(100% - 24px) !important;
+        padding: 8px 12px !important;
+        z-index: 998;
+    }
+    
+    .map-floating-cta-btn {
+        bottom: 12px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 9px 16px !important;
+        font-size: 0.78rem !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.35) !important;
+        z-index: 999;
+    }
+    
+    /* Chart container responsiveness */
+    .chart-container-responsive {
+        height: 250px !important;
     }
 }
 
 @media (max-width: 575.98px) {
-    .btn-lg {
-        width: 100%;
+    /* Stepper horizontal stays compact and clean on phones */
+    .stepper-horizontal {
+        padding: 0.6rem 0.85rem;
+        gap: 6px;
     }
-    .hero-title {
-        font-size: 2rem;
+    
+    .step-circle,
+    .stepper-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
     }
-    .map-floating-legend {
-        bottom: 12px;
-        left: 12px;
-        padding: 8px 12px;
-        max-width: 210px;
+    
+    .stepper-step {
+        gap: 6px;
     }
-    .map-floating-legend-title {
-        font-size: 0.6rem;
+    
+    .stepper-connector {
+        margin: 0 6px;
+        height: 2px;
     }
-    .map-floating-legend-item {
-        font-size: 0.68rem;
-    }
-    .map-floating-cta-btn {
-        bottom: 12px;
-        right: 12px;
-        padding: 7px 13px;
+    
+    .step-label,
+    .stepper-label {
         font-size: 0.72rem;
     }
-    .stepper-horizontal {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    .stepper-connector {
+    
+    /* On narrow screens, show full text on active step, compact circle on others */
+    .stepper-step:not(.active) .step-label,
+    .stepper-step:not(.active) .stepper-label {
         display: none;
+    }
+    
+    .stepper-step.active .step-label,
+    .stepper-step.active .stepper-label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.76rem;
+    }
+    
+    /* Wizard Navigation Buttons stack vertically on mobile */
+    .wizard-nav-btns {
+        flex-direction: column-reverse !important;
+        gap: 8px !important;
+        width: 100%;
+    }
+    
+    .wizard-nav-btns .btn {
+        width: 100% !important;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+    }
+    
+    .hero-title {
+        font-size: 1.85rem !important;
+    }
+    
+    .feature-icon-box {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .card {
+        border-radius: var(--radius-md) !important;
+    }
+    
+    .card-body,
+    .card-header,
+    .card-footer {
+        padding: 1rem 1.15rem !important;
+    }
+    
+    /* Legend smaller font on small phones */
+    .map-floating-legend-title {
+        font-size: 0.6rem !important;
+    }
+    
+    .map-floating-legend-item {
+        font-size: 0.67rem !important;
     }
 }

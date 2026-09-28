@@ -77,7 +77,7 @@
                                 <i class="fas fa-hand-point-up me-1 text-primary"></i> Silakan klik langsung pada jalan di peta untuk menempatkan pin lokasi.
                             </div>
                         </div>
-                        <div class="col-md-5 d-flex justify-content-md-end align-items-center gap-2">
+                        <div class="col-md-5 d-flex flex-wrap justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
                                 Lat: <span id="lat-display" class="fw-bold">-</span>
                             </span>
@@ -93,12 +93,12 @@
             </div>
 
             <!-- Navigasi Langkah 1 -->
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="wizard-nav-btns d-flex justify-content-between align-items-center">
                 <a href="{% url 'landing' %}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i> Batal / Beranda
                 </a>
                 <button type="button" class="btn btn-primary btn-lg shadow-sm" id="btn-goto-step-2" disabled>
-                    <span>Lanjut ke Langkah 2: Rincian Kerusakan</span> <i class="fas fa-arrow-right ms-2"></i>
+                    <span>Lanjut ke Langkah 2</span><span class="d-none d-sm-inline">: Rincian Kerusakan</span> <i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </div>
         </div>
@@ -227,12 +227,12 @@
             </div>
 
             <!-- Navigasi Langkah 2 -->
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="wizard-nav-btns d-flex justify-content-between align-items-center">
                 <button type="button" class="btn btn-secondary btn-back-to-step-1">
                     <i class="fas fa-arrow-left me-1"></i> Kembali ke Peta
                 </button>
                 <button type="button" class="btn btn-primary btn-lg shadow-sm" id="btn-goto-step-3">
-                    <span>Lanjut ke Langkah 3: Bukti Foto</span> <i class="fas fa-arrow-right ms-2"></i>
+                    <span>Lanjut ke Langkah 3</span><span class="d-none d-sm-inline">: Bukti Foto</span> <i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </div>
         </div>
@@ -258,7 +258,7 @@
                             <small class="text-muted" style="font-size: 0.75rem;">Format: JPG, PNG, WEBP. Maksimal 5MB per file.</small>
                             
                             <!-- Preview Container -->
-                            <div id="foto-preview-container" class="mt-3 d-flex flex-wrap gap-2"></div>
+                            <div id="foto-preview-container" class="upload-preview-grid"></div>
                         </div>
 
                         <!-- Captcha -->

@@ -16,26 +16,26 @@
             <p class="text-muted small mb-0">Pantau sebaran titik kerusakan jalan aktif yang telah diverifikasi dan sedang dalam pengerjaan teknis.</p>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-            <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm shadow-sm">
+        <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+            <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm shadow-sm flex-grow-1 flex-md-grow-0">
                 <i class="fas fa-plus-circle"></i> Laporkan Jalan Baru
             </a>
-            <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm">
+            <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
                 <i class="fas fa-home"></i> Beranda
             </a>
         </div>
     </div>
 
     <!-- Live Stats Pill Strip -->
-    <div class="row g-3 mb-4" data-aos="fade-up">
+    <div class="row g-2 g-md-3 mb-4" data-aos="fade-up">
         <div class="col-6 col-md-3">
-            <div class="card p-3 h-100 card-hover border-start border-primary border-4">
+            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-primary border-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">TOTAL LAPORAN</small>
-                        <h4 class="mb-0 fw-bold text-primary">{{ total_laporan|default:0 }}</h4>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">TOTAL LAPORAN</small>
+                        <h4 class="mb-0 fw-bold text-primary fs-5 fs-sm-4">{{ total_laporan|default:0 }}</h4>
                     </div>
-                    <div class="feature-icon-box bg-primary-subtle text-primary mb-0" style="width: 42px; height: 42px;">
+                    <div class="feature-icon-box bg-primary-subtle text-primary mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
                         <i class="fas fa-database fs-6"></i>
                     </div>
                 </div>
@@ -43,13 +43,13 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card p-3 h-100 card-hover border-start border-warning border-4">
+            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-warning border-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">DIVERIFIKASI</small>
-                        <h4 class="mb-0 fw-bold text-warning">{{ diverifikasi|default:0 }}</h4>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIVERIFIKASI</small>
+                        <h4 class="mb-0 fw-bold text-warning fs-5 fs-sm-4">{{ diverifikasi|default:0 }}</h4>
                     </div>
-                    <div class="feature-icon-box bg-warning-subtle text-warning mb-0" style="width: 42px; height: 42px;">
+                    <div class="feature-icon-box bg-warning-subtle text-warning mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
                         <i class="fas fa-clock fs-6"></i>
                     </div>
                 </div>
@@ -57,13 +57,13 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card p-3 h-100 card-hover border-start border-info border-4">
+            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-info border-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SEDANG DIKERJAKAN</small>
-                        <h4 class="mb-0 fw-bold text-info">{{ diperbaiki|default:0 }}</h4>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIKERJAKAN</small>
+                        <h4 class="mb-0 fw-bold text-info fs-5 fs-sm-4">{{ diperbaiki|default:0 }}</h4>
                     </div>
-                    <div class="feature-icon-box bg-info-subtle text-info mb-0" style="width: 42px; height: 42px;">
+                    <div class="feature-icon-box bg-info-subtle text-info mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
                         <i class="fas fa-person-digging fs-6"></i>
                     </div>
                 </div>
@@ -71,13 +71,13 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <div class="card p-3 h-100 card-hover border-start border-success border-4">
+            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-success border-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.72rem;">SELESAI</small>
-                        <h4 class="mb-0 fw-bold text-success">{{ selesai|default:0 }}</h4>
+                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">SELESAI</small>
+                        <h4 class="mb-0 fw-bold text-success fs-5 fs-sm-4">{{ selesai|default:0 }}</h4>
                     </div>
-                    <div class="feature-icon-box bg-success-subtle text-success mb-0" style="width: 42px; height: 42px;">
+                    <div class="feature-icon-box bg-success-subtle text-success mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
                         <i class="fas fa-check-double fs-6"></i>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
             </div>
 
             <div class="col-12 col-sm-6 col-md-auto ms-auto d-flex gap-2">
-                <button id="btn-reset-filter" class="btn btn-secondary btn-sm" title="Kembalikan semua filter ke awal">
+                <button id="btn-reset-filter" class="btn btn-secondary btn-sm w-100 w-sm-auto" title="Kembalikan semua filter ke awal">
                     <i class="fas fa-rotate-left"></i> Reset
                 </button>
             </div>
@@ -135,9 +135,14 @@
     <div class="position-relative map-showcase-wrapper" data-aos="fade-up" data-aos-delay="150" style="border-radius: var(--radius-xl);">
         <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" style="height: 640px; width: 100%;"></div>
 
-        <!-- Floating Status Legend (Bottom-Left matching reference) -->
-        <div class="map-floating-legend">
-            <div class="map-floating-legend-title">STATUS PENANGANAN TITIK:</div>
+        <!-- Floating Status Legend (Bottom-Left matching reference with mobile collapse) -->
+        <div class="map-floating-legend" id="petaMainLegend">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="map-floating-legend-title mb-0">STATUS TITIK:</div>
+                <button type="button" class="legend-toggle-btn d-md-none" onclick="document.getElementById('petaMainLegend').classList.toggle('is-collapsed')" title="Toggle Legenda">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
             <ul class="map-floating-legend-list">
                 <li class="map-floating-legend-item">
                     <span class="legend-pin-dot dot-red"></span>
