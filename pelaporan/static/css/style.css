@@ -57,42 +57,42 @@
 }
 
 [data-theme="dark"] {
-    /* --- DARK MODE PALETTE --- */
-    --bg-body: #0b0f19;
-    --bg-card: #131c2e;
-    --bg-card-subtle: #1e293b;
-    --bg-glass: rgba(19, 28, 46, 0.9);
-    --border-color: #243048;
-    --border-glass: rgba(36, 48, 72, 0.8);
+    /* --- PURE DARK (OLED OBSIDIAN) PALETTE WITH CYBER WEBGIS ACCENTS --- */
+    --bg-body: #030712;         /* Pure pitch dark (OLED deep black) */
+    --bg-card: #080d1a;         /* Ultra-deep sleek obsidian card */
+    --bg-card-subtle: #0f172a;  /* Elevated slate dark surface */
+    --bg-glass: rgba(3, 7, 18, 0.88); /* Deep dark frosted glass */
+    --border-color: #172033;     /* Subtle cyber slate border */
+    --border-glass: rgba(56, 189, 248, 0.14); /* Glowing cyber cyan border */
     
     --text-main: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
     
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --primary-light: #93c5fd;
-    --primary-subtle: rgba(59, 130, 246, 0.18);
-    --primary-glow: rgba(59, 130, 246, 0.4);
+    --primary: #38bdf8;         /* Electric Cyan / Batam GIS Maritime Accent */
+    --primary-dark: #0284c7;
+    --primary-light: #7dd3fc;
+    --primary-subtle: rgba(56, 189, 248, 0.14);
+    --primary-glow: rgba(56, 189, 248, 0.4);
     
     --success: #10b981;
-    --success-subtle: rgba(16, 185, 129, 0.18);
+    --success-subtle: rgba(16, 185, 129, 0.16);
     --warning: #f59e0b;
-    --warning-subtle: rgba(245, 158, 11, 0.18);
+    --warning-subtle: rgba(245, 158, 11, 0.16);
     --danger: #ef4444;
-    --danger-subtle: rgba(239, 68, 68, 0.18);
+    --danger-subtle: rgba(239, 68, 68, 0.16);
     --info: #38bdf8;
-    --info-subtle: rgba(56, 189, 248, 0.18);
+    --info-subtle: rgba(56, 189, 248, 0.16);
     
-    --input-bg: #1a2438;
+    --input-bg: #050913;
     --input-text: #f8fafc;
-    --input-border: #2d3b55;
-    --table-hover: rgba(255, 255, 255, 0.04);
+    --input-border: #1e293b;
+    --table-hover: rgba(56, 189, 248, 0.05);
     
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
-    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6);
-    --shadow-xl: 0 20px 35px -10px rgba(0,0,0,0.7);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.85);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.9), 0 0 0 1px rgba(56, 189, 248, 0.08);
+    --shadow-lg: 0 10px 28px rgba(0,0,0,0.92), 0 0 20px rgba(56, 189, 248, 0.1);
+    --shadow-xl: 0 20px 40px rgba(0,0,0,0.96), 0 0 32px rgba(37, 99, 235, 0.16);
 }
 
 /* --------------------------------------------------------------------------
@@ -617,7 +617,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 [data-theme="dark"] select.form-select option {
-    background-color: #1e293b !important;
+    background-color: #080d1a !important;
     color: #f8fafc !important;
 }
 
@@ -827,8 +827,13 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* --------------------------------------------------------------------------
-   14. COMPREHENSIVE DARK/LIGHT MODE CONTRAST OVERRIDES
+   14. COMPREHENSIVE DARK/LIGHT MODE CONTRAST OVERRIDES & WEBGIS ACCENTS
    -------------------------------------------------------------------------- */
+[data-theme="dark"] body {
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
+}
+
 [data-theme="dark"] .text-dark,
 [data-theme="dark"] .text-body {
     color: var(--text-main) !important;
@@ -836,6 +841,46 @@ input[type="file"]::file-selector-button:hover {
 
 [data-theme="dark"] .text-secondary {
     color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Pure Dark Navbar with Cyber Accent Line */
+[data-theme="dark"] .navbar-custom {
+    background: rgba(3, 7, 18, 0.88) !important;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.16) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(56, 189, 248, 0.08) !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+    color: #38bdf8 !important;
+    background-color: rgba(56, 189, 248, 0.12) !important;
+}
+
+/* Ambient Hero Gradient for WebGIS Theme */
+[data-theme="dark"] .hero-wrapper {
+    background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(37, 99, 235, 0.22) 0%, transparent 65%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
+                var(--bg-body) !important;
+}
+
+/* Pure Dark Surface Cards & Neon Hover */
+[data-theme="dark"] .card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .card-hover:hover {
+    border-color: rgba(56, 189, 248, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95), 0 0 20px rgba(56, 189, 248, 0.14) !important;
 }
 
 [data-theme="dark"] .bg-light,
@@ -856,43 +901,127 @@ input[type="file"]::file-selector-button:hover {
     border-color: var(--border-color) !important;
 }
 
-[data-theme="dark"] .modal-content {
-    background-color: var(--bg-card) !important;
+/* Dropdown Menu Glass in Pure Dark */
+[data-theme="dark"] .dropdown-menu {
+    background-color: #080d1a !important;
+    border: 1px solid rgba(56, 189, 248, 0.2) !important;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(56, 189, 248, 0.1) !important;
     color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
 }
 
-/* Bootstrap Subtle Badges & Containers in Dark Mode */
+[data-theme="dark"] .dropdown-item {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+    background-color: rgba(56, 189, 248, 0.12) !important;
+    color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .dropdown-divider {
+    border-color: rgba(56, 189, 248, 0.12) !important;
+}
+
+/* Modals */
+[data-theme="dark"] .modal-content {
+    background-color: #080d1a !important;
+    color: var(--text-main) !important;
+    border: 1px solid rgba(56, 189, 248, 0.22) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(56, 189, 248, 0.12) !important;
+}
+
+/* Pure Dark Tables */
+[data-theme="dark"] .table thead th {
+    background-color: #050811 !important;
+    color: #94a3b8 !important;
+    border-bottom: 2px solid rgba(56, 189, 248, 0.16) !important;
+}
+
+[data-theme="dark"] .table tbody td {
+    background-color: #080d1a !important;
+    color: #f8fafc !important;
+    border-bottom: 1px solid #141c2c !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover td {
+    background-color: rgba(56, 189, 248, 0.06) !important;
+}
+
+/* Form inputs cyber focus */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border-color: var(--input-border) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Buttons in Dark Mode */
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, #0369a1, #1d4ed8) !important;
+    box-shadow: 0 6px 22px rgba(56, 189, 248, 0.45) !important;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background-color: #0c1322 !important;
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background-color: #152035 !important;
+    border-color: rgba(56, 189, 248, 0.3) !important;
+    color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .footer-custom {
+    background: #02050b !important;
+    border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
+}
+
+/* Subtle Badges in Dark Mode */
 [data-theme="dark"] .bg-primary-subtle {
-    background-color: rgba(59, 130, 246, 0.16) !important;
-    color: #93c5fd !important;
+    background-color: rgba(56, 189, 248, 0.12) !important;
+    color: #38bdf8 !important;
 }
 [data-theme="dark"] .bg-warning-subtle {
-    background-color: rgba(245, 158, 11, 0.18) !important;
-    color: #fcd34d !important;
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #fbbf24 !important;
 }
 [data-theme="dark"] .bg-info-subtle {
-    background-color: rgba(56, 189, 248, 0.16) !important;
+    background-color: rgba(56, 189, 248, 0.14) !important;
     color: #7dd3fc !important;
 }
 [data-theme="dark"] .bg-success-subtle {
-    background-color: rgba(16, 185, 129, 0.16) !important;
-    color: #6ee7b7 !important;
+    background-color: rgba(16, 185, 129, 0.14) !important;
+    color: #34d399 !important;
 }
 [data-theme="dark"] .bg-danger-subtle {
-    background-color: rgba(239, 68, 68, 0.16) !important;
-    color: #fca5a5 !important;
+    background-color: rgba(239, 68, 68, 0.14) !important;
+    color: #f87171 !important;
 }
 [data-theme="dark"] .bg-secondary-subtle {
-    background-color: rgba(148, 163, 184, 0.16) !important;
+    background-color: rgba(148, 163, 184, 0.12) !important;
     color: #cbd5e1 !important;
 }
 
-[data-theme="dark"] .border-primary-subtle { border-color: rgba(59, 130, 246, 0.35) !important; }
-[data-theme="dark"] .border-warning-subtle { border-color: rgba(245, 158, 11, 0.35) !important; }
-[data-theme="dark"] .border-info-subtle { border-color: rgba(56, 189, 248, 0.35) !important; }
-[data-theme="dark"] .border-success-subtle { border-color: rgba(16, 185, 129, 0.35) !important; }
-[data-theme="dark"] .border-danger-subtle { border-color: rgba(239, 68, 68, 0.35) !important; }
+[data-theme="dark"] .border-primary-subtle { border-color: rgba(56, 189, 248, 0.3) !important; }
+[data-theme="dark"] .border-warning-subtle { border-color: rgba(245, 158, 11, 0.3) !important; }
+[data-theme="dark"] .border-info-subtle { border-color: rgba(56, 189, 248, 0.3) !important; }
+[data-theme="dark"] .border-success-subtle { border-color: rgba(16, 185, 129, 0.3) !important; }
+[data-theme="dark"] .border-danger-subtle { border-color: rgba(239, 68, 68, 0.3) !important; }
 
 /* Light Mode Subtle Badges */
 [data-theme="light"] .bg-primary-subtle { background-color: #eff6ff !important; color: #1d4ed8 !important; }
@@ -904,9 +1033,10 @@ input[type="file"]::file-selector-button:hover {
 
 /* SweetAlert2 Dark Mode */
 [data-theme="dark"] .swal2-popup {
-    background: #131c2e !important;
+    background: #080d1a !important;
     color: #f8fafc !important;
-    border: 1px solid #243048 !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(56, 189, 248, 0.15) !important;
 }
 [data-theme="dark"] .swal2-title,
 [data-theme="dark"] .swal2-html-container {
