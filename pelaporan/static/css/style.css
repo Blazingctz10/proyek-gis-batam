@@ -7,43 +7,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 /* --------------------------------------------------------------------------
-   1. DESIGN TOKENS & CSS VARIABLES
+   1. DESIGN TOKENS & CSS VARIABLES (ROADWORK & TRAFFIC INFRASTRUCTURE THEME)
    -------------------------------------------------------------------------- */
 :root {
     /* --- TYPOGRAPHY --- */
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-    /* --- LIGHT MODE PALETTE --- */
+    /* --- LIGHT MODE PALETTE: ROADWORKS & SAFETY INFRASTRUCTURE --- */
     --bg-body: #f8fafc;
     --bg-card: #ffffff;
     --bg-card-subtle: #f1f5f9;
-    --bg-glass: rgba(255, 255, 255, 0.9);
+    --bg-glass: rgba(255, 255, 255, 0.92);
     --border-color: #e2e8f0;
-    --border-glass: rgba(226, 232, 240, 0.8);
+    --border-glass: rgba(226, 232, 240, 0.85);
     
     --text-main: #0f172a;
     --text-secondary: #334155;
     --text-muted: #64748b;
     
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #60a5fa;
-    --primary-subtle: #eff6ff;
-    --primary-glow: rgba(37, 99, 235, 0.25);
+    /* Roadwork Safety Orange & Warning Amber */
+    --primary: #ea580c;           /* Safety Construction Orange */
+    --primary-dark: #c2410c;      /* Deep Heavy Roadwork Orange */
+    --primary-light: #f97316;     /* Bright Traffic Safety Orange */
+    --primary-subtle: #fff7ed;    /* Warm Road Sand Cream */
+    --primary-glow: rgba(234, 88, 12, 0.28);
     
     --success: #059669;
     --success-subtle: #ecfdf5;
-    --warning: #d97706;
+    --warning: #d97706;           /* Highway Amber Caution */
     --warning-subtle: #fffbeb;
     --danger: #dc2626;
-    --danger-subtle: #fef2f2;
-    --info: #0284c7;
-    --info-subtle: #f0f9ff;
+    --info: #d97706;              /* Highway Roadwork Amber */
+    --info-subtle: #fffbeb;
     
     --input-bg: #ffffff;
     --input-text: #0f172a;
     --input-border: #cbd5e1;
-    --table-hover: rgba(241, 245, 249, 0.7);
+    --table-hover: rgba(255, 247, 237, 0.65);
     
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
@@ -57,42 +57,42 @@
 }
 
 [data-theme="dark"] {
-    /* --- PURE DARK (OLED OBSIDIAN) PALETTE WITH CYBER WEBGIS ACCENTS --- */
-    --bg-body: #030712;         /* Pure pitch dark (OLED deep black) */
-    --bg-card: #080d1a;         /* Ultra-deep sleek obsidian card */
-    --bg-card-subtle: #0f172a;  /* Elevated slate dark surface */
-    --bg-glass: rgba(3, 7, 18, 0.88); /* Deep dark frosted glass */
-    --border-color: #172033;     /* Subtle cyber slate border */
-    --border-glass: rgba(56, 189, 248, 0.14); /* Glowing cyber cyan border */
+    /* --- DARK ASPHALT (SLATE ROAD PAVEMENT) WITH SAFETY REFLECTIVE ACCENTS --- */
+    --bg-body: #0b0f19;         /* Midnight Pavement / Deep Asphalt */
+    --bg-card: #111827;         /* Pavement Slate Surface */
+    --bg-card-subtle: #1e293b;  /* Elevated Road Base Surface */
+    --bg-glass: rgba(11, 15, 25, 0.92); /* Wet Asphalt Glass */
+    --border-color: #273549;     /* Asphalt Joint Border */
+    --border-glass: rgba(249, 115, 22, 0.2); /* Reflective Safety Orange Glow Border */
     
     --text-main: #f8fafc;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     
-    --primary: #38bdf8;         /* Electric Cyan / Batam GIS Maritime Accent */
-    --primary-dark: #0284c7;
-    --primary-light: #7dd3fc;
-    --primary-subtle: rgba(56, 189, 248, 0.14);
-    --primary-glow: rgba(56, 189, 248, 0.4);
+    --primary: #f97316;         /* Reflective Safety Roadwork Orange */
+    --primary-dark: #ea580c;
+    --primary-light: #fb923c;
+    --primary-subtle: rgba(249, 115, 22, 0.16);
+    --primary-glow: rgba(249, 115, 22, 0.38);
     
     --success: #10b981;
     --success-subtle: rgba(16, 185, 129, 0.16);
-    --warning: #f59e0b;
+    --warning: #f59e0b;         /* Caution Road Hazard Amber */
     --warning-subtle: rgba(245, 158, 11, 0.16);
     --danger: #ef4444;
     --danger-subtle: rgba(239, 68, 68, 0.16);
-    --info: #38bdf8;
-    --info-subtle: rgba(56, 189, 248, 0.16);
+    --info: #fbbf24;
+    --info-subtle: rgba(245, 158, 11, 0.16);
     
-    --input-bg: #050913;
+    --input-bg: #0f172a;
     --input-text: #f8fafc;
-    --input-border: #1e293b;
-    --table-hover: rgba(56, 189, 248, 0.05);
+    --input-border: #334155;
+    --table-hover: rgba(249, 115, 22, 0.08);
     
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.85);
-    --shadow-md: 0 4px 14px rgba(0,0,0,0.9), 0 0 0 1px rgba(56, 189, 248, 0.08);
-    --shadow-lg: 0 10px 28px rgba(0,0,0,0.92), 0 0 20px rgba(56, 189, 248, 0.1);
-    --shadow-xl: 0 20px 40px rgba(0,0,0,0.96), 0 0 32px rgba(37, 99, 235, 0.16);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.8);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.85), 0 0 0 1px rgba(249, 115, 22, 0.08);
+    --shadow-lg: 0 10px 28px rgba(0,0,0,0.9), 0 0 20px rgba(249, 115, 22, 0.1);
+    --shadow-xl: 0 20px 40px rgba(0,0,0,0.95), 0 0 32px rgba(234, 88, 12, 0.18);
 }
 
 /* --------------------------------------------------------------------------
@@ -167,14 +167,14 @@ a:hover {
 .navbar-brand-icon {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    font-size: 1.05rem;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
 }
 
 .nav-link {
@@ -283,7 +283,7 @@ a:hover {
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px var(--primary-glow);
-    background: linear-gradient(135deg, var(--primary-dark), #172554) !important;
+    background: linear-gradient(135deg, var(--primary-dark), #9a3412) !important;
     color: #ffffff !important;
 }
 
@@ -328,31 +328,37 @@ a:hover {
 .badge-status-baru {
     background-color: var(--primary-subtle) !important;
     color: var(--primary) !important;
-    border: 1px solid rgba(37, 99, 235, 0.3);
+    border: 1px solid rgba(234, 88, 12, 0.3);
 }
 
 .badge-status-diverifikasi {
     background-color: var(--warning-subtle) !important;
     color: var(--warning) !important;
-    border: 1px solid rgba(217, 119, 6, 0.3);
+    border: 1px solid rgba(217, 119, 6, 0.35);
 }
 
 .badge-status-diperbaiki {
-    background-color: var(--info-subtle) !important;
-    color: var(--info) !important;
-    border: 1px solid rgba(2, 132, 199, 0.3);
+    background-color: var(--primary-subtle) !important;
+    color: var(--primary-dark) !important;
+    border: 1px solid rgba(234, 88, 12, 0.4);
+}
+
+[data-theme="dark"] .badge-status-diperbaiki {
+    background-color: rgba(249, 115, 22, 0.16) !important;
+    color: #fb923c !important;
+    border-color: rgba(249, 115, 22, 0.35);
 }
 
 .badge-status-selesai {
     background-color: var(--success-subtle) !important;
     color: var(--success) !important;
-    border: 1px solid rgba(5, 150, 105, 0.3);
+    border: 1px solid rgba(5, 150, 105, 0.35);
 }
 
 .badge-status-ditolak {
     background-color: var(--danger-subtle) !important;
     color: var(--danger) !important;
-    border: 1px solid rgba(220, 38, 38, 0.3);
+    border: 1px solid rgba(220, 38, 38, 0.35);
 }
 
 /* --------------------------------------------------------------------------
@@ -388,14 +394,14 @@ a:hover {
 }
 
 /* --------------------------------------------------------------------------
-   8. HERO SECTION (LANDING PAGE)
+   8. HERO SECTION (LANDING PAGE - ROADWORK & INFRASTRUCTURE THEME)
    -------------------------------------------------------------------------- */
 .hero-wrapper {
     position: relative;
     padding: 4.5rem 0 3.5rem;
     overflow: hidden;
-    background: radial-gradient(at 0% 0%, rgba(37,99,235,0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6,182,212,0.08) 0px, transparent 50%);
+    background: radial-gradient(at 0% 0%, rgba(234,88,12,0.08) 0px, transparent 55%),
+                radial-gradient(at 100% 100%, rgba(245,158,11,0.08) 0px, transparent 55%);
 }
 
 .hero-title {
@@ -407,13 +413,13 @@ a:hover {
 }
 
 .hero-title-gradient {
-    background: linear-gradient(135deg, #1e40af 0%, #2563eb 40%, #06b6d4 100%);
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 45%, #d97706 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 [data-theme="dark"] .hero-title-gradient {
-    background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #2dd4bf 100%);
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 45%, #fbbf24 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -562,7 +568,10 @@ a:hover {
     color: var(--input-text) !important;
     border: 1px solid var(--input-border) !important;
     border-radius: var(--radius-md) !important;
-    padding: 0.65rem 1rem !important;
+    padding-top: 0.65rem !important;
+    padding-bottom: 0.65rem !important;
+    padding-right: 1rem !important;
+    padding-left: 1rem;
     font-size: 0.95rem;
     transition: all 0.2s ease;
 }
@@ -570,6 +579,32 @@ a:hover {
 .form-control:focus, .form-select:focus {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 4px var(--primary-glow) !important;
+}
+
+/* Fix search inputs with leading icon (prevent overlap in Screenshot 1) */
+.form-control.ps-5,
+.input-icon-box > .form-control,
+.has-search-icon .form-control,
+.position-relative > .form-control.ps-5 {
+    padding-left: 2.85rem !important;
+}
+
+.input-icon-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-icon-box > i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    pointer-events: none;
+    color: var(--text-muted);
+    font-size: 0.95rem;
 }
 
 .form-label {
@@ -756,22 +791,32 @@ input[type="file"]::file-selector-button:hover {
     color: #fbbf24;
 }
 
-/* Active Step - DIPERBAIKI (Sky Blue) */
+/* Active Step - DIPERBAIKI (Roadwork Safety Orange) */
 .stepper-item.active.active-info {
-    border-color: #0284c7;
-    background: var(--info-subtle);
-    box-shadow: 0 0 14px rgba(2, 132, 199, 0.25);
+    border-color: #ea580c;
+    background: #fff7ed;
+    box-shadow: 0 0 14px rgba(234, 88, 12, 0.28);
 }
 .stepper-item.active.active-info .stepper-icon-box {
-    background: #0284c7;
+    background: #ea580c;
     color: #ffffff;
-    border-color: #0284c7;
+    border-color: #ea580c;
 }
 .stepper-item.active.active-info .stepper-title {
-    color: #0284c7;
+    color: #c2410c;
+}
+[data-theme="dark"] .stepper-item.active.active-info {
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.16);
+    box-shadow: 0 0 14px rgba(249, 115, 22, 0.3);
+}
+[data-theme="dark"] .stepper-item.active.active-info .stepper-icon-box {
+    background: #f97316;
+    color: #ffffff;
+    border-color: #f97316;
 }
 [data-theme="dark"] .stepper-item.active.active-info .stepper-title {
-    color: #38bdf8;
+    color: #fb923c;
 }
 
 /* Active Step - SELESAI (Emerald Green) */
@@ -847,11 +892,11 @@ input[type="file"]::file-selector-button:hover {
     color: var(--text-muted) !important;
 }
 
-/* Pure Dark Navbar with Cyber Accent Line */
+/* Pure Dark Asphalt Navbar with Safety Reflective Line */
 [data-theme="dark"] .navbar-custom {
-    background: rgba(3, 7, 18, 0.88) !important;
-    border-bottom: 1px solid rgba(56, 189, 248, 0.16) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(56, 189, 248, 0.08) !important;
+    background: rgba(11, 15, 25, 0.92) !important;
+    border-bottom: 1px solid rgba(249, 115, 22, 0.18) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(249, 115, 22, 0.08) !important;
 }
 
 [data-theme="dark"] .nav-link {
@@ -860,18 +905,18 @@ input[type="file"]::file-selector-button:hover {
 
 [data-theme="dark"] .nav-link:hover,
 [data-theme="dark"] .nav-link.active {
-    color: #38bdf8 !important;
-    background-color: rgba(56, 189, 248, 0.12) !important;
+    color: #f97316 !important;
+    background-color: rgba(249, 115, 22, 0.14) !important;
 }
 
-/* Ambient Hero Gradient for WebGIS Theme */
+/* Ambient Hero Gradient for Roadwork Theme */
 [data-theme="dark"] .hero-wrapper {
-    background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(37, 99, 235, 0.22) 0%, transparent 65%),
-                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
+    background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(234, 88, 12, 0.2) 0%, transparent 65%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
                 var(--bg-body) !important;
 }
 
-/* Pure Dark Surface Cards & Neon Hover */
+/* Dark Asphalt Surface Cards & Safety Hover */
 [data-theme="dark"] .card {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
@@ -879,8 +924,8 @@ input[type="file"]::file-selector-button:hover {
 }
 
 [data-theme="dark"] .card-hover:hover {
-    border-color: rgba(56, 189, 248, 0.45) !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95), 0 0 20px rgba(56, 189, 248, 0.14) !important;
+    border-color: rgba(249, 115, 22, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95), 0 0 20px rgba(249, 115, 22, 0.15) !important;
 }
 
 [data-theme="dark"] .bg-light,
@@ -901,11 +946,11 @@ input[type="file"]::file-selector-button:hover {
     border-color: var(--border-color) !important;
 }
 
-/* Dropdown Menu Glass in Pure Dark */
+/* Dropdown Menu Glass in Dark Asphalt */
 [data-theme="dark"] .dropdown-menu {
-    background-color: #080d1a !important;
-    border: 1px solid rgba(56, 189, 248, 0.2) !important;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(56, 189, 248, 0.1) !important;
+    background-color: #111827 !important;
+    border: 1px solid rgba(249, 115, 22, 0.22) !important;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(249, 115, 22, 0.1) !important;
     color: var(--text-main) !important;
 }
 
@@ -915,40 +960,40 @@ input[type="file"]::file-selector-button:hover {
 
 [data-theme="dark"] .dropdown-item:hover,
 [data-theme="dark"] .dropdown-item:focus {
-    background-color: rgba(56, 189, 248, 0.12) !important;
-    color: #38bdf8 !important;
+    background-color: rgba(249, 115, 22, 0.14) !important;
+    color: #f97316 !important;
 }
 
 [data-theme="dark"] .dropdown-divider {
-    border-color: rgba(56, 189, 248, 0.12) !important;
+    border-color: rgba(249, 115, 22, 0.14) !important;
 }
 
 /* Modals */
 [data-theme="dark"] .modal-content {
-    background-color: #080d1a !important;
+    background-color: #111827 !important;
     color: var(--text-main) !important;
-    border: 1px solid rgba(56, 189, 248, 0.22) !important;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(56, 189, 248, 0.12) !important;
+    border: 1px solid rgba(249, 115, 22, 0.25) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(249, 115, 22, 0.12) !important;
 }
 
-/* Pure Dark Tables */
+/* Asphalt Dark Tables */
 [data-theme="dark"] .table thead th {
-    background-color: #050811 !important;
+    background-color: #0b0f19 !important;
     color: #94a3b8 !important;
-    border-bottom: 2px solid rgba(56, 189, 248, 0.16) !important;
+    border-bottom: 2px solid rgba(249, 115, 22, 0.2) !important;
 }
 
 [data-theme="dark"] .table tbody td {
-    background-color: #080d1a !important;
+    background-color: #111827 !important;
     color: #f8fafc !important;
-    border-bottom: 1px solid #141c2c !important;
+    border-bottom: 1px solid #1e293b !important;
 }
 
 [data-theme="dark"] .table-hover tbody tr:hover td {
-    background-color: rgba(56, 189, 248, 0.06) !important;
+    background-color: rgba(249, 115, 22, 0.08) !important;
 }
 
-/* Form inputs cyber focus */
+/* Form inputs roadwork focus */
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select {
     background-color: var(--input-bg) !important;
@@ -958,51 +1003,51 @@ input[type="file"]::file-selector-button:hover {
 
 [data-theme="dark"] .form-control:focus,
 [data-theme="dark"] .form-select:focus {
-    border-color: #38bdf8 !important;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.28) !important;
 }
 
 /* Buttons in Dark Mode */
 [data-theme="dark"] .btn-primary {
-    background: linear-gradient(135deg, #0284c7, #2563eb) !important;
-    border: 1px solid rgba(56, 189, 248, 0.3) !important;
-    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3) !important;
+    background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+    border: 1px solid rgba(249, 115, 22, 0.35) !important;
+    box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35) !important;
 }
 
 [data-theme="dark"] .btn-primary:hover {
-    background: linear-gradient(135deg, #0369a1, #1d4ed8) !important;
-    box-shadow: 0 6px 22px rgba(56, 189, 248, 0.45) !important;
+    background: linear-gradient(135deg, #f97316, #ea580c) !important;
+    box-shadow: 0 6px 22px rgba(249, 115, 22, 0.5) !important;
 }
 
 [data-theme="dark"] .btn-secondary {
-    background-color: #0c1322 !important;
-    border-color: #1e293b !important;
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
     color: #f8fafc !important;
 }
 
 [data-theme="dark"] .btn-secondary:hover {
-    background-color: #152035 !important;
-    border-color: rgba(56, 189, 248, 0.3) !important;
-    color: #38bdf8 !important;
+    background-color: #273549 !important;
+    border-color: rgba(249, 115, 22, 0.35) !important;
+    color: #f97316 !important;
 }
 
 [data-theme="dark"] .footer-custom {
-    background: #02050b !important;
-    border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
+    background: #070a12 !important;
+    border-top: 1px solid rgba(249, 115, 22, 0.15) !important;
 }
 
 /* Subtle Badges in Dark Mode */
 [data-theme="dark"] .bg-primary-subtle {
-    background-color: rgba(56, 189, 248, 0.12) !important;
-    color: #38bdf8 !important;
+    background-color: rgba(249, 115, 22, 0.16) !important;
+    color: #fb923c !important;
 }
 [data-theme="dark"] .bg-warning-subtle {
     background-color: rgba(245, 158, 11, 0.15) !important;
     color: #fbbf24 !important;
 }
 [data-theme="dark"] .bg-info-subtle {
-    background-color: rgba(56, 189, 248, 0.14) !important;
-    color: #7dd3fc !important;
+    background-color: rgba(234, 88, 12, 0.14) !important;
+    color: #fdba74 !important;
 }
 [data-theme="dark"] .bg-success-subtle {
     background-color: rgba(16, 185, 129, 0.14) !important;
@@ -1017,26 +1062,26 @@ input[type="file"]::file-selector-button:hover {
     color: #cbd5e1 !important;
 }
 
-[data-theme="dark"] .border-primary-subtle { border-color: rgba(56, 189, 248, 0.3) !important; }
+[data-theme="dark"] .border-primary-subtle { border-color: rgba(249, 115, 22, 0.35) !important; }
 [data-theme="dark"] .border-warning-subtle { border-color: rgba(245, 158, 11, 0.3) !important; }
 [data-theme="dark"] .border-info-subtle { border-color: rgba(56, 189, 248, 0.3) !important; }
 [data-theme="dark"] .border-success-subtle { border-color: rgba(16, 185, 129, 0.3) !important; }
 [data-theme="dark"] .border-danger-subtle { border-color: rgba(239, 68, 68, 0.3) !important; }
 
 /* Light Mode Subtle Badges */
-[data-theme="light"] .bg-primary-subtle { background-color: #eff6ff !important; color: #1d4ed8 !important; }
+[data-theme="light"] .bg-primary-subtle { background-color: #fff7ed !important; color: #c2410c !important; }
 [data-theme="light"] .bg-warning-subtle { background-color: #fffbeb !important; color: #b45309 !important; }
-[data-theme="light"] .bg-info-subtle { background-color: #f0f9ff !important; color: #0369a1 !important; }
+[data-theme="light"] .bg-info-subtle { background-color: #fff7ed !important; color: #ea580c !important; }
 [data-theme="light"] .bg-success-subtle { background-color: #ecfdf5 !important; color: #047857 !important; }
 [data-theme="light"] .bg-danger-subtle { background-color: #fef2f2 !important; color: #b91c1c !important; }
 [data-theme="light"] .bg-secondary-subtle { background-color: #f1f5f9 !important; color: #475569 !important; }
 
 /* SweetAlert2 Dark Mode */
 [data-theme="dark"] .swal2-popup {
-    background: #080d1a !important;
+    background: #111827 !important;
     color: #f8fafc !important;
-    border: 1px solid rgba(56, 189, 248, 0.25) !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(56, 189, 248, 0.15) !important;
+    border: 1px solid rgba(249, 115, 22, 0.28) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(249, 115, 22, 0.15) !important;
 }
 [data-theme="dark"] .swal2-title,
 [data-theme="dark"] .swal2-html-container {
@@ -1183,6 +1228,16 @@ input[type="file"]::file-selector-button:hover {
     border: 2.5px solid #10b981;
 }
 
+/* 4. PIN DIVERIFIKASI (BLUE with clipboard check) */
+.pin-diverifikasi .pin-halo {
+    background: rgba(14, 165, 233, 0.4);
+}
+.pin-diverifikasi .pin-core {
+    background: #0284c7;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+}
+
 @keyframes markerPulseGlow {
     0% {
         transform: translate(-50%, -50%) scale(0.85);
@@ -1270,6 +1325,77 @@ input[type="file"]::file-selector-button:hover {
 .legend-pin-dot.dot-green {
     background: #10b981;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+/* Legend Collapsible State */
+.map-floating-legend {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.map-floating-legend.is-collapsed {
+    padding: 7px 12px;
+}
+.map-floating-legend.is-collapsed .map-floating-legend-list {
+    display: none !important;
+}
+.map-floating-legend.is-collapsed .map-floating-legend-title {
+    margin-bottom: 0;
+}
+.legend-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+}
+.map-floating-legend.is-collapsed .legend-toggle-btn i {
+    transform: rotate(180deg);
+}
+
+/* Map Viewport Heights */
+.landing-gis-map {
+    height: 60vh;
+    min-height: 420px;
+    width: 100%;
+}
+@media (min-width: 992px) {
+    .landing-gis-map {
+        height: 70vh !important;
+        min-height: 550px !important;
+    }
+}
+
+.map-viewport-75 {
+    height: 75vh !important;
+    min-height: 520px !important;
+    width: 100%;
+}
+
+/* Floating Action Button (FAB) Bottom-Right */
+.btn-fab-lapor {
+    position: absolute;
+    bottom: 22px;
+    right: 22px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 10px 18px;
+    border-radius: 50px;
+    box-shadow: 0 8px 24px rgba(234, 88, 12, 0.45);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+}
+.btn-fab-lapor:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(234, 88, 12, 0.55);
+    color: #ffffff !important;
 }
 
 /* Floating Bottom-Right CTA Pill Button */
@@ -1754,4 +1880,134 @@ input[type="file"]::file-selector-button:hover {
     .map-floating-legend-item {
         font-size: 0.67rem !important;
     }
+}
+
+/* --------------------------------------------------------------------------
+   INTERACTIVE GIS ROAD THEME & ENHANCEMENTS
+   -------------------------------------------------------------------------- */
+.chip-category-btn {
+    border-radius: 9999px !important;
+    padding: 0.35rem 0.85rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    background: var(--bg-card) !important;
+    transition: all 0.2s ease !important;
+}
+
+.chip-category-btn:hover {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: var(--primary-subtle) !important;
+}
+
+.chip-category-btn.active {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 2px 8px var(--primary-glow) !important;
+}
+
+[data-theme="dark"] .chip-category-btn.active {
+    color: #030712 !important;
+    font-weight: 700 !important;
+}
+
+.drawer-report-item {
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    background: var(--bg-card);
+}
+
+.drawer-report-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary) !important;
+    box-shadow: var(--shadow-md);
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+
+.user-gps-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   19. UNIFIED ROADWORK THEME UTILITIES & BOOTSTRAP HARMONIZATION
+   ========================================================================== */
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.border-primary {
+    border-color: var(--primary) !important;
+}
+
+.text-info {
+    color: #ea580c !important; /* Roadwork Construction Orange */
+}
+
+[data-theme="dark"] .text-info {
+    color: #fb923c !important;
+}
+
+.bg-info {
+    background-color: #ea580c !important;
+}
+
+.bg-info-subtle {
+    background-color: #fff7ed !important;
+    color: #c2410c !important;
+}
+
+[data-theme="dark"] .bg-info-subtle {
+    background-color: rgba(249, 115, 22, 0.16) !important;
+    color: #fb923c !important;
+}
+
+.border-info,
+.border-info-subtle {
+    border-color: rgba(234, 88, 12, 0.35) !important;
+}
+
+[data-theme="dark"] .border-info,
+[data-theme="dark"] .border-info-subtle {
+    border-color: rgba(249, 115, 22, 0.35) !important;
+}
+
+.btn-outline-primary {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #ffffff !important;
+}
+
+/* Subtle Road Safety Hazard Border Strip */
+.roadwork-stripe-bar {
+    height: 4px;
+    width: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        #ea580c,
+        #ea580c 12px,
+        #1e293b 12px,
+        #1e293b 24px
+    );
+    border-radius: 2px;
 }

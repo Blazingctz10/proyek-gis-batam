@@ -147,9 +147,9 @@
                             <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary btn-sm flex-grow-1" target="_blank">
                                 <i class="fas fa-eye me-1"></i> Detail
                             </a>
-                            <a href="/admin/pelaporan/laporanjalan/{{ laporan.id }}/change/" class="btn btn-outline-primary btn-sm px-3" title="Ubah Status via Admin" target="_blank">
-                                <i class="fas fa-pen-to-square"></i>
-                            </a>
+                            <button type="button" class="btn btn-outline-primary btn-sm px-3 btn-quick-status" data-id="{{ laporan.id }}" data-status="{{ laporan.status }}" data-catatan="{{ laporan.catatan_admin|default:'' }}" title="Ubah Status & Catatan Cepat">
+                                <i class="fas fa-pen-to-square me-1"></i> Status
+                            </button>
                             <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" class="btn btn-outline-success btn-sm px-3" title="Google Maps" target="_blank">
                                 <i class="fas fa-location-dot"></i>
                             </a>
@@ -235,9 +235,9 @@
                                         <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-secondary" title="Lihat Detail & Peta" target="_blank">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="/admin/pelaporan/laporanjalan/{{ laporan.id }}/change/" class="btn btn-outline-primary" title="Ubah Status via Admin" target="_blank">
+                                        <button type="button" class="btn btn-outline-primary btn-quick-status" data-id="{{ laporan.id }}" data-status="{{ laporan.status }}" data-catatan="{{ laporan.catatan_admin|default:'' }}" title="Ubah Status & Catatan Cepat">
                                             <i class="fas fa-pen-to-square"></i>
-                                        </a>
+                                        </button>
                                         <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" class="btn btn-outline-success" title="Buka Koordinat Google Maps" target="_blank">
                                             <i class="fas fa-location-dot"></i>
                                         </a>
@@ -258,4 +258,103 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Quick Update Status & Catatan -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="quickStatusForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold" id="statusModalLabel">
+                        <i class="fas fa-pen-to-square text-primary me-2"></i>Perbarui Status Laporan <span id="modalReportId"></span>
+                    </h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Status Penanganan</label>
+                        <select name="status" id="modalStatusSelect" class="form-select form-select-sm" required>
+                            {% for value, label in status_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Catatan Petugas / Tindak Lanjut</label>
+                        <textarea name="catatan_admin" id="modalCatatanInput" class="form-control form-control-sm" rows="3" placeholder="Contoh: Sudah dijadwalkan pengurukan dan perataan aspal pada hari Selasa..."></textarea>
+                        <small class="text-muted" style="font-size: 0.72rem;">Catatan ini akan dapat dilihat oleh pelapor untuk transparansi progres.</small>
+                    </div>
+                </div>
+                <div class="modal-footer bg-card-subtle py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-3" id="btnSaveStatus">
+                        <i class="fas fa-check me-1"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusModalEl = document.getElementById('statusModal');
+    const statusModal = statusModalEl ? new bootstrap.Modal(statusModalEl) : null;
+    const form = document.getElementById('quickStatusForm');
+    const reportIdSpan = document.getElementById('modalReportId');
+    const statusSelect = document.getElementById('modalStatusSelect');
+    const catatanInput = document.getElementById('modalCatatanInput');
+    let currentId = null;
+
+    document.querySelectorAll('.btn-quick-status').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentId = this.dataset.id;
+            reportIdSpan.textContent = '#' + currentId;
+            statusSelect.value = this.dataset.status;
+            catatanInput.value = this.dataset.catatan || '';
+            statusModal.show();
+        });
+    });
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!currentId) return;
+
+            const saveBtn = document.getElementById('btnSaveStatus');
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';
+            saveBtn.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch(`/admin-laporan/${currentId}/update-status/`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Gagal memperbarui status.');
+                    saveBtn.innerHTML = '<i class="fas fa-check me-1"></i> Simpan Perubahan';
+                    saveBtn.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Terjadi kesalahan jaringan.');
+                saveBtn.innerHTML = '<i class="fas fa-check me-1"></i> Simpan Perubahan';
+                saveBtn.disabled = false;
+            });
+        });
+    }
+});
+</script>
 {% endblock %}

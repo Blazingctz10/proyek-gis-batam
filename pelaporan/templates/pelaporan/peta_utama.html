@@ -1,172 +1,188 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block full_content %}
-<div class="container-xl py-4">
-    <!-- Header Page -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4" data-aos="fade-down">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
-                    <i class="fas fa-layer-group"></i> WebGIS Monitor
-                </span>
-                <span class="text-muted small">Kota Batam, Kepulauan Riau</span>
-            </div>
-            <h1 class="h3 fw-bold mb-1">Peta Sebaran Kerusakan Jalan</h1>
-            <p class="text-muted small mb-0">Pantau sebaran titik kerusakan jalan aktif yang telah diverifikasi dan sedang dalam pengerjaan teknis.</p>
-        </div>
-
-        <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
-            <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm shadow-sm flex-grow-1 flex-md-grow-0">
-                <i class="fas fa-plus-circle"></i> Laporkan Jalan Baru
-            </a>
-            <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
-                <i class="fas fa-home"></i> Beranda
-            </a>
-        </div>
-    </div>
-
-    <!-- Live Stats Pill Strip -->
-    <div class="row g-2 g-md-3 mb-4" data-aos="fade-up">
-        <div class="col-6 col-md-3">
-            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-primary border-4">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">TOTAL LAPORAN</small>
-                        <h4 class="mb-0 fw-bold text-primary fs-5 fs-sm-4">{{ total_laporan|default:0 }}</h4>
-                    </div>
-                    <div class="feature-icon-box bg-primary-subtle text-primary mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
-                        <i class="fas fa-database fs-6"></i>
-                    </div>
-                </div>
+{% block content %}
+<div class="container-xl py-2">
+    <!-- Compact Header Bar with Small Title & Compact Stats Row -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-2 pb-2 border-bottom border-color">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-map-marked-alt text-primary fs-5"></i>
+            <div>
+                <h1 class="h5 fw-bold mb-0">Peta Sebaran Kerusakan Jalan Batam</h1>
             </div>
         </div>
 
-        <div class="col-6 col-md-3">
-            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-warning border-4">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIVERIFIKASI</small>
-                        <h4 class="mb-0 fw-bold text-warning fs-5 fs-sm-4">{{ diverifikasi|default:0 }}</h4>
-                    </div>
-                    <div class="feature-icon-box bg-warning-subtle text-warning mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
-                        <i class="fas fa-clock fs-6"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-6 col-md-3">
-            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-info border-4">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIKERJAKAN</small>
-                        <h4 class="mb-0 fw-bold text-info fs-5 fs-sm-4">{{ diperbaiki|default:0 }}</h4>
-                    </div>
-                    <div class="feature-icon-box bg-info-subtle text-info mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
-                        <i class="fas fa-person-digging fs-6"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-6 col-md-3">
-            <div class="card p-2 p-sm-3 h-100 card-hover border-start border-success border-4">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">SELESAI</small>
-                        <h4 class="mb-0 fw-bold text-success fs-5 fs-sm-4">{{ selesai|default:0 }}</h4>
-                    </div>
-                    <div class="feature-icon-box bg-success-subtle text-success mb-0 d-none d-sm-flex" style="width: 38px; height: 38px;">
-                        <i class="fas fa-check-double fs-6"></i>
-                    </div>
-                </div>
-            </div>
+        <!-- Compact Stats Micro-Row (Shrunk into 1 neat compact strip) -->
+        <div class="d-flex flex-wrap align-items-center gap-2 small">
+            <span class="badge bg-card-subtle text-main border border-color py-1 px-2" title="Total Seluruh Laporan">
+                Total: <strong>{{ total_laporan|default:0 }}</strong>
+            </span>
+            <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-1 px-2" title="Telah Diverifikasi Petugas">
+                Diverifikasi: <strong>{{ diverifikasi|default:0 }}</strong>
+            </span>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1 px-2" title="Dalam Penanganan Fisik">
+                Dikerjakan: <strong>{{ diperbaiki|default:0 }}</strong>
+            </span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2" title="Perbaikan Tuntas">
+                Selesai: <strong>{{ selesai|default:0 }}</strong>
+            </span>
         </div>
     </div>
 
-    <!-- Modern Filter Toolbar -->
-    <div class="card mb-3 p-3 shadow-sm border-0" data-aos="fade-up" data-aos-delay="100">
-        <div class="row g-2 align-items-center">
-            <div class="col-12 col-md-auto fw-bold text-secondary d-flex align-items-center gap-2">
-                <i class="fas fa-filter text-primary"></i>
-                <span class="small text-uppercase tracking-wider">Filter Data:</span>
-            </div>
-            
-            <div class="col-12 col-sm-6 col-md-3">
-                <select id="filter-status" class="form-select form-select-sm">
-                    <option value="">Semua Status Aktif</option>
-                    <option value="BARU">Menunggu Inspeksi Surveyor (Baru)</option>
-                    <option value="DIVERIFIKASI">Terverifikasi Surveyor</option>
-                    <option value="DIPERBAIKI">Pengerjaan Fisik Sedang Berjalan</option>
-                    <option value="SELESAI">Perbaikan Telah Tuntas Diverifikasi</option>
-                </select>
+    <!-- Map Control Toolbar: Filter Toggle Button + Action Buttons with Full Text Labels -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <!-- Single Filter Toggle Button -->
+            <button id="btn-toggle-filter" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel" aria-expanded="false" aria-controls="filterPanel">
+                <i class="fas fa-sliders"></i>
+                <span>Filter & Cari</span>
+                <span id="active-filter-badge" class="badge bg-white text-primary rounded-pill px-2 d-none">0</span>
+            </button>
+
+            <!-- Reset Filter Button with Text Label -->
+            <button id="btn-reset-filter" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" title="Reset semua filter ke kondisi awal">
+                <i class="fas fa-rotate-left"></i>
+                <span>Reset</span>
+            </button>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
+            <!-- Locate Button with Text Label -->
+            <button id="btn-my-location" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Pusatkan peta ke posisi GPS Anda saat ini">
+                <i class="fas fa-crosshairs"></i>
+                <span>Lokasi Saya</span>
+            </button>
+
+            <!-- List Drawer Button with Text Label -->
+            <button id="btn-toggle-list" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasReportList" title="Buka daftar titik laporan yang terlihat di peta">
+                <i class="fas fa-list-ul"></i>
+                <span>Daftar Titik (<span id="visible-count">0</span>)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Collapsible Filter Panel (Collapsed behind the "Filter" button) -->
+    <div class="collapse mb-2" id="filterPanel">
+        <div class="card p-3 shadow-sm border border-color bg-card-subtle" style="border-radius: var(--radius-md);">
+            <div class="row g-2 align-items-center">
+                <!-- Search Text -->
+                <div class="col-12 col-md-4">
+                    <label class="form-label small fw-bold mb-1 text-muted">Cari Kata Kunci / ID</label>
+                    <div class="input-icon-box">
+                        <i class="fas fa-search text-muted"></i>
+                        <input type="text" id="filter-search" class="form-control form-control-sm" style="padding-left: 2.75rem !important;" placeholder="Contoh: #12 atau nama jalan...">
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-bold mb-1 text-muted">Status Penanganan</label>
+                    <select id="filter-status" class="form-select form-select-sm">
+                        <option value="">Semua Status Aktif</option>
+                        <option value="BARU">Menunggu Review (Baru)</option>
+                        <option value="DIVERIFIKASI">Terverifikasi</option>
+                        <option value="DIPERBAIKI">Sedang Dikerjakan</option>
+                        <option value="SELESAI">Selesai Tuntas</option>
+                    </select>
+                </div>
+
+                <!-- Jenis Filter -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-bold mb-1 text-muted">Jenis Kerusakan</label>
+                    <select id="filter-jenis" class="form-select form-select-sm">
+                        <option value="">Semua Jenis Kerusakan</option>
+                        <option value="LUBANG">Jalan Berlubang</option>
+                        <option value="RETAK">Jalan Retak</option>
+                        <option value="AMBLAS">Jalan Amblas</option>
+                        <option value="RUSAK_PARAH">Rusak Parah</option>
+                        <option value="LAINNYA">Lainnya</option>
+                    </select>
+                </div>
+
+                <!-- Tingkat Filter -->
+                <div class="col-12 col-sm-6 col-md-2">
+                    <label class="form-label small fw-bold mb-1 text-muted">Tingkat Bahaya</label>
+                    <select id="filter-tingkat" class="form-select form-select-sm">
+                        <option value="">Semua Tingkat</option>
+                        <option value="RINGAN">Ringan</option>
+                        <option value="SEDANG">Sedang</option>
+                        <option value="BERAT">Berat</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <select id="filter-jenis" class="form-select form-select-sm">
-                    <option value="">Semua Jenis Kerusakan</option>
-                    <option value="LUBANG">Jalan Berlubang</option>
-                    <option value="RETAK">Jalan Retak</option>
-                    <option value="AMBLAS">Jalan Amblas</option>
-                    <option value="RUSAK_PARAH">Rusak Parah</option>
-                    <option value="LAINNYA">Lainnya</option>
-                </select>
+            <!-- Category Chips Inside Filter Panel -->
+            <div class="d-flex align-items-center gap-1 overflow-x-auto pt-2 mt-2 border-top border-color">
+                <span class="small fw-bold text-muted text-nowrap me-1" style="font-size: 0.72rem;">Kategori:</span>
+                <button type="button" class="btn btn-sm btn-outline-primary active chip-category-btn py-0 px-2" data-jenis="" style="font-size: 0.75rem;">Semua</button>
+                <button type="button" class="btn btn-sm btn-outline-primary chip-category-btn py-0 px-2" data-jenis="LUBANG" style="font-size: 0.75rem;">Berlubang</button>
+                <button type="button" class="btn btn-sm btn-outline-primary chip-category-btn py-0 px-2" data-jenis="RETAK" style="font-size: 0.75rem;">Retak</button>
+                <button type="button" class="btn btn-sm btn-outline-primary chip-category-btn py-0 px-2" data-jenis="AMBLAS" style="font-size: 0.75rem;">Amblas</button>
+                <button type="button" class="btn btn-sm btn-outline-primary chip-category-btn py-0 px-2" data-jenis="RUSAK_PARAH" style="font-size: 0.75rem;">Rusak Parah</button>
             </div>
+        </div>
+    </div>
 
-            <div class="col-12 col-sm-6 col-md-2">
-                <select id="filter-tingkat" class="form-select form-select-sm">
-                    <option value="">Semua Tingkat</option>
-                    <option value="RINGAN">Ringan</option>
-                    <option value="SEDANG">Sedang</option>
-                    <option value="BERAT">Berat</option>
-                </select>
-            </div>
+    <!-- Map Container with 75vh Viewport Height -->
+    <div class="position-relative map-showcase-wrapper" style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color);">
+        <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" class="map-viewport-75"></div>
 
-            <div class="col-12 col-sm-6 col-md-auto ms-auto d-flex gap-2">
-                <button id="btn-reset-filter" class="btn btn-secondary btn-sm w-100 w-sm-auto" title="Kembalikan semua filter ke awal">
-                    <i class="fas fa-rotate-left"></i> Reset
+        <!-- Small Collapsed Legend by Default (Bottom-Left) -->
+        <div class="map-floating-legend is-collapsed" id="petaMainLegend">
+            <div class="d-flex justify-content-between align-items-center gap-2 cursor-pointer" onclick="document.getElementById('petaMainLegend').classList.toggle('is-collapsed')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-1">
+                    <i class="fas fa-layer-group text-primary" style="font-size: 0.8rem;"></i>
+                    <span class="map-floating-legend-title mb-0">LEGENDA</span>
+                </div>
+                <button type="button" class="legend-toggle-btn p-0" title="Buka/Tutup Legenda">
+                    <i class="fas fa-chevron-up"></i>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Map Container with Floating Reference Legend -->
-    <div class="position-relative map-showcase-wrapper" data-aos="fade-up" data-aos-delay="150" style="border-radius: var(--radius-xl);">
-        <div id="map" data-geojson-url="{% url 'data_laporan_geojson' %}" style="height: 640px; width: 100%;"></div>
-
-        <!-- Floating Status Legend (Bottom-Left matching reference with mobile collapse) -->
-        <div class="map-floating-legend" id="petaMainLegend">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <div class="map-floating-legend-title mb-0">STATUS TITIK:</div>
-                <button type="button" class="legend-toggle-btn d-md-none" onclick="document.getElementById('petaMainLegend').classList.toggle('is-collapsed')" title="Toggle Legenda">
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-            </div>
-            <ul class="map-floating-legend-list">
+            <ul class="map-floating-legend-list mt-2">
                 <li class="map-floating-legend-item">
                     <span class="legend-pin-dot dot-red"></span>
-                    <span>Menunggu Inspeksi Surveyor</span>
+                    <span>Menunggu Review</span>
+                </li>
+                <li class="map-floating-legend-item">
+                    <span class="legend-pin-dot" style="background: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25);"></span>
+                    <span>Terverifikasi</span>
                 </li>
                 <li class="map-floating-legend-item">
                     <span class="legend-pin-dot dot-amber"></span>
-                    <span>Pengerjaan Fisik Sedang Berjalan</span>
+                    <span>Sedang Dikerjakan</span>
                 </li>
                 <li class="map-floating-legend-item">
                     <span class="legend-pin-dot dot-green"></span>
-                    <span>Perbaikan Telah Tuntas Diverifikasi</span>
+                    <span>Selesai Tuntas</span>
                 </li>
             </ul>
         </div>
 
-        <!-- Floating CTA Button (Bottom-Right) -->
-        <a href="{% url 'tambah_laporan' %}" class="map-floating-cta-btn">
-            <i class="fas fa-plus-circle"></i> Tambah Laporan Baru
+        <!-- Floating Action Button (FAB) Bottom-Right -->
+        <a href="{% url 'tambah_laporan' %}" class="btn-fab-lapor" title="Tambah Laporan Kerusakan Baru">
+            <i class="fas fa-plus"></i>
+            <span>Tambah Laporan Baru</span>
         </a>
+    </div>
+</div>
+
+<!-- Offcanvas Drawer: Daftar Titik Laporan Terfilter -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasReportList" aria-labelledby="offcanvasListLabel" style="width: 380px;">
+    <div class="offcanvas-header border-bottom border-color py-3">
+        <h6 class="offcanvas-title fw-bold" id="offcanvasListLabel">
+            <i class="fas fa-map-location-dot text-primary me-2"></i>Daftar Titik Laporan (<span id="offcanvas-count">0</span>)
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-3" id="report-list-container">
+        <div class="text-center py-4 text-muted">
+            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+            <small class="d-block">Memuat data titik laporan...</small>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/peta_utama.js' %}?v=4.0"></script>
+    <script src="{% static 'js/peta_utama.js' %}?v=5.5"></script>
 {% endblock %}

@@ -8,57 +8,57 @@
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
-                    <i class="fas fa-shield-alt"></i> Portal Administrator
+                    <i class="fas fa-road-barrier me-1"></i> Panel Pengawas Lapangan
                 </span>
-                <span class="text-muted small">Dinas Bina Marga / Tim Teknis WebGIS</span>
+                <span class="text-muted small">Pemantauan & Evaluasi Perbaikan Jalan Kota Batam</span>
             </div>
-            <h1 class="h3 fw-bold mb-0">Statistik & Analisis Laporan Jalan</h1>
+            <h1 class="h3 fw-bold mb-0">Statistik & Analisis Perbaikan Jalan</h1>
         </div>
         <div class="d-flex gap-2">
             <a href="{% url 'laporan_list_admin' %}" class="btn btn-primary btn-sm shadow-sm">
                 <i class="fas fa-list-check"></i> Kelola Laporan
             </a>
             <a href="/admin/" class="btn btn-secondary btn-sm" target="_blank">
-                <i class="fas fa-cog"></i> Django Admin
+                <i class="fas fa-cog"></i> Database Admin
             </a>
         </div>
     </div>
 
-    <!-- Stats Cards Strip (Balanced 2x3 grid on mobile) -->
+    <!-- Stats Cards Strip (Balanced 2x3 grid on mobile with Roadwork Palette) -->
     <div class="row g-2 g-md-3 mb-4">
         <div class="col-xl-2 col-md-4 col-6">
-            <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-primary border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">TOTAL LAPORAN</small>
-                <h3 class="fw-bold text-primary mb-0 mt-1 fs-5 fs-sm-4">{{ total_laporan }}</h3>
+            <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-secondary border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-clipboard-list me-1"></i>TOTAL LAPORAN</small>
+                <h3 class="fw-bold text-main mb-0 mt-1 fs-5 fs-sm-4">{{ total_laporan }}</h3>
             </div>
         </div>
         <div class="col-xl-2 col-md-4 col-6">
             <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-secondary border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">BARU (REVIEW)</small>
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-bell me-1"></i>BARU (MENUNGGU)</small>
                 <h3 class="fw-bold text-secondary mb-0 mt-1 fs-5 fs-sm-4">{{ baru }}</h3>
             </div>
         </div>
         <div class="col-xl-2 col-md-4 col-6">
             <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-warning border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIVERIFIKASI</small>
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-triangle-exclamation text-warning me-1"></i>DIVERIFIKASI</small>
                 <h3 class="fw-bold text-warning mb-0 mt-1 fs-5 fs-sm-4">{{ diverifikasi }}</h3>
             </div>
         </div>
         <div class="col-xl-2 col-md-4 col-6">
-            <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-info border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">DIKERJAKAN</small>
-                <h3 class="fw-bold text-info mb-0 mt-1 fs-5 fs-sm-4">{{ diperbaiki }}</h3>
+            <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-primary border-4">
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-person-digging text-primary me-1"></i>DIKERJAKAN</small>
+                <h3 class="fw-bold text-primary mb-0 mt-1 fs-5 fs-sm-4">{{ diperbaiki }}</h3>
             </div>
         </div>
         <div class="col-xl-2 col-md-4 col-6">
             <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-success border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">SELESAI</small>
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-circle-check text-success me-1"></i>SELESAI</small>
                 <h3 class="fw-bold text-success mb-0 mt-1 fs-5 fs-sm-4">{{ selesai }}</h3>
             </div>
         </div>
         <div class="col-xl-2 col-md-4 col-6">
             <div class="card p-2 p-sm-3 text-center h-100 card-hover border-start border-primary border-4">
-                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;">7 HARI TERAKHIR</small>
+                <small class="text-muted fw-bold d-block" style="font-size: 0.68rem;"><i class="fas fa-calendar-week text-primary me-1"></i>7 HARI TERAKHIR</small>
                 <h3 class="fw-bold text-primary mb-0 mt-1 fs-5 fs-sm-4">{{ laporan_minggu_ini }}</h3>
             </div>
         </div>
@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function() {
     Chart.defaults.color = textColor;
     Chart.defaults.borderColor = gridColor;
 
-    // Palette
-    const palette = ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    // Palette (Roadwork Infrastructure Theme: Safety Orange, Amber, Emerald, Red, Slate)
+    const palette = ['#ea580c', '#d97706', '#10b981', '#f59e0b', '#dc2626', '#475569'];
 
     // 1. Bar Chart: Tren Bulanan
     const ctxTren = document.getElementById('chartTrenBulanan');
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 datasets: [{
                     label: 'Jumlah Laporan Masuk',
                     data: {{ data_bulan|safe }},
-                    backgroundColor: '#2563eb',
+                    backgroundColor: '#ea580c',
                     borderRadius: 8,
                     borderSkipped: false
                 }]

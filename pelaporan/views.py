@@ -100,10 +100,11 @@ def halaman_peta_utama(request):
 
 
 def data_laporan_geojson(request):
-    """API endpoint untuk mengirim data GeoJSON ke Leaflet."""
+    """API endpoint untuk mengirim data GeoJSON ke Leaflet dengan filter lengkap."""
     status_filter = request.GET.get('status', None)
     jenis_filter = request.GET.get('jenis', None)
     tingkat_filter = request.GET.get('tingkat', None)
+    search_query = request.GET.get('search', '').strip()
     
     if status_filter:
         laporan_query = LaporanJalan.objects.filter(status=status_filter)
@@ -117,6 +118,14 @@ def data_laporan_geojson(request):
         laporan_query = laporan_query.filter(jenis_kerusakan=jenis_filter)
     if tingkat_filter:
         laporan_query = laporan_query.filter(tingkat_kerusakan=tingkat_filter)
+    if search_query:
+        clean_num = search_query.replace('#', '').strip()
+        if clean_num.isdigit():
+            laporan_query = laporan_query.filter(
+                Q(id=int(clean_num)) | Q(deskripsi__icontains=search_query)
+            )
+        else:
+            laporan_query = laporan_query.filter(deskripsi__icontains=search_query)
     
     features = []
     for laporan in laporan_query:
@@ -131,7 +140,9 @@ def data_laporan_geojson(request):
                 "jenis_kerusakan": laporan.get_jenis_kerusakan_display(),
                 "tingkat_kerusakan": laporan.get_tingkat_kerusakan_display(),
                 "tanggal_lapor": laporan.tanggal_lapor.strftime('%d/%m/%Y %H:%M'),
-                "foto_urls": foto_urls
+                "foto_urls": foto_urls,
+                "lat": laporan.lokasi.y,
+                "lng": laporan.lokasi.x,
             },
             "geometry": {
                 "type": "Point",
@@ -143,12 +154,24 @@ def data_laporan_geojson(request):
     return JsonResponse(data_geojson)
 
 
+
 def tambah_laporan(request):
     """Menampilkan halaman form (GET) atau memproses data POST via AJAX."""
     if request.method == 'POST':
         form = LaporanForm(request.POST, request.FILES)
 
         if form.is_valid():
+            # Validasi minimal 1 foto bukti kerusakan
+            foto_list = request.FILES.getlist('foto_uploads')
+            if not foto_list:
+                return JsonResponse({
+                    'status': 'form_error',
+                    'message': 'Wajib melampirkan minimal 1 foto dokumentasi kerusakan.',
+                    'errors': {
+                        'foto_uploads': ['Wajib mengunggah minimal 1 file foto bukti kerusakan jalan.']
+                    }
+                }, status=400)
+
             lat = form.cleaned_data['latitude']
             lon = form.cleaned_data['longitude']
             lokasi_point = Point(float(lon), float(lat), srid=4326)
@@ -380,28 +403,71 @@ def dashboard(request):
     return render(request, 'pelaporan/dashboard.html', context)
 
 
+def lacak_laporan(request):
+    """Halaman pelacakan status laporan cepat menggunakan ID Laporan atau kata kunci."""
+    query = request.GET.get('q', '').strip()
+    laporan = None
+    not_found = False
+
+    if query:
+        clean_id = query.replace('#', '').strip()
+        if clean_id.isdigit():
+            try:
+                laporan = LaporanJalan.objects.prefetch_related('foto_set').get(id=int(clean_id))
+            except LaporanJalan.DoesNotExist:
+                not_found = True
+        else:
+            hasil = LaporanJalan.objects.prefetch_related('foto_set').filter(
+                Q(deskripsi__icontains=clean_id) | Q(email_pelapor__iexact=clean_id)
+            ).order_by('-tanggal_lapor')
+            if hasil.exists():
+                laporan = hasil.first()
+            else:
+                not_found = True
+
+    context = {
+        'title': 'Lacak Status Laporan' + (f' #{laporan.id}' if laporan else ''),
+        'query': query,
+        'laporan': laporan,
+        'not_found': not_found,
+    }
+    return render(request, 'pelaporan/lacak_laporan.html', context)
+
+
 def detail_laporan(request, laporan_id):
     """
     Detail laporan:
-    - Publik (tanpa login) dapat melihat laporan yang sudah diverifikasi, sedang dikerjakan, atau selesai.
-    - Laporan dengan status 'BARU' hanya dapat dilihat oleh pelapor pemilik akun atau staf/admin.
+    - Publik (termasuk tamu pelapor) dapat melihat progres laporan secara transparan.
+    - Laporan berstatus 'BARU' diberi indikasi review verifikasi tanpa diblokir.
+    - Data privat (email) otomatis disamarkan (masked) jika diakses oleh publik non-pemilik.
     """
-    laporan = get_object_or_404(LaporanJalan, id=laporan_id)
+    laporan = get_object_or_404(LaporanJalan.objects.prefetch_related('foto_set'), id=laporan_id)
     
-    # Proteksi laporan status 'BARU': hanya pemilik atau staff yang bisa melihat
-    if laporan.status == 'BARU':
-        if not request.user.is_authenticated or (request.user != laporan.user and not request.user.is_staff):
-            messages.warning(request, 'Laporan ini masih dalam tahap review verifikasi dan hanya dapat dilihat oleh pelapor.')
-            return redirect('landing')
-
     is_owner = request.user.is_authenticated and (request.user == laporan.user or request.user.is_staff)
     
+    # Mask email jika bukan pemilik / bukan staff
+    masked_email = None
+    if laporan.email_pelapor:
+        if is_owner:
+            masked_email = laporan.email_pelapor
+        else:
+            parts = laporan.email_pelapor.split('@')
+            if len(parts) == 2:
+                name_part = parts[0]
+                domain_part = parts[1]
+                masked_name = name_part[0] + '***' if len(name_part) > 1 else '***'
+                masked_email = f"{masked_name}@{domain_part}"
+            else:
+                masked_email = "***"
+
     context = {
-        'title': f'Detail Laporan #{laporan.id}',
+        'title': f'Detail Laporan #{laporan.id} - {laporan.get_jenis_kerusakan_display()}',
         'laporan': laporan,
         'is_owner': is_owner,
+        'masked_email': masked_email,
     }
     return render(request, 'pelaporan/detail_laporan.html', context)
+
 
 
 @login_required
@@ -786,3 +852,43 @@ def laporan_list_admin(request):
         }
     }
     return render(request, 'pelaporan/admin_laporan_list.html', context)
+
+
+@staff_member_required
+def update_status_laporan(request, laporan_id):
+    """Update status laporan secara cepat oleh staff/admin via AJAX atau form POST."""
+    if request.method == 'POST':
+        laporan = get_object_or_404(LaporanJalan, id=laporan_id)
+        status_baru = request.POST.get('status')
+        catatan = request.POST.get('catatan_admin', '')
+        
+        valid_statuses = [s[0] for s in LaporanJalan.STATUS_CHOICES]
+        if status_baru in valid_statuses:
+            status_lama = laporan.status
+            laporan.status = status_baru
+            if catatan:
+                laporan.catatan_admin = catatan
+            laporan.save()
+            
+            # Kirim email notifikasi jika ada email pelapor dan status berubah
+            if status_baru != status_lama:
+                try:
+                    laporan.kirim_notifikasi_email()
+                except Exception as e:
+                    print(f"Error sending email: {e}")
+            
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'message': f'Status laporan #{laporan.id} berhasil diubah ke {laporan.get_status_display()}.',
+                    'new_status': status_baru,
+                    'new_status_display': laporan.get_status_display(),
+                    'catatan': laporan.catatan_admin or ''
+                })
+            messages.success(request, f'Status laporan #{laporan.id} berhasil diperbarui.')
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Status tidak valid.'}, status=400)
+            messages.error(request, 'Status tidak valid.')
+            
+    return redirect('laporan_list_admin')

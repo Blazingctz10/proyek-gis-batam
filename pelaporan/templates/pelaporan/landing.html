@@ -3,93 +3,58 @@
 
 {% block full_content %}
 <!-- =========================================================================
-     HERO SECTION
+     1. HERO SECTION (FOCUSED & CLEAN, NO DUPLICATE STATS)
      ========================================================================= -->
-<section class="hero-wrapper">
+<section class="hero-wrapper py-4 py-md-5">
     <div class="container-xl">
-        <div class="row align-items-center g-5">
-            <!-- Left Hero Content -->
-            <div class="col-lg-7" data-aos="fade-right">
+        <div class="row align-items-center">
+            <div class="col-lg-9 col-xl-8 mx-auto text-center" data-aos="fade-up">
                 <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary-subtle text-primary border border-primary-subtle mb-3">
-                    <span class="pulse-indicator pulse-indicator-green"></span>
-                    <small class="fw-bold tracking-wide">PORTAL RESMI PARTISIPASI GEOSPASIAL BATAM</small>
+                    <i class="fas fa-person-digging"></i>
+                    <small class="fw-bold tracking-wide">LAYANAN WARGA BATAM • LAPOR & PANTAU PERBAIKAN JALAN</small>
                 </div>
 
-                <h1 class="hero-title">
-                    Pantau & Laporkan Kerusakan Jalan di <span class="hero-title-gradient">Kota Batam</span>
+                <h1 class="hero-title mb-3">
+                    Pantau & Laporkan Titik Jalan Rusak di <span class="hero-title-gradient">Kota Batam</span>
                 </h1>
 
-                <p class="hero-lead">
-                    Wujudkan infrastruktur jalan Batam yang aman dan nyaman. Laporkan jalan berlubang, retak, atau amblas dengan akurasi GPS real-time dan kawal proses penanganannya secara transparan.
+                <p class="hero-lead mb-4 max-w-700 mx-auto">
+                    Inisiatif bersama warga Batam untuk mendokumentasikan jalan berlubang, amblas, dan rusak berbasis peta geospasial real-time demi keselamatan seluruh pengguna jalan raya.
                 </p>
 
-                <div class="d-flex flex-wrap gap-3 mb-4">
-                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-lg shadow-lg">
-                        <i class="fas fa-camera"></i> Laporkan Jalan Rusak
+                <!-- Action Buttons: "Laporkan Jalan Rusak" is the SOLE primary button -->
+                <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-lg shadow-lg px-4 py-3">
+                        <i class="fas fa-camera me-1"></i> Laporkan Jalan Rusak
                     </a>
-                    <a href="{% url 'halaman_peta_utama' %}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-map-marked-alt text-primary"></i> Jelajahi Peta Interaktif
+                    <a href="{% url 'halaman_peta_utama' %}" class="btn btn-secondary btn-lg px-4 py-3">
+                        <i class="fas fa-map-marked-alt text-primary me-1"></i> Jelajahi Peta Jalan
                     </a>
+                </div>
+
+                <!-- Quick Track Report Widget Directly in Hero -->
+                <div class="card p-3 bg-card-subtle border border-color shadow-sm max-w-600 mx-auto mb-3" style="border-radius: var(--radius-md);">
+                    <form method="GET" action="{% url 'lacak_laporan' %}" class="d-flex flex-column flex-sm-row gap-2">
+                        <div class="input-icon-box flex-grow-1">
+                            <i class="fas fa-search text-muted"></i>
+                            <input type="text" name="q" class="form-control form-control-sm" style="padding-left: 2.75rem !important;" placeholder="Punya nomor laporan? Masukkan ID (misal: 12)..." required>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-sm flex-shrink-0">
+                            <i class="fas fa-magnifying-glass me-1"></i> Lacak Status
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Quick highlights bullet -->
-                <div class="d-flex flex-wrap gap-4 text-muted small pt-2">
+                <div class="d-flex flex-wrap justify-content-center gap-4 text-muted small pt-2">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-check-circle text-success"></i> Akurat dengan GPS
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-check-circle text-success"></i> Terintegrasi WebGIS Batam
+                        <i class="fas fa-location-dot text-primary"></i> Titik GPS Presisi
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-check-circle text-success"></i> Transparan & Real-time
+                        <i class="fas fa-road-barrier text-warning"></i> Pemantauan Terbuka
                     </div>
-                </div>
-            </div>
-
-            <!-- Right Hero Card / Visual Preview -->
-            <div class="col-lg-5" data-aos="fade-left" data-aos-delay="100">
-                <div class="card border-0 shadow-xl overflow-hidden position-relative">
-                    <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between py-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-satellite-dish"></i>
-                            <span class="fw-bold small">Live WebGIS Monitoring</span>
-                        </div>
-                        <span class="badge bg-white text-primary rounded-pill px-2 py-1 small">Kota Batam</span>
-                    </div>
-                    
-                    <div class="p-4 bg-card">
-                        <!-- Mini Preview Banner -->
-                        <div class="rounded-3 p-3 mb-3 bg-card-subtle border border-color d-flex align-items-center gap-3">
-                            <div class="feature-icon-box bg-primary-subtle text-primary mb-0" style="width: 48px; height: 48px;">
-                                <i class="fas fa-map-location-dot"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Peta Kerusakan Terkini</h6>
-                                <small class="text-muted">Titik laporan terverifikasi tersebar di seluruh pulau Batam</small>
-                            </div>
-                        </div>
-
-                        <!-- Mini Stats Summary -->
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-card-subtle border border-color text-center">
-                                    <small class="text-muted d-block fw-bold" style="font-size: 0.75rem;">SEDANG DITANGANI</small>
-                                    <span class="fs-4 fw-bold text-info">{{ sedang_proses|default:0 }}</span>
-                                    <small class="text-muted d-block" style="font-size: 0.7rem;">Titik Perbaikan</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-card-subtle border border-color text-center">
-                                    <small class="text-muted d-block fw-bold" style="font-size: 0.75rem;">SELESAI DITANGANI</small>
-                                    <span class="fs-4 fw-bold text-success">{{ selesai|default:0 }}</span>
-                                    <small class="text-muted d-block" style="font-size: 0.7rem;">Ruas Jalan Tuntas</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary w-100 btn-sm">
-                            <i class="fas fa-layer-group"></i> Buka Fullscreen GIS Workspace
-                        </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-check text-success"></i> Transparan & Terverifikasi
                     </div>
                 </div>
             </div>
@@ -98,28 +63,28 @@
 </section>
 
 <!-- =========================================================================
-     LIVE GIS MAP SHOWCASE SECTION (MATCHING REFERENCE UI)
+     2. LIVE GIS MAP SECTION (DIRECTLY UNDER HERO, TALLER 60vh MOBILE / 70vh DESKTOP)
      ========================================================================= -->
 <section class="py-2 mb-4">
-    <div class="container-xl" data-aos="zoom-in" data-aos-delay="100">
-        <div class="d-flex justify-content-between align-items-end mb-3">
+    <div class="container-xl" data-aos="fade-up">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3 gap-2">
             <div>
                 <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
-                    <i class="fas fa-satellite-dish me-1"></i> PEMANTAUAN REAL-TIME
+                    <i class="fas fa-road me-1"></i> PEMANTAUAN KONDISI JALAN
                 </span>
-                <h3 class="fw-extrabold mb-1">Peta Sebaran Titik Penanganan Jalan Batam</h3>
-                <p class="text-muted small mb-0">Visualisasi geospasial status inspeksi dan progres fisik perbaikan di seluruh kecamatan Kota Batam.</p>
+                <h2 class="h3 fw-bold mb-1">Peta Titik Kerusakan & Pekerjaan Jalan Batam</h2>
+                <p class="text-muted small mb-0">Pantau lokasi jalan berlubang, verifikasi petugas, dan progres perbaikan di seluruh wilayah Kota Batam.</p>
             </div>
-            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm d-none d-md-inline-flex align-items-center gap-2">
-                <i class="fas fa-layer-group"></i> Workspace Peta Penuh
+            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2 align-self-start align-self-md-end">
+                <i class="fas fa-map"></i> Buka Peta Layar Penuh
             </a>
         </div>
 
-        <div class="map-showcase-wrapper position-relative">
-            <!-- Map Container with Leaflet -->
-            <div id="landing-preview-map" style="height: 520px; width: 100%;"></div>
+        <div class="map-showcase-wrapper position-relative" style="border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color);">
+            <!-- Map Container with Leaflet (Tall viewport) -->
+            <div id="landing-preview-map" class="landing-gis-map"></div>
 
-            <!-- Floating Status Legend (Bottom-Left matching reference with mobile collapse) -->
+            <!-- Floating Status Legend (Bottom-Left with mobile collapse) -->
             <div class="map-floating-legend" id="landingLegend">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="map-floating-legend-title mb-0">STATUS TITIK:</div>
@@ -130,52 +95,52 @@
                 <ul class="map-floating-legend-list">
                     <li class="map-floating-legend-item">
                         <span class="legend-pin-dot dot-red"></span>
-                        <span>Menunggu Inspeksi Surveyor</span>
+                        <span>Menunggu Review Awal</span>
                     </li>
                     <li class="map-floating-legend-item">
                         <span class="legend-pin-dot dot-amber"></span>
-                        <span>Pengerjaan Fisik Sedang Berjalan</span>
+                        <span>Sedang Dikerjakan</span>
                     </li>
                     <li class="map-floating-legend-item">
                         <span class="legend-pin-dot dot-green"></span>
-                        <span>Perbaikan Telah Tuntas Diverifikasi</span>
+                        <span>Perbaikan Telah Selesai</span>
                     </li>
                 </ul>
             </div>
 
-            <!-- Floating CTA Pill Button (Bottom-Right matching reference) -->
+            <!-- Floating Button to Open Full Map (Bottom-Right) -->
             <a href="{% url 'halaman_peta_utama' %}" class="map-floating-cta-btn">
-                <i class="fas fa-arrow-up-right-from-square"></i> Buka Peta Kerusakan Lengkap (GIS)
+                <i class="fas fa-arrow-up-right-from-square"></i> Buka Peta Interaktif
             </a>
         </div>
     </div>
 </section>
 
 <!-- =========================================================================
-     LIVE STATS COUNTER STRIP
+     3. SINGLE STATS COUNTER ROW (KEPT AS THE ONLY STATS ROW)
      ========================================================================= -->
 <section class="py-4 border-top border-bottom border-color bg-card-subtle">
     <div class="container-xl">
         <div class="row g-3 text-center">
-            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="50">
+            <div class="col-6 col-md-3">
                 <div class="p-3">
-                    <div class="fs-2 fw-extrabold text-primary mb-1">{{ total_laporan|default:0 }}</div>
+                    <div class="fs-2 fw-extrabold text-main mb-1">{{ total_laporan|default:0 }}</div>
                     <div class="small fw-semibold text-secondary">TOTAL LAPORAN MASUK</div>
                 </div>
             </div>
-            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-6 col-md-3">
                 <div class="p-3">
                     <div class="fs-2 fw-extrabold text-warning mb-1">{{ diverifikasi|default:0 }}</div>
                     <div class="small fw-semibold text-secondary">TELAH DIVERIFIKASI</div>
                 </div>
             </div>
-            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="150">
+            <div class="col-6 col-md-3">
                 <div class="p-3">
-                    <div class="fs-2 fw-extrabold text-info mb-1">{{ diperbaiki|default:0 }}</div>
+                    <div class="fs-2 fw-extrabold text-primary mb-1">{{ diperbaiki|default:0 }}</div>
                     <div class="small fw-semibold text-secondary">SEDANG DIKERJAKAN</div>
                 </div>
             </div>
-            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="col-6 col-md-3">
                 <div class="p-3">
                     <div class="fs-2 fw-extrabold text-success mb-1">{{ selesai|default:0 }}</div>
                     <div class="small fw-semibold text-secondary">SELESAI DIPERBAIKI</div>
@@ -186,77 +151,14 @@
 </section>
 
 <!-- =========================================================================
-     FITUR UTAMA WEBGIS
+     4. ALUR 3 LANGKAH PELAPORAN (RETAINED, 4-CARD BENEFIT GRID REMOVED)
      ========================================================================= -->
 <section class="py-5">
     <div class="container-xl">
-        <div class="text-center max-w-700 mx-auto mb-5" data-aos="fade-up">
-            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">KEUNGGULAN SISTEM</span>
-            <h2 class="fw-bold">Mengapa Menggunakan LaporJalan Batam?</h2>
-            <p class="text-muted">Platform yang dirancang agar warga dan dinas terkait dapat berkolaborasi cepat menjaga mutu infrastruktur jalan kota.</p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-                <div class="card card-hover h-100 p-3">
-                    <div class="card-body">
-                        <div class="feature-icon-box bg-primary-subtle text-primary">
-                            <i class="fas fa-crosshairs"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Geotagging Presisi</h5>
-                        <p class="text-muted small mb-0">Deteksi titik koordinat otomatis dengan GPS atau klik langsung di atas peta wilayah administratif Batam.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
-                <div class="card card-hover h-100 p-3">
-                    <div class="card-body">
-                        <div class="feature-icon-box bg-warning-subtle text-warning">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Verifikasi Transparan</h5>
-                        <p class="text-muted small mb-0">Setiap laporan diverifikasi secara berjenjang sehingga perbaikan tepat sasaran dan terhindar dari duplikasi.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="card card-hover h-100 p-3">
-                    <div class="card-body">
-                        <div class="feature-icon-box bg-info-subtle text-info">
-                            <i class="fas fa-images"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Bukti Multi-Foto</h5>
-                        <p class="text-muted small mb-0">Unggah foto kerusakan dari berbagai sudut pandang jalan untuk mempermudah identifikasi tim lapangan.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="250">
-                <div class="card card-hover h-100 p-3">
-                    <div class="card-body">
-                        <div class="feature-icon-box bg-success-subtle text-success">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Heatmap & Analitik</h5>
-                        <p class="text-muted small mb-0">Visualisasi kepadatan kerusakan jalan membantu perumusan prioritas anggaran perawatan dinas terkait.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =========================================================================
-     ALUR 3 LANGKAH PELAPORAN
-     ========================================================================= -->
-<section class="py-5 bg-card-subtle border-top border-bottom border-color">
-    <div class="container-xl">
-        <div class="text-center max-w-700 mx-auto mb-5" data-aos="fade-up">
+        <div class="text-center max-w-700 mx-auto mb-4" data-aos="fade-up">
             <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-1 mb-2">ALUR KERJA</span>
             <h2 class="fw-bold">Hanya 3 Langkah Mudah</h2>
-            <p class="text-muted">Proses cepat tanpa birokrasi berbelit-belit untuk melaporkan jalan rusak di lingkungan Anda.</p>
+            <p class="text-muted small">Proses cepat tanpa birokrasi berbelit-belit untuk mendokumentasikan jalan rusak di lingkungan Anda.</p>
         </div>
 
         <div class="row g-4 text-center">
@@ -267,7 +169,19 @@
                     </div>
                     <h5 class="fw-bold mb-2">Ambil Foto & Lokasi</h5>
                     <p class="text-muted small mb-0">
-                        Foto kondisi jalan yang berlubang atau rusak saat Anda berada di lokasi atau siapkan file fotonya di galeri ponsel.
+                        Ambil foto kondisi jalan yang rusak saat berada di lokasi atau unggah berkas dari galeri ponsel Anda.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
+                <div class="card h-100 p-4 border-0 shadow-sm">
+                    <div class="d-flex justify-content-center">
+                        <div class="step-number-circle">2</div>
+                    </div>
+                    <h5 class="fw-bold mb-2">Pilih Titik di Peta</h5>
+                    <p class="text-muted small mb-0">
+                        Gunakan tombol deteksi GPS atau klik langsung di peta untuk menetapkan koordinat lokasi secara presisi.
                     </p>
                 </div>
             </div>
@@ -275,49 +189,37 @@
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100 p-4 border-0 shadow-sm">
                     <div class="d-flex justify-content-center">
-                        <div class="step-number-circle">2</div>
-                    </div>
-                    <h5 class="fw-bold mb-2">Pilih Titik di Peta</h5>
-                    <p class="text-muted small mb-0">
-                        Gunakan tombol GPS otomatis atau klik langsung di peta untuk menetapkan koordinat lintang & bujur secara akurat.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="card h-100 p-4 border-0 shadow-sm">
-                    <div class="d-flex justify-content-center">
                         <div class="step-number-circle">3</div>
                     </div>
                     <h5 class="fw-bold mb-2">Kirim & Pantau Progres</h5>
                     <p class="text-muted small mb-0">
-                        Laporan langsung tersimpan di sistem. Anda dapat memantau perubahannya dari diverifikasi hingga tuntas diperbaiki.
+                        Laporan langsung tersimpan. Pantau perubahan status dari review awal hingga tuntas diperbaiki.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="text-center mt-5" data-aos="fade-up">
-            <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-lg shadow">
-                <i class="fas fa-paper-plane"></i> Mulai Buat Laporan Sekarang
+        <div class="text-center mt-4">
+            <a href="{% url 'tambah_laporan' %}" class="btn btn-outline-primary btn-lg px-4 shadow-sm">
+                <i class="fas fa-paper-plane me-1"></i> Mulai Buat Laporan Sekarang
             </a>
         </div>
     </div>
 </section>
 
 <!-- =========================================================================
-     LAPORAN TERKINI WARGA
+     5. LAPORAN TERKINI WARGA (EQUAL HEIGHT CARDS + FALLBACK ROAD ICON)
      ========================================================================= -->
-<section class="py-5">
+<section class="py-5 bg-card-subtle border-top border-bottom border-color">
     <div class="container-xl">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4" data-aos="fade-up">
             <div>
                 <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">PARTISIPASI PUBLIK</span>
                 <h2 class="fw-bold mb-1">Laporan Terkini Warga Batam</h2>
-                <p class="text-muted mb-0">Daftar laporan yang masuk dan sedang dalam pemantauan petugas.</p>
+                <p class="text-muted small mb-0">Daftar laporan masyarakat yang masuk dan dalam pemantauan.</p>
             </div>
-            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm mt-3 mt-md-0">
-                <i class="fas fa-map"></i> Lihat Semua di Peta
+            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-secondary btn-sm mt-3 mt-md-0">
+                <i class="fas fa-map me-1"></i> Lihat Semua di Peta
             </a>
         </div>
 
@@ -325,8 +227,8 @@
             <div class="row g-4">
                 {% for laporan in laporan_terbaru %}
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
-                        <div class="card card-hover h-100 overflow-hidden">
-                            <!-- Image Thumbnail if available -->
+                        <div class="card card-hover h-100 overflow-hidden d-flex flex-column border-0 shadow-sm">
+                            <!-- Image Thumbnail or Road Icon Placeholder (Uniform 180px height) -->
                             {% with first_photo=laporan.foto_set.first %}
                                 {% if first_photo %}
                                     <div style="height: 180px; overflow: hidden; background: #e2e8f0;" class="position-relative">
@@ -344,8 +246,9 @@
                                         </div>
                                     </div>
                                 {% else %}
-                                    <div style="height: 120px; background: var(--bg-card-subtle);" class="d-flex align-items-center justify-content-center position-relative">
-                                        <i class="fas fa-road fa-3x text-muted opacity-50"></i>
+                                    <div style="height: 180px; background: var(--bg-card-subtle);" class="d-flex flex-column align-items-center justify-content-center position-relative text-muted">
+                                        <i class="fas fa-road fa-3x mb-2 opacity-50 text-secondary"></i>
+                                        <small class="fw-semibold text-secondary opacity-75">Dokumentasi Belum Ada</small>
                                         <div class="position-absolute top-0 end-0 m-2">
                                             {% if laporan.status == 'BARU' %}
                                                 <span class="badge-custom badge-status-baru">Baru</span>
@@ -361,7 +264,8 @@
                                 {% endif %}
                             {% endwith %}
 
-                            <div class="card-body d-flex flex-column">
+                            <!-- Card Body with equalized height and layout -->
+                            <div class="card-body d-flex flex-column p-3 flex-grow-1">
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <span class="badge bg-secondary-subtle text-secondary small">
                                         {{ laporan.get_jenis_kerusakan_display }}
@@ -371,11 +275,11 @@
                                     </span>
                                 </div>
 
-                                <p class="card-text small text-secondary flex-grow-1 mb-3">
-                                    {{ laporan.deskripsi|truncatechars:95 }}
+                                <p class="card-text small text-secondary flex-grow-1 mb-3" style="min-height: 48px; line-height: 1.5;">
+                                    {{ laporan.deskripsi|default:"Laporan kerusakan fisik jalan di wilayah Batam."|truncatechars:95 }}
                                 </p>
 
-                                <div class="pt-2 border-top border-color d-flex justify-content-between align-items-center small text-muted">
+                                <div class="pt-2 border-top border-color d-flex justify-content-between align-items-center small text-muted mt-auto">
                                     <span><i class="far fa-calendar-alt me-1"></i>{{ laporan.tanggal_lapor|date:"d M Y" }}</span>
                                     <a href="{% url 'detail_laporan' laporan.id %}" class="fw-bold text-primary">
                                         Detail <i class="fas fa-arrow-right ms-1"></i>
@@ -389,11 +293,11 @@
         {% else %}
             <div class="card text-center p-5 border-dashed" data-aos="fade-up">
                 <i class="fas fa-road-barrier fa-3x text-muted mb-3 opacity-50"></i>
-                <h5 class="fw-bold">Belum Ada Laporan Terverifikasi</h5>
-                <p class="text-muted small mb-3">Jadilah yang pertama melaporkan kondisi jalan di sekitar Anda untuk kemaslahatan bersama.</p>
+                <h5 class="fw-bold">Belum Ada Laporan</h5>
+                <p class="text-muted small mb-3">Jadilah yang pertama mendokumentasikan kondisi jalan di lingkungan Anda.</p>
                 <div>
                     <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> Buat Laporan Pertama
+                        <i class="fas fa-plus me-1"></i> Buat Laporan Pertama
                     </a>
                 </div>
             </div>
@@ -402,21 +306,22 @@
 </section>
 
 <!-- =========================================================================
-     CALL TO ACTION BANNER
+     6. CALL TO ACTION BANNER (HIGH CONTRAST WHITE SUBTITLE)
      ========================================================================= -->
 <section class="py-5">
     <div class="container-xl" data-aos="zoom-in">
-        <div class="card border-0 text-white overflow-hidden p-4 p-md-5" style="background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #06b6d4 100%); border-radius: var(--radius-xl) !important;">
+        <div class="card border-0 text-white overflow-hidden p-4 p-md-5" style="background: linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #d97706 100%); border-radius: var(--radius-xl) !important; box-shadow: 0 15px 35px rgba(234, 88, 12, 0.25);">
             <div class="row align-items-center g-4">
                 <div class="col-lg-8">
                     <h2 class="display-6 fw-bold mb-3 text-white">Lihat Jalan Berlubang yang Membahayakan?</h2>
-                    <p class="mb-0 text-white-50 lead fs-6">
-                        Satu laporan Anda dapat menyelamatkan pengendara lain dari kecelakaan. Laporkan segera melalui platform WebGIS kami sekarang.
+                    <!-- Fixed high-contrast text-white subtitle -->
+                    <p class="mb-0 text-white lead fs-6" style="color: #ffffff !important; opacity: 0.95;">
+                        Satu laporan Anda dapat menyelamatkan pengendara lain dari kecelakaan. Laporkan segera melalui platform WebGIS perbaikan jalan sekarang.
                     </p>
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <a href="{% url 'tambah_laporan' %}" class="btn btn-light btn-lg text-primary fw-bold px-4 py-3 shadow">
-                        <i class="fas fa-plus-circle text-primary"></i> Laporkan Sekarang
+                        <i class="fas fa-plus-circle text-primary me-1"></i> Laporkan Sekarang
                     </a>
                 </div>
             </div>
@@ -438,13 +343,13 @@ document.addEventListener("DOMContentLoaded", function() {
         zoom: 12,
         zoomControl: false,
         attributionControl: false,
-        scrollWheelZoom: false // Avoid accidental page scroll trapping
+        scrollWheelZoom: false
     });
 
     // Custom zoom control in top-right
     L.control.zoom({ position: 'topright' }).addTo(map);
 
-    // Tile Layer OpenStreetMap (100% Gratis & Bebas Watermark / Tanpa API Key)
+    // Tile Layer OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap'
@@ -500,14 +405,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 onEachFeature: function(feature, layer) {
                     const p = feature.properties;
                     let badgeClass = 'bg-danger text-white';
-                    let statusLabel = 'Menunggu Inspeksi Surveyor';
+                    let statusLabel = 'Menunggu Validasi';
 
                     if (p.status === 'DIPERBAIKI') {
                         badgeClass = 'bg-warning text-dark';
-                        statusLabel = 'Pengerjaan Fisik Sedang Berjalan';
+                        statusLabel = 'Pengerjaan Sedang Berjalan';
                     } else if (p.status === 'SELESAI') {
                         badgeClass = 'bg-success text-white';
-                        statusLabel = 'Perbaikan Telah Tuntas Diverifikasi';
+                        statusLabel = 'Perbaikan Telah Tuntas';
                     }
 
                     let fotoHtml = '';
@@ -538,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (markers.length > 0) {
                 const group = L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.25));
+                map.fitBounds(group.getBounds().pad(0.2));
             }
         })
         .catch(err => console.error("Gagal memuat GeoJSON preview:", err));

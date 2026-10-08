@@ -2,11 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div data-aos="fade-up">
+<!-- Top spacing to ensure sticky header never overlaps the badge and title -->
+<div class="pt-2 pt-md-3" data-aos="fade-up">
     <!-- Header -->
     <div class="text-center max-w-700 mx-auto mb-4">
         <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
-            <i class="fas fa-bullhorn"></i> FORMULIR PELAPORAN
+            <i class="fas fa-bullhorn me-1"></i> FORMULIR PELAPORAN
         </span>
         <h1 class="h3 fw-bold mb-2">{{ title }}</h1>
         <p class="text-muted small">
@@ -15,7 +16,7 @@
     </div>
 
     <!-- Interactive Stepper Indicator -->
-    <div class="stepper-horizontal mb-4" data-aos="fade-up">
+    <div class="stepper-horizontal mb-4">
         <div class="stepper-step active" id="stepper-step-1">
             <div class="step-circle"><i class="fas fa-map-pin"></i></div>
             <div class="step-label">1. Titik Lokasi Peta</div>
@@ -23,7 +24,7 @@
         <div class="stepper-connector"></div>
         <div class="stepper-step" id="stepper-step-2">
             <div class="step-circle"><i class="fas fa-pen-to-square"></i></div>
-            <div class="step-label">2. Rincian & Kategori</div>
+            <div class="step-label">2. Rincian Kerusakan</div>
         </div>
         <div class="stepper-connector"></div>
         <div class="stepper-step" id="stepper-step-3">
@@ -50,43 +51,36 @@
                         <span class="badge bg-primary text-white rounded-circle p-2" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">1</span>
                         <div>
                             <h6 class="mb-0 fw-bold">Tentukan Titik Kerusakan di Peta</h6>
-                            <small class="text-muted">Klik pada jalan yang bermasalah atau gunakan tombol sensor GPS</small>
+                            <small class="text-muted">Klik pada jalan yang rusak atau tekan tombol GPS di kiri atas peta</small>
                         </div>
                     </div>
-                    <span class="text-muted small"><i class="fas fa-info-circle me-1 text-primary"></i>Titik Wajib Dipilih</span>
+                    <span class="text-muted small d-none d-sm-inline"><i class="fas fa-info-circle me-1 text-primary"></i>Titik Wajib Dipilih</span>
                 </div>
                 
                 <div class="card-body p-0 position-relative">
-                    <div id="map" style="border: none; border-radius: 0; min-height: 480px; height: 100%;"></div>
+                    <div id="map" style="border: none; border-radius: 0; min-height: 480px; height: 55vh;"></div>
                 </div>
 
                 <div class="card-footer bg-card-subtle py-3">
-                    <div class="row align-items-center g-3">
-                        <div class="col-md-7">
-                            <!-- Reverse Geocoding Address Card -->
-                            <div id="detected-address-card" class="address-detected-card d-none mb-0">
-                                <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                    <i class="fas fa-location-dot text-primary fs-5 flex-shrink-0"></i>
-                                    <div class="overflow-hidden">
-                                        <small class="text-muted d-block fw-bold" style="font-size: 0.68rem; text-transform: uppercase;">Alamat Terdeteksi Otomatis:</small>
-                                        <span id="detected-address-text" class="fw-bold small text-truncate d-block text-main">Mendeteksi alamat...</span>
-                                    </div>
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                        <!-- Reverse Geocoding Address Card -->
+                        <div id="detected-address-card" class="address-detected-card d-none mb-0 flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                <i class="fas fa-location-dot text-primary fs-5 flex-shrink-0"></i>
+                                <div class="overflow-hidden">
+                                    <small class="text-muted d-block fw-bold" style="font-size: 0.68rem; text-transform: uppercase;">Alamat Terdeteksi Otomatis:</small>
+                                    <span id="detected-address-text" class="fw-bold small text-truncate d-block text-main">Mendeteksi alamat...</span>
                                 </div>
                             </div>
-                            <div id="no-location-hint" class="small text-muted">
-                                <i class="fas fa-hand-point-up me-1 text-primary"></i> Silakan klik langsung pada jalan di peta untuk menempatkan pin lokasi.
-                            </div>
                         </div>
-                        <div class="col-md-5 d-flex flex-wrap justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
-                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
-                                Lat: <span id="lat-display" class="fw-bold">-</span>
+                        <div id="no-location-hint" class="small text-muted flex-grow-1">
+                            <i class="fas fa-hand-point-up me-1 text-primary"></i> Silakan klik langsung pada jalan di peta atau tekan tombol GPS untuk menempatkan pin.
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                            <span id="location-selected-badge" class="badge bg-success-subtle text-success border border-success-subtle py-2 px-3 d-none">
+                                <i class="fas fa-check-circle me-1"></i> Titik Terpilih
                             </span>
-                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
-                                Lon: <span id="lon-display" class="fw-bold">-</span>
-                            </span>
-                            <button type="button" id="btn-copy-coords" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.72rem;" title="Salin koordinat">
-                                <i class="far fa-copy me-1"></i> Salin
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -95,7 +89,7 @@
             <!-- Navigasi Langkah 1 -->
             <div class="wizard-nav-btns d-flex justify-content-between align-items-center">
                 <a href="{% url 'landing' %}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i> Batal / Beranda
+                    <i class="fas fa-arrow-left me-1"></i> Batal
                 </a>
                 <button type="button" class="btn btn-primary btn-lg shadow-sm" id="btn-goto-step-2" disabled>
                     <span>Lanjut ke Langkah 2</span><span class="d-none d-sm-inline">: Rincian Kerusakan</span> <i class="fas fa-arrow-right ms-2"></i>
@@ -124,7 +118,7 @@
                     </button>
                 </div>
 
-                <!-- Jenis Kerusakan -->
+                <!-- Jenis Kerusakan (Required, Empty Placeholder) -->
                 <div class="mb-3">
                     <label for="id_jenis_kerusakan" class="form-label fw-bold">
                         <i class="fas fa-road text-primary me-1"></i> Jenis Kerusakan <span class="text-danger">*</span>
@@ -133,14 +127,14 @@
                     <div id="error-jenis_kerusakan" class="invalid-feedback d-block text-danger small"></div>
                 </div>
 
-                <!-- Tingkat Kerusakan -->
+                <!-- Tingkat Kerusakan (Required, Empty Placeholder) -->
                 <div class="mb-3">
                     <label for="id_tingkat_kerusakan" class="form-label fw-bold">
                         <i class="fas fa-triangle-exclamation text-warning me-1"></i> Tingkat Kerusakan <span class="text-danger">*</span>
                     </label>
                     {{ form.tingkat_kerusakan }}
                     <div id="error-tingkat_kerusakan" class="invalid-feedback d-block text-danger small"></div>
-                    <div class="d-flex gap-2 mt-2">
+                    <div class="d-flex flex-wrap gap-2 mt-2">
                         <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2" style="font-size: 0.72rem;">Ringan: Retak tipis / goresan</span>
                         <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-1 px-2" style="font-size: 0.72rem;">Sedang: Lubang dangkal / aspal lepas</span>
                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2" style="font-size: 0.72rem;">Berat: Amblas / lubang dalam</span>
@@ -152,34 +146,6 @@
                     <label for="id_deskripsi" class="form-label fw-bold">
                         <i class="fas fa-align-left text-primary me-1"></i> Deskripsi & Patokan Lokasi <span class="text-danger">*</span>
                     </label>
-                    
-                    <!-- Quick Category Tag Chips -->
-                    <div class="mb-2">
-                        <small class="text-muted d-block fw-bold mb-1" style="font-size: 0.72rem;">
-                            <i class="fas fa-tags text-primary me-1"></i> TEMPLATE KATEGORI CEPAT (KLIK UNTUK MEMILIH):
-                        </small>
-                        <div class="quick-tag-group">
-                            <span class="quick-tag-chip" data-tag="Lubang Aspal Dalam (> 10cm)">
-                                <i class="fas fa-circle-exclamation text-danger"></i> Lubang Dalam
-                            </span>
-                            <span class="quick-tag-chip" data-tag="Bahu Jalan Amblas">
-                                <i class="fas fa-arrow-down text-warning"></i> Bahu Amblas
-                            </span>
-                            <span class="quick-tag-chip" data-tag="Retak Buaya Meluas">
-                                <i class="fas fa-wave-square text-info"></i> Retak Buaya
-                            </span>
-                            <span class="quick-tag-chip" data-tag="Genangan Air Saat Hujan">
-                                <i class="fas fa-water text-primary"></i> Genangan Air
-                            </span>
-                            <span class="quick-tag-chip" data-tag="Jalur Utama Protokol Padat">
-                                <i class="fas fa-car text-secondary"></i> Jalan Protokol
-                            </span>
-                            <span class="quick-tag-chip" data-tag="Akses Kawasan Pemukiman / Gang">
-                                <i class="fas fa-home text-secondary"></i> Akses Warga
-                            </span>
-                        </div>
-                    </div>
-
                     {{ form.deskripsi }}
                     <div id="error-deskripsi" class="invalid-feedback d-block text-danger small"></div>
                     <div class="d-flex justify-content-between align-items-center mt-1">
@@ -220,7 +186,7 @@
                         {{ form.email_pelapor }}
                         <div id="error-email_pelapor" class="invalid-feedback d-block text-danger small"></div>
                         <small class="text-muted" style="font-size: 0.75rem;">
-                            Ingin pelacakan otomatis? <a href="{% url 'register' %}" class="fw-semibold">Daftar akun gratis</a>.
+                            Ingin melacak otomatis di akun? <a href="{% url 'register' %}" class="fw-semibold">Daftar akun gratis</a>.
                         </small>
                     </div>
                 {% endif %}
@@ -238,27 +204,30 @@
         </div>
 
         <!-- =========================================================================
-             LANGKAH 3: BUKTI FOTO & KIRIM
+             LANGKAH 3: BUKTI FOTO & KIRIM (REQUIRED PHOTO + CAMERA CAPTURE + SUBMIT GATE)
              ========================================================================= -->
         <div class="wizard-step-panel" id="panel-step-3">
             <div class="row g-4 mb-4">
                 <!-- Kolom Kiri: Upload Foto & Captcha -->
                 <div class="col-lg-7">
                     <div class="card shadow-sm border-0 p-4 h-100">
-                        <h5 class="fw-bold mb-2"><i class="fas fa-camera text-primary me-2"></i>Dokumentasi Foto Lapangan</h5>
-                        <p class="text-muted small mb-4">Lampirkan foto visual kerusakan agar surveyor dinas dapat melakukan asesmen secara akurat.</p>
+                        <h5 class="fw-bold mb-2"><i class="fas fa-camera text-primary me-2"></i>Dokumentasi Foto Lapangan <span class="text-danger">*</span></h5>
+                        <p class="text-muted small mb-3">Wajib melampirkan minimal 1 foto fisik kerusakan jalan agar tim verifikator dapat mengecek kebenaran laporan.</p>
 
-                        <!-- Upload Foto Input -->
+                        <!-- Upload Foto Input with accept="image/*" capture="environment" -->
                         <div class="mb-4">
                             <label for="id_foto_upload" class="form-label fw-bold">
-                                Unggah File Foto (Maksimal 5 Foto)
+                                Pilih / Ambil Foto Lapangan (Minimal 1, Maksimal 5 Foto) <span class="text-danger">*</span>
                             </label>
-                            <input type="file" name="foto_uploads" id="id_foto_upload" class="form-control" multiple accept="image/*">
+                            <input type="file" name="foto_uploads" id="id_foto_upload" class="form-control" multiple accept="image/*" capture="environment" required>
                             <div id="error-foto_uploads" class="invalid-feedback d-block text-danger small"></div>
-                            <small class="text-muted" style="font-size: 0.75rem;">Format: JPG, PNG, WEBP. Maksimal 5MB per file.</small>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <small class="text-muted" style="font-size: 0.75rem;">Mendukung kamera langsung atau galeri ponsel (JPG, PNG, WEBP, maks 5MB).</small>
+                                <span id="photo-count-status" class="badge bg-danger-subtle text-danger small">Wajib Diisi</span>
+                            </div>
                             
-                            <!-- Preview Container -->
-                            <div id="foto-preview-container" class="upload-preview-grid"></div>
+                            <!-- Thumbnail Previews Container -->
+                            <div id="foto-preview-container" class="upload-preview-grid mt-3"></div>
                         </div>
 
                         <!-- Captcha -->
@@ -266,6 +235,7 @@
                             <label class="form-label fw-bold">Verifikasi Keamanan <span class="text-danger">*</span></label>
                             {{ form.captcha }}
                             <div id="error-captcha" class="invalid-feedback d-block text-danger small"></div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Centang kotak reCAPTCHA untuk mengaktifkan tombol kirim.</small>
                         </div>
                     </div>
                 </div>
@@ -295,19 +265,25 @@
                             </div>
                             <div class="wizard-summary-item">
                                 <span class="text-muted">Foto Terpilih:</span>
-                                <span id="summary-photos" class="fw-bold text-primary">0 Foto</span>
+                                <span id="summary-photos" class="fw-bold text-danger">0 Foto (Wajib Minimal 1)</span>
                             </div>
                         </div>
 
-                        <!-- Tombol Submit -->
+                        <!-- Submit Requirements Checklist -->
+                        <div class="p-2 mb-3 rounded-2 bg-card-subtle border small text-muted">
+                            <div id="check-photo-item" class="d-flex align-items-center gap-2 mb-1 text-danger">
+                                <i class="fas fa-circle-xmark"></i> Minimal 1 Foto Dokumentasi
+                            </div>
+                            <div id="check-captcha-item" class="d-flex align-items-center gap-2 text-danger">
+                                <i class="fas fa-circle-xmark"></i> Verifikasi reCAPTCHA
+                            </div>
+                        </div>
+
+                        <!-- Tombol Submit (Disabled by default until photo and reCAPTCHA are completed) -->
                         <div class="d-grid mt-auto">
-                            <button type="submit" class="btn btn-primary btn-lg shadow-sm" id="submit-btn">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm" id="submit-btn" disabled>
                                 <span class="submit-text">
-                                    {% if is_edit %}
-                                        <i class="fas fa-save me-1"></i> Simpan Perubahan Laporan
-                                    {% else %}
-                                        <i class="fas fa-paper-plane me-1"></i> Kirim Laporan ke Sistem
-                                    {% endif %}
+                                    <i class="fas fa-paper-plane me-1"></i> Kirim Laporan ke Sistem
                                 </span>
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             </button>
@@ -325,56 +301,50 @@
         </div>
     </form>
 </div>
+
+<!-- =========================================================================
+     POST-SUBMIT SUCCESS MODAL (LARGE REPORT ID, SALIN ID, LACAK STATUS LINK)
+     ========================================================================= -->
+<div class="modal fade" id="successReportModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="successReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-xl" style="border-radius: var(--radius-xl);">
+            <div class="modal-body p-4 p-md-5 text-center">
+                <div class="feature-icon-box bg-success-subtle text-success mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2rem;">
+                    <i class="fas fa-circle-check"></i>
+                </div>
+                <h4 class="fw-bold mb-1" id="successReportModalLabel">Laporan Berhasil Terkirim!</h4>
+                <p class="text-muted small mb-4">Terima kasih atas partisipasi Anda dalam menjaga keselamatan jalan raya di Kota Batam.</p>
+
+                <!-- Large Report ID Box -->
+                <div class="p-3 mb-3 rounded-4 bg-primary-subtle border border-primary-subtle text-center">
+                    <small class="text-primary fw-bold d-block text-uppercase" style="letter-spacing: 0.05em; font-size: 0.75rem;">NOMOR ID LAPORAN ANDA:</small>
+                    <div class="display-5 fw-extrabold text-primary my-1" id="success-report-id">#--</div>
+                    <small class="text-muted" style="font-size: 0.72rem;">Gunakan ID ini untuk memantau status perkembangan perbaikan jalan.</small>
+                </div>
+
+                <!-- Copy ID Button -->
+                <div class="d-flex gap-2 justify-content-center mb-4">
+                    <button type="button" class="btn btn-outline-primary btn-sm px-3" id="btn-copy-success-id">
+                        <i class="far fa-copy me-1"></i> <span id="copy-success-text">Salin ID Laporan</span>
+                    </button>
+                </div>
+
+                <!-- Action Buttons: Lacak Status & Selesai -->
+                <div class="d-grid gap-2">
+                    <a href="#" id="link-track-status" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="fas fa-magnifying-glass-location me-1"></i> Lacak Status Laporan Sekarang
+                    </a>
+                    <a href="{% url 'halaman_peta_utama' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-map me-1"></i> Lihat di Peta Interaktif
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/form_laporan.js' %}?v=5.0"></script>
+    <script src="{% static 'js/form_laporan.js' %}?v=5.5"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const fotoInput = document.getElementById('id_foto_upload');
-        const previewContainer = document.getElementById('foto-preview-container');
-        const summaryPhotos = document.getElementById('summary-photos');
-        if (!fotoInput || !previewContainer) return;
-        
-        fotoInput.addEventListener('change', function(e) {
-            previewContainer.innerHTML = '';
-            const files = Array.from(e.target.files);
-            
-            if (files.length > 5) {
-                Swal.fire('Maksimal 5 Foto', 'Anda hanya dapat mengunggah maksimal 5 file foto.', 'warning');
-                fotoInput.value = '';
-                if (summaryPhotos) summaryPhotos.textContent = '0 Foto';
-                return;
-            }
-            
-            if (summaryPhotos) {
-                summaryPhotos.textContent = `${files.length} Foto Terpilih`;
-            }
-            
-            files.forEach((file, index) => {
-                if (file.size > 5 * 1024 * 1024) {
-                    Swal.fire('Ukuran Terlalu Besar', `Foto ke-${index + 1} melebihi batas 5MB`, 'warning');
-                    return;
-                }
-                if (!file.type.match('image.*')) {
-                    Swal.fire('Format Salah', `File ke-${index + 1} bukan berkas gambar valid`, 'warning');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'upload-preview-item';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview Foto ${index + 1}">
-                    `;
-                    previewContainer.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-    });
-    </script>
 {% endblock %}

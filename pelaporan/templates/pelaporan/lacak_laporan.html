@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-900 mx-auto py-2" data-aos="fade-up">
+    <!-- Header -->
+    <div class="text-center mb-3">
+        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+            <i class="fas fa-magnifying-glass-location me-1"></i> PELACAKAN STATUS
+        </span>
+        <h1 class="h3 fw-bold mb-1">Lacak Status Laporan Jalan</h1>
+        <p class="text-muted small max-w-600 mx-auto mb-0">
+            Pantau transparansi penanganan laporan kerusakan jalan di Kota Batam secara real-time.
+        </p>
+    </div>
+
+    <!-- Search Form Card -->
+    <div class="card shadow-sm border-0 p-3 p-md-4 mb-3">
+        <form method="GET" action="{% url 'lacak_laporan' %}" class="row g-2 align-items-center">
+            <div class="col-12 col-md-9">
+                <div class="input-icon-box">
+                    <i class="fas fa-search text-muted"></i>
+                    <input type="text" name="q" value="{{ query }}" class="form-control form-control-lg" style="padding-left: 2.85rem !important;" placeholder="Masukkan Nomor ID Laporan (contoh: 12 atau #12)..." required autofocus>
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
+                    <i class="fas fa-magnifying-glass me-1"></i> Lacak Status
+                </button>
+            </div>
+        </form>
+        <!-- Replaced three stacked instruction cards with this single short line of text -->
+        <div class="text-center text-muted small mt-2 pt-1">
+            <i class="fas fa-info-circle text-primary me-1"></i> Masukkan nomor ID laporan yang Anda peroleh saat mengirim laporan untuk melihat progres penanganan secara transparan.
+        </div>
+    </div>
+
+    <!-- Hasil Pelacakan -->
+    {% if query %}
+        {% if laporan %}
+            <div class="card shadow-sm border-0 overflow-hidden mb-4" data-aos="fade-up">
+                <!-- Status Banner Top -->
+                <div class="card-header bg-card-subtle py-3 px-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 border-bottom border-color">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary text-white fs-6 px-3 py-2 rounded-pill">
+                            <i class="fas fa-file-lines me-1"></i> ID #{{ laporan.id }}
+                        </span>
+                        <span class="fw-bold fs-6 text-main">{{ laporan.get_jenis_kerusakan_display }}</span>
+                    </div>
+                    <div>
+                        {% if laporan.status == 'BARU' %}
+                            <span class="badge-custom badge-status-baru fs-6 py-2 px-3"><i class="fas fa-clock me-1"></i> Menunggu Review</span>
+                        {% elif laporan.status == 'DIVERIFIKASI' %}
+                            <span class="badge-custom badge-status-diverifikasi fs-6 py-2 px-3"><i class="fas fa-clipboard-check me-1"></i> Diverifikasi</span>
+                        {% elif laporan.status == 'DIPERBAIKI' %}
+                            <span class="badge-custom badge-status-diperbaiki fs-6 py-2 px-3"><i class="fas fa-person-digging me-1"></i> Sedang Dikerjakan</span>
+                        {% elif laporan.status == 'SELESAI' %}
+                            <span class="badge-custom badge-status-selesai fs-6 py-2 px-3"><i class="fas fa-check-double me-1"></i> Selesai Diperbaiki</span>
+                        {% else %}
+                            <span class="badge-custom badge-status-ditolak fs-6 py-2 px-3">{{ laporan.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Simple Clean Timeline: Menunggu Review -> Diverifikasi -> Dikerjakan -> Selesai -->
+                    <div class="mb-4 pb-2">
+                        <h6 class="fw-bold mb-3 text-secondary text-uppercase small tracking-wider">
+                            <i class="fas fa-timeline text-primary me-1"></i> Alur Progres Penanganan
+                        </h6>
+                        <div class="row g-2 text-center">
+                            <!-- Step 1: Menunggu Review -->
+                            <div class="col-6 col-md-3">
+                                <div class="stepper-item {% if laporan.status == 'BARU' %}active active-baru{% elif laporan.status == 'DIVERIFIKASI' or laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}completed{% endif %}">
+                                    <div class="stepper-icon-box">
+                                        {% if laporan.status == 'BARU' %}
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        {% elif laporan.status == 'DIVERIFIKASI' or laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            <i class="fas fa-clock"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="stepper-title">1. Menunggu Review</div>
+                                    <div class="stepper-desc">Review Berkas</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Diverifikasi -->
+                            <div class="col-6 col-md-3">
+                                <div class="stepper-item {% if laporan.status == 'DIVERIFIKASI' %}active active-warning{% elif laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}completed{% endif %}">
+                                    <div class="stepper-icon-box">
+                                        {% if laporan.status == 'DIVERIFIKASI' %}
+                                            <i class="fas fa-magnifying-glass-location"></i>
+                                        {% elif laporan.status == 'DIPERBAIKI' or laporan.status == 'SELESAI' %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            <i class="fas fa-clipboard-check"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="stepper-title">2. Diverifikasi</div>
+                                    <div class="stepper-desc">Validasi Lokasi</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Dikerjakan -->
+                            <div class="col-6 col-md-3">
+                                <div class="stepper-item {% if laporan.status == 'DIPERBAIKI' %}active active-info{% elif laporan.status == 'SELESAI' %}completed{% endif %}">
+                                    <div class="stepper-icon-box">
+                                        {% if laporan.status == 'DIPERBAIKI' %}
+                                            <i class="fas fa-person-digging"></i>
+                                        {% elif laporan.status == 'SELESAI' %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            <i class="fas fa-wrench"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="stepper-title">3. Dikerjakan</div>
+                                    <div class="stepper-desc">Perbaikan Fisik</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Selesai -->
+                            <div class="col-6 col-md-3">
+                                <div class="stepper-item {% if laporan.status == 'SELESAI' %}active active-success{% endif %}">
+                                    <div class="stepper-icon-box">
+                                        {% if laporan.status == 'SELESAI' %}
+                                            <i class="fas fa-check-double"></i>
+                                        {% else %}
+                                            <i class="fas fa-flag-checkered"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="stepper-title">4. Selesai</div>
+                                    <div class="stepper-desc">Jalan Tuntas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Info Detail -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6 col-md-3">
+                            <div class="p-3 rounded-3 bg-card-subtle border h-100">
+                                <small class="text-muted d-block fw-bold" style="font-size: 0.7rem;">TINGKAT KERUSAKAN</small>
+                                {% if laporan.tingkat_kerusakan == 'BERAT' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 mt-1">
+                                        <i class="fas fa-triangle-exclamation"></i> {{ laporan.get_tingkat_kerusakan_display }}
+                                    </span>
+                                {% elif laporan.tingkat_kerusakan == 'SEDANG' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 mt-1">
+                                        {{ laporan.get_tingkat_kerusakan_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 mt-1">
+                                        {{ laporan.get_tingkat_kerusakan_display }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="p-3 rounded-3 bg-card-subtle border h-100">
+                                <small class="text-muted d-block fw-bold" style="font-size: 0.7rem;">TANGGAL LAPOR</small>
+                                <span class="fw-bold small text-main mt-1 d-block">{{ laporan.tanggal_lapor|date:"d M Y, H:i" }} WIB</span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="p-3 rounded-3 bg-card-subtle border h-100">
+                                <small class="text-muted d-block fw-bold" style="font-size: 0.7rem;">TERAKHIR DIUPDATE</small>
+                                <span class="fw-bold small text-main mt-1 d-block">{{ laporan.tanggal_update|date:"d M Y, H:i" }} WIB</span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3">
+                            <div class="p-3 rounded-3 bg-card-subtle border h-100">
+                                <small class="text-muted d-block fw-bold" style="font-size: 0.7rem;">KOORDINAT GPS</small>
+                                <span class="fw-bold small text-primary mt-1 d-block">
+                                    {{ laporan.lokasi.y|floatformat:5 }}, {{ laporan.lokasi.x|floatformat:5 }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deskripsi & Catatan Petugas -->
+                    <div class="p-3 rounded-3 bg-card-subtle border mb-3">
+                        <small class="text-muted fw-bold d-block mb-1"><i class="fas fa-align-left text-primary me-1"></i>DESKRIPSI / PATOKAN JALAN</small>
+                        <p class="mb-0 text-main">{{ laporan.deskripsi|default:"<em>Tidak ada catatan deskripsi khusus.</em>" }}</p>
+                    </div>
+
+                    {% if laporan.catatan_admin %}
+                        <div class="p-3 rounded-3 bg-info-subtle border border-info mb-3">
+                            <small class="text-info fw-bold d-block mb-1"><i class="fas fa-clipboard-user me-1"></i>CATATAN / TINDAK LANJUT PETUGAS</small>
+                            <p class="mb-0 text-main">{{ laporan.catatan_admin }}</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Foto Dokumentasi Preview -->
+                    {% if laporan.foto_set.all %}
+                        <div class="mb-4">
+                            <small class="text-muted fw-bold d-block mb-2"><i class="fas fa-camera text-primary me-1"></i>FOTO DOKUMENTASI ({{ laporan.foto_set.count }})</small>
+                            <div class="row g-2">
+                                {% for foto in laporan.foto_set.all %}
+                                    <div class="col-4 col-sm-3 col-md-2">
+                                        <div class="rounded-2 overflow-hidden border shadow-sm" style="height: 90px;">
+                                            <img src="{{ foto.foto.url }}" class="w-100 h-100 object-fit-cover" style="cursor: pointer;" onclick="window.open('{{ foto.foto.url }}', '_blank')" alt="Dokumentasi Laporan" title="Klik untuk perbesar">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-2 pt-2 border-top border-color">
+                        <a href="{% url 'detail_laporan' laporan.id %}" class="btn btn-primary btn-sm px-3">
+                            <i class="fas fa-arrow-up-right-from-square me-1"></i> Buka Halaman Lengkap
+                        </a>
+                        <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" target="_blank" class="btn btn-outline-success btn-sm px-3">
+                            <i class="fas fa-location-arrow me-1"></i> Rute Google Maps
+                        </a>
+                        <a href="https://api.whatsapp.com/send?text=Pantau%20progres%20perbaikan%20jalan%20rusak%20Batam%20ID%20%23{{ laporan.id }}%20di%20WebGIS:%20{{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-secondary btn-sm px-3">
+                            <i class="fab fa-whatsapp me-1"></i> Bagikan
+                        </a>
+                        <a href="{% url 'halaman_peta_utama' %}" class="btn btn-secondary btn-sm ms-auto">
+                            <i class="fas fa-map me-1"></i> Lihat di Peta Batam
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Not Found State -->
+            <div class="card text-center p-5 shadow-sm border-0" data-aos="fade-up">
+                <div class="feature-icon-box bg-warning-subtle text-warning mx-auto mb-3" style="width: 56px; height: 56px;">
+                    <i class="fas fa-circle-exclamation fs-3"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Laporan Tidak Ditemukan</h5>
+                <p class="text-muted small max-w-500 mx-auto mb-4">
+                    Tidak ditemukan data laporan dengan nomor ID <strong>"{{ query }}"</strong>. Pastikan nomor ID laporan yang Anda masukkan sudah benar.
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{% url 'lacak_laporan' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-rotate-left me-1"></i> Cari Ulang
+                    </a>
+                    <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus-circle me-1"></i> Buat Laporan Baru
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

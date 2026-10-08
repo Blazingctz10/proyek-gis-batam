@@ -20,15 +20,28 @@
                     <i class="fas fa-arrow-left"></i> Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'landing' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
-                    <i class="fas fa-arrow-left"></i> Beranda
+                <a href="{% url 'lacak_laporan' %}" class="btn btn-secondary btn-sm flex-grow-1 flex-md-grow-0">
+                    <i class="fas fa-magnifying-glass me-1"></i> Lacak Lainnya
                 </a>
             {% endif %}
+            <a href="https://api.whatsapp.com/send?text=Pantau%20progres%20perbaikan%20jalan%20rusak%20Batam%20ID%20%23{{ laporan.id }}%20di%20WebGIS:%20{{ request.build_absolute_uri }}" target="_blank" class="btn btn-outline-success btn-sm flex-grow-1 flex-md-grow-0" title="Bagikan ke WhatsApp">
+                <i class="fab fa-whatsapp me-1"></i> Bagikan
+            </a>
             <a href="{% url 'halaman_peta_utama' %}" class="btn btn-outline-primary btn-sm flex-grow-1 flex-md-grow-0">
                 <i class="fas fa-map"></i> Lihat di Peta
             </a>
         </div>
     </div>
+
+    <!-- Info Banner for New Reports -->
+    {% if laporan.status == 'BARU' %}
+        <div class="alert alert-info border border-info-subtle shadow-sm mb-4 d-flex align-items-center gap-2">
+            <i class="fas fa-circle-info fs-5 text-info"></i>
+            <div>
+                <strong>Laporan Sedang Ditinjau:</strong> Laporan ini telah diterima sistem dan dalam antrean verifikasi data. Anda dapat menyimpan atau membagikan nomor ID <strong>#{{ laporan.id }}</strong> untuk memantau perkembangannya kapan saja.
+            </div>
+        </div>
+    {% endif %}
 
     <!-- Progress Status Stepper -->
     <div class="card shadow-sm border-0 mb-4 p-3 p-md-4">
@@ -47,7 +60,7 @@
                         {% endif %}
                     </div>
                     <div class="stepper-title">1. Masuk</div>
-                    <div class="stepper-desc">Review Administrasi</div>
+                    <div class="stepper-desc">Review Data</div>
                 </div>
             </div>
 
@@ -64,7 +77,7 @@
                         {% endif %}
                     </div>
                     <div class="stepper-title">2. Diverifikasi</div>
-                    <div class="stepper-desc">Validasi Tim Lapangan</div>
+                    <div class="stepper-desc">Validasi Tim</div>
                 </div>
             </div>
 
@@ -155,15 +168,30 @@
                             <span class="fw-semibold text-main">{{ laporan.tanggal_update|date:"d F Y, H:i" }} WIB</span>
                         </div>
 
+                        {% if masked_email %}
+                        <div class="col-sm-6">
+                            <small class="text-muted d-block">PELAPOR (EMAIL)</small>
+                            <span class="fw-semibold text-main"><i class="far fa-envelope me-1 text-muted"></i>{{ masked_email }}</span>
+                        </div>
+                        {% endif %}
+
                         <div class="col-12">
-                            <small class="text-muted d-block">KOORDINAT LOKASI</small>
+                            <small class="text-muted d-block fw-bold mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                                <i class="fas fa-location-crosshairs text-primary me-1"></i> KOORDINAT LOKASI
+                            </small>
                             <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
-                                <span class="badge bg-card-subtle text-main border px-2 py-1">
-                                    {{ laporan.lokasi.y|floatformat:6 }}, {{ laporan.lokasi.x|floatformat:6 }}
-                                </span>
-                                <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" target="_blank" class="btn btn-outline-primary btn-sm py-1">
-                                    <i class="fas fa-external-link-alt me-1"></i> Buka Google Maps
+                                <div class="d-inline-flex align-items-center gap-2 bg-card-subtle border rounded-3 px-3 py-1 font-monospace" style="font-size: 0.88rem;">
+                                    <span class="text-muted small">Lat:</span>
+                                    <strong class="text-main">{{ laporan.lokasi.y|floatformat:6 }}</strong>
+                                    <span class="text-muted small ms-1">Lon:</span>
+                                    <strong class="text-main">{{ laporan.lokasi.x|floatformat:6 }}</strong>
+                                </div>
+                                <a href="https://www.google.com/maps?q={{ laporan.lokasi.y }},{{ laporan.lokasi.x }}" target="_blank" class="btn btn-outline-success btn-sm py-1">
+                                    <i class="fas fa-location-arrow me-1"></i> Rute Google Maps
                                 </a>
+                                <button type="button" class="btn btn-outline-secondary btn-sm py-1" onclick="navigator.clipboard.writeText('{{ laporan.lokasi.y }}, {{ laporan.lokasi.x }}').then(() => alert('Koordinat berhasil disalin!'))">
+                                    <i class="far fa-copy me-1"></i> Salin Koordinat
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -175,12 +203,13 @@
 
                     {% if laporan.catatan_admin %}
                         <div class="p-3 rounded-3 bg-info-subtle border border-info mb-0">
-                            <small class="text-info fw-bold d-block mb-1"><i class="fas fa-user-shield me-1"></i>TANGGAPAN / CATATAN PETUGAS</small>
+                            <small class="text-info fw-bold d-block mb-1"><i class="fas fa-clipboard-user me-1"></i>TANGGAPAN / CATATAN TIM</small>
                             <p class="mb-0 text-main">{{ laporan.catatan_admin }}</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
+
 
             <!-- Dokumentasi Foto -->
             {% if laporan.foto_set.all %}
@@ -269,9 +298,9 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Add a soft accuracy pulse circle around marker
         L.circle([lat, lon], {
-            color: '#2563eb',
-            fillColor: '#3b82f6',
-            fillOpacity: 0.15,
+            color: '#ea580c',
+            fillColor: '#f97316',
+            fillOpacity: 0.18,
             radius: 40
         }).addTo(map);
     }

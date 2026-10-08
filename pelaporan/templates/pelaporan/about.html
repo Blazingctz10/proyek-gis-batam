@@ -2,50 +2,65 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-900 mx-auto py-3" data-aos="fade-up">
+<div class="max-w-900 mx-auto py-2">
     <!-- Header -->
-    <div class="text-center mb-5">
+    <div class="text-center mb-4">
         <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
-            <i class="fas fa-info-circle"></i> TENTANG PLATFORM
+            <i class="fas fa-info-circle"></i> TENTANG INISIATIF
         </span>
         <h1 class="display-6 fw-bold mb-2">Mengenal LaporJalan Batam</h1>
         <p class="text-muted lead fs-6 max-w-700 mx-auto">
-            Sebuah inisiatif Geographic Information System (WebGIS) modern untuk mempercepat respon perbaikan infrastruktur jalan di Kota Batam melalui partisipasi aktif warga.
+            Platform Geographic Information System (WebGIS) urun daya independen untuk pemetaan dan pemantauan kondisi jalan di Kota Batam melalui partisipasi aktif warga.
         </p>
     </div>
 
+    <!-- Official Non-Affiliation Disclaimer Banner -->
+    <div class="card border border-warning-subtle bg-warning-subtle p-3 p-md-4 rounded-4 shadow-sm mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <div class="feature-icon-box bg-warning text-white flex-shrink-0 mb-0" style="width: 44px; height: 44px;">
+                <i class="fas fa-shield-cat"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-1 text-warning-emphasis">Pemberitahuan & Pernyataan Independensi (Disclaimer)</h5>
+                <p class="mb-0 small text-secondary" style="line-height: 1.6;">
+                    {{ PLATFORM_DISCLAIMER }}
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Mission & Vision Cards -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6" data-aos="fade-right">
+    <div class="row g-3 g-md-4 mb-4">
+        <div class="col-md-6">
             <div class="card p-4 h-100 shadow-sm border-0">
                 <div class="feature-icon-box bg-primary-subtle text-primary mb-3">
                     <i class="fas fa-bullseye"></i>
                 </div>
-                <h5 class="fw-bold mb-2">Tujuan & Misi Kami</h5>
+                <h5 class="fw-bold mb-2">Tujuan & Misi Komunitas</h5>
                 <p class="text-muted small mb-0">
-                    Menjembatani aspirasi masyarakat Batam dengan instansi pemeliharaan jalan (Dinas Bina Marga & Sumber Daya Air). Setiap laporan yang dikirimkan memiliki koordinat presisi dan dokumentasi foto agar tim teknis dapat melakukan survei dan perbaikan secara akurat dan tepat sasaran.
+                    Memudahkan warga Batam mendokumentasikan titik jalan berlubang, amblas, atau rusak secara presisi berbasis titik koordinat GPS dan foto visual. Inisiatif ini mendorong data yang akurat agar dapat diakses terbuka oleh publik dan para pemangku kepentingan.
                 </p>
             </div>
         </div>
 
-        <div class="col-md-6" data-aos="fade-left">
+        <div class="col-md-6">
             <div class="card p-4 h-100 shadow-sm border-0">
                 <div class="feature-icon-box bg-success-subtle text-success mb-3">
                     <i class="fas fa-shield-halved"></i>
                 </div>
-                <h5 class="fw-bold mb-2">Transparansi Data</h5>
+                <h5 class="fw-bold mb-2">Transparansi & Partisipasi Publik</h5>
                 <p class="text-muted small mb-0">
-                    Kami meyakini bahwa keterbukaan informasi publik adalah kunci pelayanan yang prima. Melalui peta interaktif, warga dapat memantau secara langsung status penanganan jalan rusak dari tahap verifikasi hingga selesai dikerjakan.
+                    Kami meyakini keterbukaan data geospasial adalah hak publik. Melalui peta interaktif, siapapun dapat melacak perkembangan status penanganan kerusakan jalan dari tahap pelaporan, kurasi verifikasi, hingga tuntas diperbaiki.
                 </p>
             </div>
         </div>
     </div>
 
     <!-- Tech Stack Showcase -->
-    <div class="card shadow-sm border-0 p-4 p-md-5 mb-5 text-center" data-aos="fade-up">
-        <h5 class="fw-bold mb-3">Arsitektur & Teknologi WebGIS</h5>
+    <div class="card shadow-sm border-0 p-4 p-md-5 mb-4 text-center">
+        <h5 class="fw-bold mb-2">Arsitektur & Teknologi WebGIS</h5>
         <p class="text-muted small max-w-700 mx-auto mb-4">
-            Aplikasi ini dibangun menggunakan tumpukan teknologi geospasial handal berstandar enterprise:
+            Platform ini dibangun menggunakan teknologi geospasial modern standar terbuka:
         </p>
 
         <div class="d-flex flex-wrap justify-content-center gap-3">
@@ -53,7 +68,7 @@
                 <i class="fab fa-python text-primary fs-4"></i>
                 <div class="text-start">
                     <strong class="d-block small">Django & GeoDjango</strong>
-                    <small class="text-muted" style="font-size: 0.7rem;">Backend & GIS Engine</small>
+                    <small class="text-muted" style="font-size: 0.7rem;">Backend & GIS Processing</small>
                 </div>
             </div>
 
@@ -61,22 +76,22 @@
                 <i class="fas fa-database text-info fs-4"></i>
                 <div class="text-start">
                     <strong class="d-block small">PostgreSQL & PostGIS</strong>
-                    <small class="text-muted" style="font-size: 0.7rem;">Spatial Database</small>
+                    <small class="text-muted" style="font-size: 0.7rem;">Spatial Geometry DB</small>
                 </div>
             </div>
 
             <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
                 <i class="fas fa-map-marked-alt text-success fs-4"></i>
                 <div class="text-start">
-                    <strong class="d-block small">Leaflet.js</strong>
-                    <small class="text-muted" style="font-size: 0.7rem;">Interactive Mapping</small>
+                    <strong class="d-block small">Leaflet.js & OpenStreetMap</strong>
+                    <small class="text-muted" style="font-size: 0.7rem;">Interactive Map Engine</small>
                 </div>
             </div>
 
             <div class="p-3 rounded-3 bg-card-subtle border d-flex align-items-center gap-2">
-                <i class="fab fa-bootstrap text-purple fs-4" style="color: #7952b3;"></i>
+                <i class="fab fa-bootstrap text-purple fs-4" style="color: #ea580c;"></i>
                 <div class="text-start">
-                    <strong class="d-block small">Bootstrap 5</strong>
+                    <strong class="d-block small">Bootstrap 5 + Custom Design</strong>
                     <small class="text-muted" style="font-size: 0.7rem;">Responsive UI System</small>
                 </div>
             </div>
@@ -84,12 +99,15 @@
     </div>
 
     <!-- Contact & Feedback CTA -->
-    <div class="card bg-card-subtle border-0 p-4 text-center" data-aos="fade-up">
-        <h5 class="fw-bold mb-2">Punya Saran atau Pertanyaan?</h5>
-        <p class="text-muted small mb-3">Kritik, saran, dan masukan Anda sangat berharga bagi pengembangan platform ini ke depan.</p>
-        <div>
-            <a href="{% url 'feedback' %}" class="btn btn-primary btn-sm px-4">
+    <div class="card bg-card-subtle border-0 p-4 text-center">
+        <h5 class="fw-bold mb-2">Ingin Berkontribusi atau Punya Saran?</h5>
+        <p class="text-muted small mb-3">Kritik, saran, dan ide kolaborasi pengembangan platform geospasial ini sangat kami nantikan.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <a href="{% url 'feedback' %}" class="btn btn-outline-primary btn-sm px-4">
                 <i class="fas fa-comment-dots me-1"></i> Kirim Umpan Balik
+            </a>
+            <a href="{% url 'halaman_peta_utama' %}" class="btn btn-secondary btn-sm px-4">
+                <i class="fas fa-map me-1"></i> Jelajahi Peta
             </a>
         </div>
     </div>

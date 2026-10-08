@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.landing_page, name='landing'),
     path('peta/', views.halaman_peta_utama, name='halaman_peta_utama'),
     path('lapor/', views.tambah_laporan, name='tambah_laporan'),
+    path('lacak/', views.lacak_laporan, name='lacak_laporan'),
     path('api/data-laporan/', views.data_laporan_geojson, name='data_laporan_geojson'),
     path('faq/', views.faq_view, name='faq'),
     path('tentang/', views.about_view, name='about'),
@@ -27,7 +28,9 @@ urlpatterns = [
     # ✅ ADMIN STATISTICS & ANALYTICS URLS
     path('admin-stats/', views.admin_statistics, name='admin_statistics'),
     path('admin-laporan/', views.laporan_list_admin, name='laporan_list_admin'),
+    path('admin-laporan/<int:laporan_id>/update-status/', views.update_status_laporan, name='update_status_laporan'),
     path('export/excel/', views.export_laporan_excel, name='export_excel'),
     path('export/csv/', views.export_laporan_csv, name='export_csv'),
     path('api/heatmap/', views.heatmap_data, name='heatmap_data'),
-]    
+]
+    

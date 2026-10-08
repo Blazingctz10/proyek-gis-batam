@@ -5,8 +5,8 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Portal WebGIS LaporJalan Batam - Laporkan jalan berlubang, rusak, atau membahayakan di Kota Batam secara presisi berbasis peta geospasial real-time.">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Platform WebGIS Partisipatif LaporJalan Batam - Inisiatif independen pemantauan dan pelaporan jalan rusak di Kota Batam berbasis peta geospasial real-time.">
+    <meta name="theme-color" content="#ea580c">
     
     <title>{{ title }} | LaporJalan Batam WebGIS</title>
     
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     
     <!-- Custom Design System -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.2">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.5">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -38,13 +38,13 @@
             <!-- Brand -->
             <a class="navbar-brand" href="{% url 'landing' %}">
                 <div class="navbar-brand-icon">
-                    <i class="fas fa-route"></i>
+                    <i class="fas fa-road-barrier"></i>
                 </div>
                 <div>
                     <span>LaporJalan</span><span class="text-primary">Batam</span>
                 </div>
-                <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle d-none d-sm-inline-flex align-items-center gap-1 ms-1 px-2 py-1" style="font-size: 0.68rem;">
-                    <span class="pulse-indicator pulse-indicator-green"></span> Live GIS
+                <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle d-none d-sm-inline-flex align-items-center gap-1 ms-1 px-2 py-1" style="font-size: 0.68rem;">
+                    <i class="fas fa-helmet-safety me-1"></i> Pantau Jalan
                 </span>
             </a>
 
@@ -69,6 +69,11 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'halaman_peta_utama' %}active{% endif %}" href="{% url 'halaman_peta_utama' %}">
                             <i class="fas fa-map-marked-alt"></i> Peta Interaktif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'lacak_laporan' %}active{% endif %}" href="{% url 'lacak_laporan' %}">
+                            <i class="fas fa-magnifying-glass-location"></i> Lacak Status
                         </a>
                     </li>
                     
@@ -98,6 +103,7 @@
                         </a>
                     </li>
                 </ul>
+
 
                 <!-- Right Side Actions (Adaptive for Mobile) -->
                 <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-lg-center gap-2 mt-3 mt-lg-0 w-100 w-lg-auto ms-lg-auto">
@@ -193,70 +199,62 @@
         </main>
     {% endblock %}
 
-    <!-- Modern Multi-Column Footer -->
-    <footer class="footer-custom pt-5 pb-4 mt-auto">
+    <!-- Compact Modern Footer -->
+    <footer class="footer-custom py-4 mt-auto">
         <div class="container-xl">
-            <div class="row g-4 mb-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="row g-4 mb-3">
+                <div class="col-lg-6 col-md-6">
+                    <div class="d-flex align-items-center gap-2 mb-2">
                         <div class="navbar-brand-icon">
-                            <i class="fas fa-route"></i>
+                            <i class="fas fa-road-barrier"></i>
                         </div>
                         <h5 class="mb-0 fw-bold">LaporJalan <span class="text-primary">Batam</span></h5>
                     </div>
-                    <p class="text-muted small mb-3">
-                        Inisiatif sistem informasi geografis partisipatif untuk pemantauan, pelaporan, dan verifikasi perbaikan infrastruktur jalan di seluruh wilayah Kota Batam.
+                    <p class="text-muted small mb-2 max-w-600">
+                        Inisiatif pemantauan, pelaporan, dan dokumentasi terbuka kondisi jalan di seluruh Kota Batam. Dikelola secara independen oleh komunitas demi keselamatan seluruh pengguna jalan raya.
                     </p>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
                         <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
-                            <i class="fas fa-layer-group"></i> GeoDjango + PostGIS
+                            <i class="fas fa-helmet-safety me-1"></i> Keselamatan Jalan
                         </span>
-                        <span class="badge rounded-pill bg-info-subtle text-info border border-info-subtle">
-                            <i class="fas fa-map"></i> Leaflet.js
+                        <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle">
+                            <i class="fas fa-shield-halved me-1"></i> Independen & Terbuka
                         </span>
                     </div>
                 </div>
 
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="fw-bold mb-3">Navigasi</h6>
-                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                <div class="col-6 col-md-3 col-lg-3">
+                    <h6 class="fw-bold mb-2 small text-uppercase text-secondary">Navigasi</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-1 mb-0">
                         <li><a href="{% url 'landing' %}" class="footer-link">Beranda</a></li>
                         <li><a href="{% url 'halaman_peta_utama' %}" class="footer-link">Peta Kerusakan</a></li>
+                        <li><a href="{% url 'lacak_laporan' %}" class="footer-link">Lacak Status</a></li>
                         <li><a href="{% url 'tambah_laporan' %}" class="footer-link">Laporkan Jalan</a></li>
-                        <li><a href="{% url 'dashboard' %}" class="footer-link">Dashboard Warga</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="fw-bold mb-3">Dukungan</h6>
-                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                <div class="col-6 col-md-3 col-lg-3">
+                    <h6 class="fw-bold mb-2 small text-uppercase text-secondary">Dukungan</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-1 mb-0">
                         <li><a href="{% url 'faq' %}" class="footer-link">Pusat Bantuan / FAQ</a></li>
                         <li><a href="{% url 'feedback' %}" class="footer-link">Kirim Umpan Balik</a></li>
                         <li><a href="{% url 'about' %}" class="footer-link">Tentang Platform</a></li>
                     </ul>
                 </div>
-
-                <div class="col-lg-4 col-md-12">
-                    <div class="card p-3 bg-card-subtle border-0">
-                        <h6 class="fw-bold mb-2"><i class="fas fa-bullhorn text-primary me-2"></i>Menemukan Jalan Rusak?</h6>
-                        <p class="small text-muted mb-3">Ambil foto dan tentukan titik lokasi kerusakan di peta sekarang. Tanpa perlu proses yang rumit.</p>
-                        <a href="{% url 'tambah_laporan' %}" class="btn btn-primary btn-sm w-100">
-                            <i class="fas fa-camera"></i> Buat Laporan Baru
-                        </a>
-                    </div>
-                </div>
             </div>
 
-            <hr class="my-4 border-secondary opacity-25">
+            <hr class="my-3 border-secondary opacity-25">
 
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-muted">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-muted">
                 <div>
-                    &copy; {% now "Y" %} <strong>LaporJalan Batam</strong>. Hak cipta dilindungi.
+                    &copy; {% now "Y" %} <strong>LaporJalan Batam</strong> • {{ PLATFORM_SHORT_DISCLAIMER }}
                 </div>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'about' %}" class="footer-link">Inisiatif Terbuka</a>
-                    <span>•</span>
-                    <a href="{% url 'feedback' %}" class="footer-link">Kontak & Saran</a>
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-end gap-3">
+                    <a href="{% url 'about' %}" class="footer-link text-nowrap">Tentang Inisiatif</a>
+                    <span class="opacity-50 d-none d-sm-inline">•</span>
+                    <a href="{% url 'lacak_laporan' %}" class="footer-link text-nowrap">Lacak Laporan</a>
+                    <span class="opacity-50 d-none d-sm-inline">•</span>
+                    <a href="{% url 'feedback' %}" class="footer-link text-nowrap">Kontak & Saran</a>
                 </div>
             </div>
         </div>

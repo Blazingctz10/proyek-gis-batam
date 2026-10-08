@@ -1,16 +1,14 @@
 // static/js/form_laporan.js
-// Multi-Step Wizard Controller for LaporJalan Batam WebGIS
+// Multi-Step Wizard Controller for LaporJalan Batam WebGIS with Photo & Captcha Validation Gate
 
 document.addEventListener("DOMContentLoaded", function() {
 
     const mapElement = document.getElementById('map');
     if (!mapElement) return;
 
-    // --- Elemen Input Form ---
+    // --- Form Input Elements ---
     const latInput = document.getElementById('id_latitude');
     const lonInput = document.getElementById('id_longitude');
-    const latDisplay = document.getElementById('lat-display');
-    const lonDisplay = document.getElementById('lon-display');
     const formElement = document.getElementById('laporan-form'); 
     const submitBtn = document.getElementById('submit-btn');
     const submitTextSpan = submitBtn ? submitBtn.querySelector('.submit-text') : null;
@@ -19,8 +17,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const jenisInput = document.getElementById('id_jenis_kerusakan');
     const tingkatInput = document.getElementById('id_tingkat_kerusakan');
     const fotoInput = document.getElementById('id_foto_upload');
+    const previewContainer = document.getElementById('foto-preview-container');
 
-    // --- Elemen Wizard & Stepper ---
+    // --- Wizard Panels & Steps ---
     const panel1 = document.getElementById('panel-step-1');
     const panel2 = document.getElementById('panel-step-2');
     const panel3 = document.getElementById('panel-step-3');
@@ -35,8 +34,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const addressCard = document.getElementById('detected-address-card');
     const addressText = document.getElementById('detected-address-text');
     const noLocationHint = document.getElementById('no-location-hint');
+    const locationSelectedBadge = document.getElementById('location-selected-badge');
     const btnUseAddress = document.getElementById('btn-use-address');
-    const btnCopyCoords = document.getElementById('btn-copy-coords');
 
     const step2LocationPreview = document.getElementById('step2-location-preview');
     const summaryCoords = document.getElementById('summary-coords');
@@ -44,11 +43,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const summaryJenis = document.getElementById('summary-jenis');
     const summaryTingkat = document.getElementById('summary-tingkat');
     const summaryPhotos = document.getElementById('summary-photos');
+    const photoCountStatus = document.getElementById('photo-count-status');
+    const checkPhotoItem = document.getElementById('check-photo-item');
+    const checkCaptchaItem = document.getElementById('check-captcha-item');
 
     let currentDetectedAddress = '';
-    let currentStep = 1;
+    let hasValidPhoto = false;
+    let hasValidCaptcha = false;
 
-    // --- 1. Inisialisasi Peta Leaflet (OpenStreetMap 100% Bebas API Key) ---
+    // --- 1. Map Initialization (OSM) ---
     const defaultCenter = [1.1250, 104.0380];
     const map = L.map('map').setView(defaultCenter, 12);
     
@@ -59,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let marker = null;
 
-    // Custom GIS pin icon dengan pulsing halo
+    // Custom GIS pin icon
     const customPinIcon = L.divIcon({
         className: 'custom-gis-pin-container',
         html: `
@@ -111,13 +114,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 300);
     }
 
-    // --- 3. Update Titik Marker & Form ---
-    function updateMarkerAndForm(latlng) {
+    // --- 3. Update Marker & Form Inputs ---
+    function updateMarkerAndForm(latlng, zoomToLevel = null) {
         const lat = typeof latlng.lat === 'number' ? latlng.lat : parseFloat(latlng.lat);
         const lon = typeof latlng.lng === 'number' ? latlng.lng : parseFloat(latlng.lng);
         
-        if (latDisplay) latDisplay.textContent = lat.toFixed(6);
-        if (lonDisplay) lonDisplay.textContent = lon.toFixed(6);
         if (latInput) latInput.value = lat;
         if (lonInput) lonInput.value = lon;
         
@@ -128,33 +129,16 @@ document.addEventListener("DOMContentLoaded", function() {
             marker.on('dragend', function(e) { updateMarkerAndForm(e.target.getLatLng()); });
         }
 
+        if (zoomToLevel) {
+            map.setView([lat, lon], zoomToLevel);
+        }
+
         fetchReverseGeocode(lat, lon);
 
-        // Aktifkan tombol Lanjut ke Langkah 2
-        if (btnGotoStep2) {
-            btnGotoStep2.disabled = false;
-        }
-        if (noLocationHint) {
-            noLocationHint.classList.add('d-none');
-        }
-    }
-
-    // Salin koordinat
-    if (btnCopyCoords) {
-        btnCopyCoords.addEventListener('click', function() {
-            if (!latInput.value || !lonInput.value) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, icon: 'info', title: 'Pilih titik di peta terlebih dahulu' });
-                }
-                return;
-            }
-            const coordText = `${parseFloat(latInput.value).toFixed(6)}, ${parseFloat(lonInput.value).toFixed(6)}`;
-            navigator.clipboard.writeText(coordText).then(() => {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, icon: 'success', title: 'Koordinat tersalin: ' + coordText });
-                }
-            });
-        });
+        // Enable Next to Step 2
+        if (btnGotoStep2) btnGotoStep2.disabled = false;
+        if (noLocationHint) noLocationHint.classList.add('d-none');
+        if (locationSelectedBadge) locationSelectedBadge.classList.remove('d-none');
     }
 
     // Sisipkan alamat ke deskripsi
@@ -172,36 +156,154 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Quick Tag Chips
-    document.querySelectorAll('.quick-tag-chip').forEach(chip => {
-        chip.addEventListener('click', function() {
-            if (!deskripsiInput) return;
-            const tagText = this.getAttribute('data-tag');
-            const formattedTag = `[${tagText}]`;
-            
-            if (this.classList.contains('active')) {
-                this.classList.remove('active');
-                deskripsiInput.value = deskripsiInput.value.replace(formattedTag, '').replace(/\s{2,}/g, ' ').trim();
-            } else {
-                this.classList.add('active');
-                deskripsiInput.value = (deskripsiInput.value.trim() ? (deskripsiInput.value.trim() + ' ') : '') + formattedTag;
-            }
-        });
+    // --- 4. GPS Button: Zoom to Level 17-18 and Place Pin ---
+    const LocateControl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function (map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-geolocate');
+            container.innerHTML = '<a href="#" title="Gunakan Lokasi GPS Saya"><i class="fa-solid fa-location-crosshairs"></i></a>';
+            container.style.cursor = 'pointer';
+            container.onclick = function (e) {
+                e.stopPropagation(); e.preventDefault();
+                map.locate({ setView: false, maxZoom: 18, enableHighAccuracy: true });
+            }; return container;
+        }
+    });
+    map.addControl(new LocateControl());
+    
+    map.on('locationfound', function (e) {
+        // Zoom to 18 on location and place pin
+        map.setView(e.latlng, 18);
+        updateMarkerAndForm(e.latlng);
+        if (marker) {
+            marker.bindPopup(`<strong>Lokasi GPS Terdeteksi</strong><br>Akurasi: &plusmn;${e.accuracy.toFixed(0)} meter`).openPopup();
+        }
+    });
+    map.on('locationerror', function (e) { 
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('GPS Terkendala', "Gagal mendeteksi lokasi GPS: " + e.message + ". Silakan klik titik langsung di atas peta jalan.", 'warning');
+        } else {
+            alert("Gagal mendeteksi lokasi: " + e.message); 
+        }
     });
 
-    // --- 4. WIZARD STEP NAVIGATION ENGINE ---
+    map.on('click', function(e) { updateMarkerAndForm(e.latlng); });
+
+    // --- 5. Submit Button Gate: Check Photo + reCAPTCHA ---
+    function checkSubmitReadiness() {
+        // Check photo
+        hasValidPhoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
+        
+        // Check captcha
+        let captchaResponse = '';
+        if (typeof grecaptcha !== 'undefined') {
+            try { captchaResponse = grecaptcha.getResponse(); } catch(e) {}
+        }
+        hasValidCaptcha = captchaResponse.length > 0;
+
+        // Update Checklist Visuals
+        if (checkPhotoItem) {
+            if (hasValidPhoto) {
+                checkPhotoItem.className = 'd-flex align-items-center gap-2 mb-1 text-success';
+                checkPhotoItem.innerHTML = `<i class="fas fa-circle-check"></i> Foto Dokumentasi Terlampir (${fotoInput.files.length})`;
+            } else {
+                checkPhotoItem.className = 'd-flex align-items-center gap-2 mb-1 text-danger';
+                checkPhotoItem.innerHTML = `<i class="fas fa-circle-xmark"></i> Wajib Minimal 1 Foto Dokumentasi`;
+            }
+        }
+
+        if (checkCaptchaItem) {
+            if (hasValidCaptcha) {
+                checkCaptchaItem.className = 'd-flex align-items-center gap-2 text-success';
+                checkCaptchaItem.innerHTML = `<i class="fas fa-circle-check"></i> Verifikasi reCAPTCHA Selesai`;
+            } else {
+                checkCaptchaItem.className = 'd-flex align-items-center gap-2 text-danger';
+                checkCaptchaItem.innerHTML = `<i class="fas fa-circle-xmark"></i> Menunggu Verifikasi reCAPTCHA`;
+            }
+        }
+
+        // Enable or Disable Submit Button
+        if (submitBtn) {
+            submitBtn.disabled = !(hasValidPhoto && hasValidCaptcha);
+        }
+    }
+
+    // Interval to monitor reCAPTCHA state automatically
+    setInterval(checkSubmitReadiness, 600);
+
+    // --- 6. Photo Input & Thumbnail Previews ---
+    if (fotoInput && previewContainer) {
+        fotoInput.addEventListener('change', function(e) {
+            previewContainer.innerHTML = '';
+            const files = Array.from(e.target.files);
+            
+            if (files.length === 0) {
+                if (summaryPhotos) {
+                    summaryPhotos.className = 'fw-bold text-danger';
+                    summaryPhotos.textContent = '0 Foto (Wajib Minimal 1)';
+                }
+                if (photoCountStatus) {
+                    photoCountStatus.className = 'badge bg-danger-subtle text-danger small';
+                    photoCountStatus.textContent = 'Wajib Diisi';
+                }
+                checkSubmitReadiness();
+                return;
+            }
+
+            if (files.length > 5) {
+                Swal.fire('Maksimal 5 Foto', 'Anda hanya dapat mengunggah maksimal 5 file foto dokumentasi.', 'warning');
+                fotoInput.value = '';
+                checkSubmitReadiness();
+                return;
+            }
+
+            if (summaryPhotos) {
+                summaryPhotos.className = 'fw-bold text-success';
+                summaryPhotos.textContent = `${files.length} Foto Terpilih`;
+            }
+            if (photoCountStatus) {
+                photoCountStatus.className = 'badge bg-success-subtle text-success small';
+                photoCountStatus.textContent = `${files.length} Foto Siap`;
+            }
+
+            files.forEach((file, index) => {
+                if (file.size > 5 * 1024 * 1024) {
+                    Swal.fire('Ukuran Terlalu Besar', `Foto ke-${index + 1} melebihi batas 5MB`, 'warning');
+                    return;
+                }
+                if (!file.type.match('image.*')) {
+                    Swal.fire('Format Salah', `File ke-${index + 1} bukan berkas gambar yang didukung`, 'warning');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const div = document.createElement('div');
+                    div.className = 'upload-preview-item';
+                    div.style.cssText = 'position: relative; width: 75px; height: 75px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border-color); display: inline-block; margin-right: 8px; margin-bottom: 8px;';
+                    div.innerHTML = `
+                        <img src="${evt.target.result}" alt="Preview ${index + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            checkSubmitReadiness();
+        });
+    }
+
+    // --- 7. Wizard Navigation Engine ---
     function goToStep(targetStep) {
-        // Validasi saat ingin berpindah maju
         if (targetStep === 2) {
             if (!latInput.value || !lonInput.value) {
                 if (typeof Swal !== 'undefined') {
-                    Swal.fire('Titik Lokasi Wajib Dipilih', 'Silakan klik titik lokasi jalan yang rusak pada peta terlebih dahulu.', 'warning');
+                    Swal.fire('Pilih Titik di Peta', 'Silakan klik titik lokasi jalan yang rusak pada peta atau gunakan tombol sensor GPS terlebih dahulu.', 'warning');
                 } else {
-                    alert('Silakan klik titik lokasi pada peta terlebih dahulu!');
+                    alert('Silakan tentukan titik lokasi pada peta terlebih dahulu!');
                 }
                 return;
             }
-            // Update preview di langkah 2
             if (step2LocationPreview) {
                 const latStr = parseFloat(latInput.value).toFixed(5);
                 const lonStr = parseFloat(lonInput.value).toFixed(5);
@@ -210,7 +312,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         if (targetStep === 3) {
-            // Validasi data rincian langkah 2
             let valid = true;
             if (jenisInput && !jenisInput.value) {
                 jenisInput.classList.add('is-invalid');
@@ -235,17 +336,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (!valid) {
                 if (typeof Swal !== 'undefined') {
-                    Swal.fire('Lengkapi Rincian', 'Pastikan Jenis Kerusakan, Tingkat Kerusakan, dan Deskripsi (minimal 5 karakter) sudah diisi.', 'warning');
+                    Swal.fire('Lengkapi Formulir', 'Pilih Jenis Kerusakan, Tingkat Kerusakan, dan tuliskan Deskripsi (minimal 5 karakter).', 'warning');
                 }
                 return;
             }
 
-            // Update Ringkasan Langkah 3
+            // Update Step 3 Summary
             if (summaryCoords && latInput.value) {
                 summaryCoords.textContent = `${parseFloat(latInput.value).toFixed(5)}, ${parseFloat(lonInput.value).toFixed(5)}`;
             }
             if (summaryAddress) {
-                summaryAddress.textContent = currentDetectedAddress || 'Koordinat Peta Terpilih';
+                summaryAddress.textContent = currentDetectedAddress || 'Titik Koordinat Terpilih';
             }
             if (summaryJenis && jenisInput) {
                 summaryJenis.textContent = jenisInput.options[jenisInput.selectedIndex]?.text || '-';
@@ -253,21 +354,15 @@ document.addEventListener("DOMContentLoaded", function() {
             if (summaryTingkat && tingkatInput) {
                 summaryTingkat.textContent = tingkatInput.options[tingkatInput.selectedIndex]?.text || '-';
             }
-            if (summaryPhotos && fotoInput) {
-                const count = fotoInput.files ? fotoInput.files.length : 0;
-                summaryPhotos.textContent = `${count} Foto Terlampir`;
-            }
+            checkSubmitReadiness();
         }
 
-        // Sembunyikan semua panel dan tampilkan panel target
         [panel1, panel2, panel3].forEach(p => { if (p) p.classList.remove('active'); });
         if (targetStep === 1 && panel1) panel1.classList.add('active');
         if (targetStep === 2 && panel2) panel2.classList.add('active');
         if (targetStep === 3 && panel3) panel3.classList.add('active');
 
-        // Update visual stepper atas
         const connectors = document.querySelectorAll('.stepper-connector');
-
         if (targetStep === 1) {
             step1.classList.remove('completed');
             step1.classList.add('active');
@@ -276,8 +371,6 @@ document.addEventListener("DOMContentLoaded", function() {
             step3.classList.remove('active', 'completed');
             if (connectors[0]) connectors[0].classList.remove('completed');
             if (connectors[1]) connectors[1].classList.remove('completed');
-
-            // Render ulang ukuran peta jika kembali ke step 1
             setTimeout(() => { map.invalidateSize(); }, 150);
         } else if (targetStep === 2) {
             step1.classList.remove('active');
@@ -299,22 +392,14 @@ document.addEventListener("DOMContentLoaded", function() {
             if (connectors[1]) connectors[1].classList.add('completed');
         }
 
-        currentStep = targetStep;
-
-        // Scroll halus ke header form
         const formTop = document.querySelector('.stepper-horizontal');
         if (formTop) {
             formTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 
-    // --- 5. Event Listener Tombol Navigasi Wizard ---
-    if (btnGotoStep2) {
-        btnGotoStep2.addEventListener('click', () => goToStep(2));
-    }
-    if (btnGotoStep3) {
-        btnGotoStep3.addEventListener('click', () => goToStep(3));
-    }
+    if (btnGotoStep2) btnGotoStep2.addEventListener('click', () => goToStep(2));
+    if (btnGotoStep3) btnGotoStep3.addEventListener('click', () => goToStep(3));
 
     document.querySelectorAll('.btn-back-to-step-1').forEach(btn => {
         btn.addEventListener('click', () => goToStep(1));
@@ -323,61 +408,21 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener('click', () => goToStep(2));
     });
 
-    // Klik langsung pada Stepper di atas
-    if (step1) {
-        step1.addEventListener('click', () => goToStep(1));
-    }
-    if (step2) {
-        step2.addEventListener('click', () => {
-            if (latInput.value && lonInput.value) goToStep(2);
-        });
-    }
-    if (step3) {
-        step3.addEventListener('click', () => {
-            if (latInput.value && lonInput.value && deskripsiInput.value.length >= 5) goToStep(3);
-        });
-    }
+    if (step1) step1.addEventListener('click', () => goToStep(1));
+    if (step2) step2.addEventListener('click', () => { if (latInput.value && lonInput.value) goToStep(2); });
+    if (step3) step3.addEventListener('click', () => { if (latInput.value && lonInput.value && deskripsiInput.value.length >= 5) goToStep(3); });
 
-    // --- 6. Inisialisasi Mode Edit jika sudah ada Koordinat ---
+    // Existing edit mode coordinates
     if (latInput && lonInput && latInput.value && lonInput.value) {
         const existingLat = parseFloat(latInput.value);
         const existingLon = parseFloat(lonInput.value);
         if (!isNaN(existingLat) && !isNaN(existingLon)) {
-            map.setView([existingLat, existingLon], 15);
+            map.setView([existingLat, existingLon], 16);
             updateMarkerAndForm({ lat: existingLat, lng: existingLon });
         }
     }
 
-    // --- 7. Event Listener Peta & Geolokasi ---
-    map.on('click', function(e) { updateMarkerAndForm(e.latlng); });
-
-    const LocateControl = L.Control.extend({
-        options: { position: 'topleft' },
-        onAdd: function (map) {
-            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-geolocate');
-            container.innerHTML = '<a href="#" title="Cari Lokasi Saya (GPS)"><i class="fa-solid fa-location-crosshairs"></i></a>';
-            container.style.cursor = 'pointer';
-            container.onclick = function (e) {
-                e.stopPropagation(); e.preventDefault();
-                map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true });
-            }; return container;
-        }
-    });
-    map.addControl(new LocateControl());
-    
-    map.on('locationfound', function (e) {
-        updateMarkerAndForm(e.latlng);
-        if (marker) { marker.bindPopup(`<strong>Lokasi GPS Terdeteksi</strong><br>Akurasi: &plusmn;${e.accuracy.toFixed(0)} meter`).openPopup(); }
-    });
-    map.on('locationerror', function (e) { 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire('GPS Terkendala', "Gagal mendapatkan lokasi sensor: " + e.message + ". Silakan klik titik langsung di peta.", 'warning');
-        } else {
-            alert("Gagal mendapatkan lokasi Anda: " + e.message); 
-        }
-    });
-
-    // --- 8. Error Display & Reset Helpers ---
+    // --- 8. Error Display Helpers ---
     function displayFormErrors(errors) {
         document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
         document.querySelectorAll('.form-control, .form-select, .g-recaptcha, input[type=file]').forEach(el => el.classList.remove('is-invalid'));
@@ -407,24 +452,31 @@ document.addEventListener("DOMContentLoaded", function() {
     function resetForm() {
         if (formElement) formElement.reset();
         if (marker) { map.removeLayer(marker); marker = null; }
-        if (latDisplay) latDisplay.textContent = '-';
-        if (lonDisplay) lonDisplay.textContent = '-';
         if (btnGotoStep2) btnGotoStep2.disabled = true;
         if (addressCard) addressCard.classList.add('d-none');
         if (noLocationHint) noLocationHint.classList.remove('d-none');
-        document.querySelectorAll('.quick-tag-chip').forEach(c => c.classList.remove('active'));
+        if (locationSelectedBadge) locationSelectedBadge.classList.add('d-none');
+        if (previewContainer) previewContainer.innerHTML = '';
         goToStep(1);
         if (typeof grecaptcha !== 'undefined') { 
-             try { grecaptcha.reset(); } catch (e) { console.warn("Gagal reset reCAPTCHA:", e); }
+             try { grecaptcha.reset(); } catch (e) {}
         }
         document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
         document.querySelectorAll('.form-control, .form-select, .g-recaptcha, input[type=file]').forEach(el => el.classList.remove('is-invalid'));
+        checkSubmitReadiness();
     }
 
-    // --- 9. Submit AJAX & SweetAlert2 ---
+    // --- 9. Submit AJAX & Success Screen with Large ID Box, Copy Button, Track Link ---
     if (formElement && submitBtn) { 
         formElement.addEventListener('submit', function(event) {
             event.preventDefault();
+
+            // Client photo validation
+            if (!fotoInput.files || fotoInput.files.length === 0) {
+                Swal.fire('Foto Wajib Diunggah', 'Silakan lampirkan minimal 1 foto dokumentasi fisik kerusakan jalan.', 'warning');
+                goToStep(3);
+                return;
+            }
 
             if (submitTextSpan) submitTextSpan.classList.add('d-none');
             if (spinnerSpan) spinnerSpan.classList.remove('d-none');
@@ -450,39 +502,70 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(({ ok, data }) => {
                 if (ok && data.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Laporan Berhasil Terkirim!',
-                        text: data.message,
-                        confirmButtonColor: '#2563eb',
-                        confirmButtonText: 'Buka Detail Laporan'
-                    }).then(() => {
-                        if (data.laporan_id) {
-                            window.location.href = `/laporan/${data.laporan_id}/`;
-                        } else {
-                            window.location.href = '/';
-                        }
-                    });
+                    const reportId = data.laporan_id || 'BARU';
+                    const idFormatted = `#${reportId}`;
+
+                    // Set Report ID and Link in Success Modal
+                    const modalIdElem = document.getElementById('success-report-id');
+                    const trackLinkElem = document.getElementById('link-track-status');
+                    const copyBtnElem = document.getElementById('btn-copy-success-id');
+                    const copyTextElem = document.getElementById('copy-success-text');
+
+                    if (modalIdElem) modalIdElem.textContent = idFormatted;
+                    if (trackLinkElem) trackLinkElem.href = `/lacak/?q=${reportId}`;
+
+                    if (copyBtnElem) {
+                        copyBtnElem.onclick = function() {
+                            navigator.clipboard.writeText(`${reportId}`).then(() => {
+                                if (copyTextElem) copyTextElem.textContent = 'ID Tersalin!';
+                                copyBtnElem.classList.replace('btn-outline-primary', 'btn-success');
+                                setTimeout(() => {
+                                    if (copyTextElem) copyTextElem.textContent = 'Salin ID Laporan';
+                                    copyBtnElem.classList.replace('btn-success', 'btn-outline-primary');
+                                }, 2000);
+                            });
+                        };
+                    }
+
+                    // Show custom success modal
+                    const successModalEl = document.getElementById('successReportModal');
+                    if (successModalEl) {
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(successModalEl);
+                        bsModal.show();
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Laporan #${reportId} Berhasil Terkirim!`,
+                            text: 'Gunakan ID laporan untuk melacak progres penanganan.',
+                            confirmButtonColor: '#ea580c',
+                            confirmButtonText: 'Lacak Status Laporan'
+                        }).then(() => {
+                            window.location.href = `/lacak/?q=${reportId}`;
+                        });
+                    }
+
                     resetForm();
                 } else if (data.status === 'form_error') {
-                    Swal.fire('Input Belum Lengkap', data.message || 'Cek kembali data form Anda (pastikan centang reCAPTCHA).', 'error');
+                    Swal.fire('Input Belum Lengkap', data.message || 'Cek kembali data form Anda (pastikan foto terlampir & centang reCAPTCHA).', 'error');
                     displayFormErrors(data.errors || {});
                     if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                    checkSubmitReadiness();
                 } else {
-                    Swal.fire('Gagal Menyimpan', data.message || 'Terjadi kesalahan sistem.', 'error');
+                    Swal.fire('Gagal Menyimpan', data.message || 'Terjadi kesalahan sistem saat menyimpan laporan.', 'error');
                     if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                    checkSubmitReadiness();
                 }
             })
             .catch(error => {
                 console.error('Submit error:', error);
-                Swal.fire('Koneksi Terkendala', 'Gagal memproses data di server. Coba periksa koneksi internet Anda.', 'warning');
+                Swal.fire('Koneksi Terkendala', 'Gagal memproses data di server. Periksa jaringan internet Anda.', 'warning');
             })
             .finally(() => {
                 if (submitTextSpan) submitTextSpan.classList.remove('d-none');
                 if (spinnerSpan) spinnerSpan.classList.add('d-none');
-                submitBtn.disabled = false;
+                checkSubmitReadiness();
             }); 
         }); 
     }
 
-});
+});

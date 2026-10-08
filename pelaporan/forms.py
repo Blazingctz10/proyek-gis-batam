@@ -5,22 +5,43 @@ from django_recaptcha.fields import ReCaptchaField
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+JENIS_KERUSAKAN_CHOICES = [
+    ('', 'Pilih jenis kerusakan...'),
+    ('LUBANG', 'Jalan Berlubang'),
+    ('RETAK', 'Jalan Retak'),
+    ('AMBLAS', 'Jalan Amblas'),
+    ('RUSAK_PARAH', 'Rusak Parah'),
+    ('LAINNYA', 'Lainnya'),
+]
+
+TINGKAT_KERUSAKAN_CHOICES = [
+    ('', 'Pilih tingkat...'),
+    ('RINGAN', 'Ringan'),
+    ('SEDANG', 'Sedang'),
+    ('BERAT', 'Berat'),
+]
+
 class LaporanForm(forms.ModelForm):
     latitude = forms.FloatField(widget=forms.HiddenInput())
     longitude = forms.FloatField(widget=forms.HiddenInput())
+    
+    jenis_kerusakan = forms.ChoiceField(
+        choices=JENIS_KERUSAKAN_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_jenis_kerusakan'})
+    )
+    tingkat_kerusakan = forms.ChoiceField(
+        choices=TINGKAT_KERUSAKAN_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_tingkat_kerusakan'})
+    )
     
     captcha = ReCaptchaField()
 
     class Meta:
         model = LaporanJalan
-        fields = ['jenis_kerusakan', 'tingkat_kerusakan', 'deskripsi', 'email_pelapor']  # ✅ TAMBAH FIELD BARU
+        fields = ['jenis_kerusakan', 'tingkat_kerusakan', 'deskripsi', 'email_pelapor']
         widgets = {
-            'jenis_kerusakan': forms.Select(attrs={
-                'class': 'form-select',
-            }),
-            'tingkat_kerusakan': forms.Select(attrs={
-                'class': 'form-select',
-            }),
             'deskripsi': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
